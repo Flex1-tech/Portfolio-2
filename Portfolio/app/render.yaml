@@ -6,4 +6,4 @@ services:
     publishDir: dist
     envVars:
       - key: VITE_API_URL
-        value: https://your-backend-url.onrender.com
+        value: https://portfolio-backend-3w27.onrender.com
