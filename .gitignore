@@ -1,1 +1,50 @@
+# Dépendances
+node_modules/
+
+# Build output
+dist/
+
+# Base de données (NE PAS committer les données locales/prod)
+data/
+*.db
+*.sqlite
+*.sqlite3
+
+# Variables d'environnement (garder .env.example !)
+.env
+.env.local
+.env.*.local
+
+# Uploads utilisateurs
+uploads/
+
+# Logs
+*.log
+logs/
+
+# Cache TypeScript
+*.tsbuildinfo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Fichiers de documentation générés automatiquement
+ANSWER.md
+LAUNCH_NOW.md
+PRODUCTION_READY.md
+QUICK_START.md
+EXECUTIVE_SUMMARY.md
+BACKEND_SETUP_GUIDE.md
+INTEGRATION_GUIDE.md
+DATA_MODEL_REFERENCE.md
+DOCUMENTATION_INDEX.md
+INDEX.md
+PRE_LAUNCH_CHECKLIST.md
+Portfolio/app/info.md
 Portfolio/File_tree.txt
