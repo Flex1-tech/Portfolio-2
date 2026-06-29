@@ -5,12 +5,12 @@
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
-    "dev": "nodemon --exec ts-node src/index.ts",
+    "dev": "nodemon --exec node --loader ts-node/esm src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "migrate": "ts-node src/scripts/migrate.ts",
-    "seed": "ts-node src/scripts/seed.ts",
-    "init-admin": "ts-node src/scripts/init-admin.ts",
+    "migrate": "node --loader ts-node/esm src/scripts/migrate.ts",
+    "seed": "node --loader ts-node/esm src/scripts/seed.ts",
+    "init-admin": "node --loader ts-node/esm src/scripts/init-admin.ts",
     "lint": "eslint src --ext .ts",
     "type-check": "tsc --noEmit"
   },
@@ -49,5 +49,9 @@
   },
   "engines": {
     "node": "22.x"
+  },
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
   }
 }

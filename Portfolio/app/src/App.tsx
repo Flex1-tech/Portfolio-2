@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ActiveSectionProvider, useActiveSection } from '@/context/ActiveSectionContext';
@@ -12,6 +13,8 @@ import ProjectsSection from '@/sections/ProjectsSection';
 import CertificationsSection from '@/sections/CertificationsSection';
 import CommunitySection from '@/sections/CommunitySection';
 import ContactSection from '@/sections/ContactSection';
+import AdminLogin from '@/pages/admin/AdminLogin';
+import AdminDashboard from '@/pages/admin/AdminDashboard';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -76,10 +79,17 @@ function AppContent() {
 
 export default function App() {
   return (
-    <ActiveSectionProvider>
-      <SmoothScrollProvider>
-        <AppContent />
-      </SmoothScrollProvider>
-    </ActiveSectionProvider>
+    <BrowserRouter>
+      <ActiveSectionProvider>
+        <SmoothScrollProvider>
+          <Routes>
+            <Route path="/" element={<AppContent />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </SmoothScrollProvider>
+      </ActiveSectionProvider>
+    </BrowserRouter>
   );
 }

@@ -439,3 +439,211 @@ export async function getAdminSession(): Promise<{
     return null;
   }
 }
+
+// ============================================================================
+// Admin CRUD API Functions
+// ============================================================================
+
+/**
+ * Create project
+ */
+export async function createProject(
+  project: Omit<Project, "id" | "created_at" | "updated_at">,
+): Promise<Project | null> {
+  try {
+    const response = await fetch(`${API_URL}/admin/projects`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(project),
+    });
+
+    if (!response.ok) throw new Error("Failed to create project");
+
+    const data: ApiResponse<Project> = await response.json();
+    return data.data || null;
+  } catch (error) {
+    console.error("Error creating project:", error);
+    return null;
+  }
+}
+
+/**
+ * Update project
+ */
+export async function updateProject(
+  id: number,
+  updates: Partial<Project>,
+): Promise<Project | null> {
+  try {
+    const response = await fetch(`${API_URL}/admin/projects/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(updates),
+    });
+
+    if (!response.ok) throw new Error("Failed to update project");
+
+    const data: ApiResponse<Project> = await response.json();
+    return data.data || null;
+  } catch (error) {
+    console.error("Error updating project:", error);
+    return null;
+  }
+}
+
+/**
+ * Delete project
+ */
+export async function deleteProject(id: number): Promise<boolean> {
+  try {
+    const response = await fetch(`${API_URL}/admin/projects/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+
+    if (!response.ok) throw new Error("Failed to delete project");
+
+    return true;
+  } catch (error) {
+    console.error("Error deleting project:", error);
+    return false;
+  }
+}
+
+/**
+ * Create event
+ */
+export async function createEvent(
+  event: Omit<Event, "id" | "created_at" | "updated_at">,
+): Promise<Event | null> {
+  try {
+    const response = await fetch(`${API_URL}/admin/events`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(event),
+    });
+
+    if (!response.ok) throw new Error("Failed to create event");
+
+    const data: ApiResponse<Event> = await response.json();
+    return data.data || null;
+  } catch (error) {
+    console.error("Error creating event:", error);
+    return null;
+  }
+}
+
+/**
+ * Update event
+ */
+export async function updateEvent(
+  id: number,
+  updates: Partial<Event>,
+): Promise<Event | null> {
+  try {
+    const response = await fetch(`${API_URL}/admin/events/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(updates),
+    });
+
+    if (!response.ok) throw new Error("Failed to update event");
+
+    const data: ApiResponse<Event> = await response.json();
+    return data.data || null;
+  } catch (error) {
+    console.error("Error updating event:", error);
+    return null;
+  }
+}
+
+/**
+ * Delete event
+ */
+export async function deleteEvent(id: number): Promise<boolean> {
+  try {
+    const response = await fetch(`${API_URL}/admin/events/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+
+    if (!response.ok) throw new Error("Failed to delete event");
+
+    return true;
+  } catch (error) {
+    console.error("Error deleting event:", error);
+    return false;
+  }
+}
+
+/**
+ * Create certification
+ */
+export async function createCertification(
+  cert: Omit<Certification, "id" | "created_at" | "updated_at">,
+): Promise<Certification | null> {
+  try {
+    const response = await fetch(`${API_URL}/admin/certifications`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(cert),
+    });
+
+    if (!response.ok) throw new Error("Failed to create certification");
+
+    const data: ApiResponse<Certification> = await response.json();
+    return data.data || null;
+  } catch (error) {
+    console.error("Error creating certification:", error);
+    return null;
+  }
+}
+
+/**
+ * Update certification
+ */
+export async function updateCertification(
+  id: number,
+  updates: Partial<Certification>,
+): Promise<Certification | null> {
+  try {
+    const response = await fetch(`${API_URL}/admin/certifications/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(updates),
+    });
+
+    if (!response.ok) throw new Error("Failed to update certification");
+
+    const data: ApiResponse<Certification> = await response.json();
+    return data.data || null;
+  } catch (error) {
+    console.error("Error updating certification:", error);
+    return null;
+  }
+}
+
+/**
+ * Delete certification
+ */
+export async function deleteCertification(id: number): Promise<boolean> {
+  try {
+    const response = await fetch(`${API_URL}/admin/certifications/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+
+    if (!response.ok) throw new Error("Failed to delete certification");
+
+    return true;
+  } catch (error) {
+    console.error("Error deleting certification:", error);
+    return false;
+  }
+}
