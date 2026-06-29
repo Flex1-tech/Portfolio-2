@@ -2,9 +2,9 @@
  * Admin User Model and Authentication
  */
 
-import { db } from "../config/database";
+import { db } from "../config/database.js";
 import bcryptjs from "bcryptjs";
-import type { AdminUser } from "../types";
+import type { AdminUser } from "../types/index.js";
 
 export class AdminUserModel {
   /**

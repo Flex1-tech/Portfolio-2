@@ -2,8 +2,8 @@
  * Certification Model and Database Operations
  */
 
-import { db } from "../config/database";
-import type { Certification } from "../types";
+import { db } from "../config/database.js";
+import type { Certification } from "../types/index.js";
 
 export class CertificationModel {
   /**

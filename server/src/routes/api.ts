@@ -4,11 +4,11 @@
  */
 
 import { Router, Request, Response } from "express";
-import { ProjectModel } from "../models/ProjectModel";
-import { EventModel } from "../models/EventModel";
-import { CertificationModel } from "../models/CertificationModel";
-import { validateQuery } from "../middleware";
-import { paginationSchema } from "../schemas/validation";
+import { ProjectModel } from "../models/ProjectModel.js";
+import { EventModel } from "../models/EventModel.js";
+import { CertificationModel } from "../models/CertificationModel.js";
+import { validateQuery } from "../middleware/index.js";
+import { paginationSchema } from "../schemas/validation.js";
 
 const router = Router();
 

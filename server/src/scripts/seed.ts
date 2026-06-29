@@ -4,10 +4,10 @@
  * Usage: npm run seed
  */
 
-import { ProjectModel } from "../models/ProjectModel";
-import { EventModel } from "../models/EventModel";
-import { CertificationModel } from "../models/CertificationModel";
-import { initializeDatabase } from "../config/database";
+import { ProjectModel } from "../models/ProjectModel.js";
+import { EventModel } from "../models/EventModel.js";
+import { CertificationModel } from "../models/CertificationModel.js";
+import { initializeDatabase } from "../config/database.js";
 
 function seedProjects() {
   console.log("🌱 Seeding projects...");

@@ -4,9 +4,9 @@
 
 import { Router, Request, Response } from "express";
 import rateLimit from "express-rate-limit";
-import { ProjectModel } from "../models/ProjectModel";
-import { EventModel } from "../models/EventModel";
-import { CertificationModel } from "../models/CertificationModel";
+import { ProjectModel } from "../models/ProjectModel.js";
+import { EventModel } from "../models/EventModel.js";
+import { CertificationModel } from "../models/CertificationModel.js";
 import {
   createProjectSchema,
   updateProjectSchema,
@@ -14,13 +14,13 @@ import {
   updateEventSchema,
   createCertificationSchema,
   updateCertificationSchema,
-} from "../schemas/validation";
+} from "../schemas/validation.js";
 import {
   validate,
   requireAuth,
   requireAdmin,
   sanitizeInput,
-} from "../middleware";
+} from "../middleware/index.js";
 
 const router = Router();
 

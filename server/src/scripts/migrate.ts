@@ -4,7 +4,7 @@
  * Usage: npm run migrate
  */
 
-import { initializeDatabase } from "../config/database";
+import { initializeDatabase } from "../config/database.js";
 
 async function main() {
   try {

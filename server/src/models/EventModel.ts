@@ -2,8 +2,8 @@
  * Event Model and Database Operations
  */
 
-import { db } from "../config/database";
-import type { Event } from "../types";
+import { db } from "../config/database.js";
+import type { Event } from "../types/index.js";
 
 export class EventModel {
   /**

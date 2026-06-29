@@ -4,8 +4,8 @@
  * Usage: npm run init-admin
  */
 
-import { AdminUserModel } from "../models/AdminUserModel";
-import { initializeDatabase } from "../config/database";
+import { AdminUserModel } from "../models/AdminUserModel.js";
+import { initializeDatabase } from "../config/database.js";
 import readline from "readline";
 
 const rl = readline.createInterface({

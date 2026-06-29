@@ -2,8 +2,8 @@
  * Project Model and Database Operations
  */
 
-import { db } from "../config/database";
-import type { Project } from "../types";
+import { db } from "../config/database.js";
+import type { Project } from "../types/index.js";
 
 export class ProjectModel {
   /**

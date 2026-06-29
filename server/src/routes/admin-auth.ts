@@ -4,9 +4,9 @@
  */
 
 import { Router, Request, Response } from "express";
-import { AdminUserModel } from "../models/AdminUserModel";
-import { loginSchema } from "../schemas/validation";
-import { validate, requireAuth, sanitizeInput } from "../middleware";
+import { AdminUserModel } from "../models/AdminUserModel.js";
+import { loginSchema } from "../schemas/validation.js";
+import { validate, requireAuth, sanitizeInput } from "../middleware/index.js";
 import rateLimit from "express-rate-limit";
 
 const router = Router();

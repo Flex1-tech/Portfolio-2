@@ -11,11 +11,11 @@ import helmet from "helmet";
 import compression from "compression";
 import morgan from "morgan";
 
-import { initializeDatabase } from "./config/database";
-import { errorHandler, notFound } from "./middleware";
-import apiRoutes from "./routes/api";
-import adminAuthRoutes from "./routes/admin-auth";
-import adminCrudRoutes from "./routes/admin-crud";
+import { initializeDatabase } from "./config/database.js";
+import { errorHandler, notFound } from "./middleware/index.js";
+import apiRoutes from "./routes/api.js";
+import adminAuthRoutes from "./routes/admin-auth.js";
+import adminCrudRoutes from "./routes/admin-crud.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
