@@ -84,7 +84,7 @@ export default function AboutSection() {
       style={{ maxWidth: '1280px', margin: '0 auto' }}
     >
       <SectionLabel text="01 — ABOUT" />
-      <SectionHeading text="Discipline, Code &\nImpact" className="mb-12" />
+      <SectionHeading text="Discipline, Code & Impact" className="mb-12" />
 
       <div className="grid grid-cols-1 md:grid-cols-[55%_45%] gap-16">
         <div ref={contentRef} className="order-2 md:order-1">

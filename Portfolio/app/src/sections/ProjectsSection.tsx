@@ -102,7 +102,7 @@ export default function ProjectsSection() {
       style={{ maxWidth: "1280px", margin: "0 auto" }}
     >
       <SectionLabel text="03 — PROJECTS" />
-      <SectionHeading text="Selected\nWork" className="mb-16" />
+      <SectionHeading text="Selected Work" className="mb-16" />
 
       <p
         ref={introRef}

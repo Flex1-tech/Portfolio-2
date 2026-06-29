@@ -71,7 +71,7 @@ export default function CommunitySection() {
       style={{ maxWidth: "1280px", margin: "0 auto" }}
     >
       <SectionLabel text="05 — COMMUNITY" />
-      <SectionHeading text="Engagement &\nMentoring" className="mb-12" />
+      <SectionHeading text="Engagement & Mentoring" className="mb-12" />
 
       <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {loading ? (

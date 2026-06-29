@@ -73,7 +73,7 @@ export default function CertificationsSection() {
         style={{ maxWidth: "1280px", margin: "0 auto" }}
       >
         <SectionLabel text="04 — CERTIFICATIONS" />
-        <SectionHeading text="Credentials &\nLearning" className="mb-12" />
+        <SectionHeading text="Credentials & Learning" className="mb-12" />
 
         <div ref={listRef}>
           {loading ? (

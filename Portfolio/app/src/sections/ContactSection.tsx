@@ -72,7 +72,7 @@ export default function ContactSection() {
       style={{ maxWidth: '1280px', margin: '0 auto' }}
     >
       <SectionLabel text="06 — CONTACT" />
-      <SectionHeading text="Let's\nConnect" className="mb-8" />
+      <SectionHeading text="Let's Connect" className="mb-8" />
 
       <div ref={contentRef}>
         <p className="contact-body text-[15px] leading-relaxed text-[#CFCFCF] max-w-[480px] mb-10">

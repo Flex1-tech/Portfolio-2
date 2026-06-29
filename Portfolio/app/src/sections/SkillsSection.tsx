@@ -81,7 +81,7 @@ export default function SkillsSection() {
     >
       <div className="section-gap page-padding" style={{ maxWidth: '1280px', margin: '0 auto' }}>
         <SectionLabel text="02 — TECH STACK" />
-        <SectionHeading text="Languages &\nTools" className="mb-12" />
+        <SectionHeading text="Languages & Tools" className="mb-12" />
 
         <div
           ref={categoriesRef}
