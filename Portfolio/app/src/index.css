@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 4%;
+    --foreground: 0 0% 96%;
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 96%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 96%;
+    --primary: 1 49% 48%;
+    --primary-foreground: 0 0% 96%;
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 0 0% 96%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 0 0% 12%;
+    --accent-foreground: 0 0% 96%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 12%;
+    --input: 0 0% 12%;
+    --ring: 1 49% 48%;
+    --radius: 0rem;
+  }
+
+  * {
+    @apply border-graphite;
+  }
+
+  body {
+    @apply bg-void text-silver antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background-color: rgba(181, 66, 63, 0.3);
+    color: #F5F5F5;
+  }
+}
+
+@layer components {
+  .word-span {
+    display: inline-block;
+    opacity: 0;
+    animation: word-rotate-in 0.6s cubic-bezier(0.215, 0.61, 0.355, 1) forwards paused;
+  }
+
+  .projects-intro {
+    perspective: 1000px;
+    transform-style: preserve-3d;
+  }
+}
+
+@layer utilities {
+  .page-padding {
+    padding-left: clamp(24px, 5vw, 80px);
+    padding-right: clamp(24px, 5vw, 80px);
+  }
+
+  .section-gap {
+    padding-top: clamp(100px, 15vh, 200px);
+    padding-bottom: clamp(100px, 15vh, 200px);
+  }
+}

@@ -1,0 +1,130 @@
+File Tree: Portfolio
+Generated on: 29/06/2026 08:05:08
+Root path: c:\Users\HP\Documents\Projets\Portofio\Portfolio
+
+────────────────────────────────────────────────────────────────────────────────
+
+├── app/
+│   ├── public/
+│   │   └── images/
+│   │       ├── projects/
+│   │       │   ├── 2fa.jpg
+│   │       │   ├── carpool.jpg
+│   │       │   ├── mllib.jpg
+│   │       │   └── music.jpg
+│   │       └── profile.jpg
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── ui/
+│   │   │   │   ├── accordion.tsx
+│   │   │   │   ├── alert-dialog.tsx
+│   │   │   │   ├── alert.tsx
+│   │   │   │   ├── aspect-ratio.tsx
+│   │   │   │   ├── avatar.tsx
+│   │   │   │   ├── badge.tsx
+│   │   │   │   ├── breadcrumb.tsx
+│   │   │   │   ├── button-group.tsx
+│   │   │   │   ├── button.tsx
+│   │   │   │   ├── calendar.tsx
+│   │   │   │   ├── card.tsx
+│   │   │   │   ├── carousel.tsx
+│   │   │   │   ├── chart.tsx
+│   │   │   │   ├── checkbox.tsx
+│   │   │   │   ├── collapsible.tsx
+│   │   │   │   ├── command.tsx
+│   │   │   │   ├── context-menu.tsx
+│   │   │   │   ├── dialog.tsx
+│   │   │   │   ├── drawer.tsx
+│   │   │   │   ├── dropdown-menu.tsx
+│   │   │   │   ├── empty.tsx
+│   │   │   │   ├── field.tsx
+│   │   │   │   ├── form.tsx
+│   │   │   │   ├── hover-card.tsx
+│   │   │   │   ├── input-group.tsx
+│   │   │   │   ├── input-otp.tsx
+│   │   │   │   ├── input.tsx
+│   │   │   │   ├── item.tsx
+│   │   │   │   ├── kbd.tsx
+│   │   │   │   ├── label.tsx
+│   │   │   │   ├── menubar.tsx
+│   │   │   │   ├── navigation-menu.tsx
+│   │   │   │   ├── pagination.tsx
+│   │   │   │   ├── popover.tsx
+│   │   │   │   ├── progress.tsx
+│   │   │   │   ├── radio-group.tsx
+│   │   │   │   ├── resizable.tsx
+│   │   │   │   ├── scroll-area.tsx
+│   │   │   │   ├── select.tsx
+│   │   │   │   ├── separator.tsx
+│   │   │   │   ├── sheet.tsx
+│   │   │   │   ├── sidebar.tsx
+│   │   │   │   ├── skeleton.tsx
+│   │   │   │   ├── slider.tsx
+│   │   │   │   ├── sonner.tsx
+│   │   │   │   ├── spinner.tsx
+│   │   │   │   ├── switch.tsx
+│   │   │   │   ├── table.tsx
+│   │   │   │   ├── tabs.tsx
+│   │   │   │   ├── textarea.tsx
+│   │   │   │   ├── toggle-group.tsx
+│   │   │   │   ├── toggle.tsx
+│   │   │   │   └── tooltip.tsx
+│   │   │   ├── AsciiCanvas.tsx
+│   │   │   ├── CertificationRow.tsx
+│   │   │   ├── CustomCursor.tsx
+│   │   │   ├── EventCard.tsx
+│   │   │   ├── Navigation.tsx
+│   │   │   ├── ProjectCard.tsx
+│   │   │   ├── ScrollIndicator.tsx
+│   │   │   ├── SectionHeading.tsx
+│   │   │   ├── SectionLabel.tsx
+│   │   │   ├── SkillTag.tsx
+│   │   │   └── SmoothScrollProvider.tsx
+│   │   ├── context/
+│   │   │   └── ActiveSectionContext.tsx
+│   │   ├── hooks/
+│   │   │   ├── use-mobile.ts
+│   │   │   ├── useCharacterReveal.ts
+│   │   │   ├── useReducedMotion.ts
+│   │   │   └── useScrollReveal.ts
+│   │   ├── lib/
+│   │   │   └── utils.ts
+│   │   ├── pages/
+│   │   │   └── Home.tsx
+│   │   ├── sections/
+│   │   │   ├── AboutSection.tsx
+│   │   │   ├── CertificationsSection.tsx
+│   │   │   ├── CommunitySection.tsx
+│   │   │   ├── ContactSection.tsx
+│   │   │   ├── HeroSection.tsx
+│   │   │   ├── ProjectsSection.tsx
+│   │   │   └── SkillsSection.tsx
+│   │   ├── types/
+│   │   │   └── index.ts
+│   │   ├── App.css
+│   │   ├── App.tsx
+│   │   ├── index.css
+│   │   └── main.tsx
+│   ├── .gitignore
+│   ├── README.md
+│   ├── components.json
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── info.md
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── postcss.config.js
+│   ├── tailwind.config.js
+│   ├── tsconfig.app.json
+│   ├── tsconfig.json
+│   ├── tsconfig.node.json
+│   └── vite.config.ts
+├── images/
+│   ├── projects/
+│   │   ├── 2fa.jpg
+│   │   ├── carpool.jpg
+│   │   ├── mllib.jpg
+│   │   └── music.jpg
+│   └── profile.jpg
+└── tech-spec.md
+
