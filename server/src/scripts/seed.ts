@@ -108,7 +108,7 @@ function seedCertifications() {
     {
       platform: "DataCamp",
       title: "Associate Data Scientist in Python",
-      status: "in-progress" as const,
+      status: "in_progress" as const,
       credential_url: "https://www.datacamp.com",
       date_earned: undefined,
     },

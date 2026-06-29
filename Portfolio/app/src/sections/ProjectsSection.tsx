@@ -23,7 +23,7 @@ export default function ProjectsSection() {
         const transformedProjects: Project[] = data.map((project, index) => ({
           number: String(index + 1).padStart(2, "0"),
           title: project.title,
-          status: project.status as "completed" | "in-progress",
+          status: project.status === "in_progress" ? "in-progress" : "completed",
           problem: project.core_problem,
           solution: project.technical_solution,
           tech: project.tech_stack,

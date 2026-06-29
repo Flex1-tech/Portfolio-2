@@ -23,7 +23,7 @@ export default function CertificationsSection() {
         const transformedCerts: Certification[] = data.map((cert) => ({
           platform: cert.platform,
           title: cert.title,
-          status: cert.status as "completed" | "in-progress",
+          status: cert.status === "in_progress" ? "in-progress" : "completed",
           verifyUrl: cert.credential_url,
         }));
         setCertifications(transformedCerts);

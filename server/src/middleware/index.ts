@@ -9,14 +9,14 @@ import { z } from "zod";
  * Request validation middleware
  */
 export function validate(schema: z.ZodSchema) {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     try {
       const validData = schema.parse(req.body);
       req.body = validData;
       next();
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           message: "Validation error",
           errors: error.errors.map((e) => ({
@@ -24,6 +24,7 @@ export function validate(schema: z.ZodSchema) {
             message: e.message,
           })),
         });
+        return;
       }
       next(error);
     }
@@ -34,18 +35,19 @@ export function validate(schema: z.ZodSchema) {
  * Query validation middleware
  */
 export function validateQuery(schema: z.ZodSchema) {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     try {
       const validData = schema.parse(req.query);
       req.query = validData;
       next();
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           message: "Query validation error",
           errors: error.errors,
         });
+        return;
       }
       next(error);
     }
@@ -55,12 +57,13 @@ export function validateQuery(schema: z.ZodSchema) {
 /**
  * Authentication middleware
  */
-export function requireAuth(req: Request, res: Response, next: NextFunction) {
+export function requireAuth(req: Request, res: Response, next: NextFunction): void {
   if (!req.session.userId) {
-    return res.status(401).json({
+    res.status(401).json({
       success: false,
       message: "Unauthorized. Please log in.",
     });
+    return;
   }
   next();
 }
@@ -68,12 +71,13 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
 /**
  * Admin-only middleware
  */
-export function requireAdmin(req: Request, res: Response, next: NextFunction) {
+export function requireAdmin(req: Request, res: Response, next: NextFunction): void {
   if (!req.session.isAdmin) {
-    return res.status(403).json({
+    res.status(403).json({
       success: false,
       message: "Forbidden. Admin access required.",
     });
+    return;
   }
   next();
 }
@@ -94,8 +98,13 @@ export function sanitizeInput(req: Request, res: Response, next: NextFunction) {
     const sanitized: any = {};
     for (const [key, value] of Object.entries(obj)) {
       if (typeof value === "string") {
-        // Remove potential XSS vectors
-        sanitized[key] = value.replace(/[<>]/g, "").trim();
+        // Remove potential XSS vectors - strip script tags and common XSS patterns
+        sanitized[key] = value
+          .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+          .replace(/javascript:/gi, "")
+          .replace(/on\w+\s*=/gi, "")
+          .replace(/[<>]/g, "")
+          .trim();
       } else {
         sanitized[key] = sanitize(value);
       }

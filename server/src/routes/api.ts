@@ -58,16 +58,17 @@ router.get(
 /**
  * GET /api/projects/:id - Get project by ID
  */
-router.get("/projects/:id", (req: Request, res: Response) => {
+router.get("/projects/:id", (req: Request, res: Response): void => {
   try {
     const { id } = req.params;
     const project = ProjectModel.getById(Number(id));
 
     if (!project) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         message: "Project not found",
       });
+      return;
     }
 
     res.json({
@@ -86,16 +87,17 @@ router.get("/projects/:id", (req: Request, res: Response) => {
 /**
  * GET /api/projects/slug/:slug - Get project by slug
  */
-router.get("/projects/slug/:slug", (req: Request, res: Response) => {
+router.get("/projects/slug/:slug", (req: Request, res: Response): void => {
   try {
     const { slug } = req.params;
     const project = ProjectModel.getBySlug(slug);
 
     if (!project) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         message: "Project not found",
       });
+      return;
     }
 
     res.json({
@@ -157,16 +159,17 @@ router.get(
 /**
  * GET /api/events/:id - Get event by ID
  */
-router.get("/events/:id", (req: Request, res: Response) => {
+router.get("/events/:id", (req: Request, res: Response): void => {
   try {
     const { id } = req.params;
     const event = EventModel.getById(Number(id));
 
     if (!event) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         message: "Event not found",
       });
+      return;
     }
 
     res.json({
@@ -228,16 +231,17 @@ router.get(
 /**
  * GET /api/certifications/:id - Get certification by ID
  */
-router.get("/certifications/:id", (req: Request, res: Response) => {
+router.get("/certifications/:id", (req: Request, res: Response): void => {
   try {
     const { id } = req.params;
     const certification = CertificationModel.getById(Number(id));
 
     if (!certification) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         message: "Certification not found",
       });
+      return;
     }
 
     res.json({

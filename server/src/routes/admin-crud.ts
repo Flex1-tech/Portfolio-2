@@ -3,6 +3,7 @@
  */
 
 import { Router, Request, Response } from "express";
+import rateLimit from "express-rate-limit";
 import { ProjectModel } from "../models/ProjectModel";
 import { EventModel } from "../models/EventModel";
 import { CertificationModel } from "../models/CertificationModel";
@@ -23,8 +24,20 @@ import {
 
 const router = Router();
 
-// Apply authentication and admin middleware to all routes
-router.use(requireAuth, requireAdmin, sanitizeInput);
+// Rate limiting for CRUD operations
+const crudLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  message: {
+    success: false,
+    message: "Too many requests, please try again later.",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Apply authentication, admin, and rate limiting middleware to all routes
+router.use(requireAuth, requireAdmin, crudLimiter, sanitizeInput);
 
 // ============================================================================
 // PROJECTS CRUD
@@ -36,16 +49,17 @@ router.use(requireAuth, requireAdmin, sanitizeInput);
 router.post(
   "/projects",
   validate(createProjectSchema),
-  (req: Request, res: Response) => {
+  (req: Request, res: Response): void => {
     try {
       const { slug } = req.body;
 
       // Check slug uniqueness
       if (!ProjectModel.isSlugUnique(slug)) {
-        return res.status(400).json({
+        res.status(400).json({
           success: false,
           message: "Slug already exists",
         });
+        return;
       }
 
       const project = ProjectModel.create(req.body);
@@ -86,16 +100,17 @@ router.get("/projects", (req: Request, res: Response) => {
 /**
  * GET /admin/projects/:id - Get project by ID
  */
-router.get("/projects/:id", (req: Request, res: Response) => {
+router.get("/projects/:id", (req: Request, res: Response): void => {
   try {
     const { id } = req.params;
     const project = ProjectModel.getById(Number(id));
 
     if (!project) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         message: "Project not found",
       });
+      return;
     }
 
     res.json({
@@ -117,26 +132,28 @@ router.get("/projects/:id", (req: Request, res: Response) => {
 router.put(
   "/projects/:id",
   validate(updateProjectSchema),
-  (req: Request, res: Response) => {
+  (req: Request, res: Response): void => {
     try {
       const { id } = req.params;
       const projectId = Number(id);
 
       const existingProject = ProjectModel.getById(projectId);
       if (!existingProject) {
-        return res.status(404).json({
+        res.status(404).json({
           success: false,
           message: "Project not found",
         });
+        return;
       }
 
       // Check slug uniqueness if slug is being updated
       if (req.body.slug && req.body.slug !== existingProject.slug) {
         if (!ProjectModel.isSlugUnique(req.body.slug, projectId)) {
-          return res.status(400).json({
+          res.status(400).json({
             success: false,
             message: "Slug already exists",
           });
+          return;
         }
       }
 
@@ -159,16 +176,17 @@ router.put(
 /**
  * DELETE /admin/projects/:id - Delete project
  */
-router.delete("/projects/:id", (req: Request, res: Response) => {
+router.delete("/projects/:id", (req: Request, res: Response): void => {
   try {
     const { id } = req.params;
     const success = ProjectModel.delete(Number(id));
 
     if (!success) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         message: "Project not found",
       });
+      return;
     }
 
     res.json({
@@ -234,16 +252,17 @@ router.get("/events", (req: Request, res: Response) => {
 /**
  * GET /admin/events/:id - Get event by ID
  */
-router.get("/events/:id", (req: Request, res: Response) => {
+router.get("/events/:id", (req: Request, res: Response): void => {
   try {
     const { id } = req.params;
     const event = EventModel.getById(Number(id));
 
     if (!event) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         message: "Event not found",
       });
+      return;
     }
 
     res.json({
@@ -265,16 +284,17 @@ router.get("/events/:id", (req: Request, res: Response) => {
 router.put(
   "/events/:id",
   validate(updateEventSchema),
-  (req: Request, res: Response) => {
+  (req: Request, res: Response): void => {
     try {
       const { id } = req.params;
       const updatedEvent = EventModel.update(Number(id), req.body);
 
       if (!updatedEvent) {
-        return res.status(404).json({
+        res.status(404).json({
           success: false,
           message: "Event not found",
         });
+        return;
       }
 
       res.json({
@@ -295,16 +315,17 @@ router.put(
 /**
  * DELETE /admin/events/:id - Delete event
  */
-router.delete("/events/:id", (req: Request, res: Response) => {
+router.delete("/events/:id", (req: Request, res: Response): void => {
   try {
     const { id } = req.params;
     const success = EventModel.delete(Number(id));
 
     if (!success) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         message: "Event not found",
       });
+      return;
     }
 
     res.json({
@@ -370,16 +391,17 @@ router.get("/certifications", (req: Request, res: Response) => {
 /**
  * GET /admin/certifications/:id - Get certification by ID
  */
-router.get("/certifications/:id", (req: Request, res: Response) => {
+router.get("/certifications/:id", (req: Request, res: Response): void => {
   try {
     const { id } = req.params;
     const certification = CertificationModel.getById(Number(id));
 
     if (!certification) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         message: "Certification not found",
       });
+      return;
     }
 
     res.json({
@@ -401,16 +423,17 @@ router.get("/certifications/:id", (req: Request, res: Response) => {
 router.put(
   "/certifications/:id",
   validate(updateCertificationSchema),
-  (req: Request, res: Response) => {
+  (req: Request, res: Response): void => {
     try {
       const { id } = req.params;
       const updatedCert = CertificationModel.update(Number(id), req.body);
 
       if (!updatedCert) {
-        return res.status(404).json({
+        res.status(404).json({
           success: false,
           message: "Certification not found",
         });
+        return;
       }
 
       res.json({
@@ -431,16 +454,17 @@ router.put(
 /**
  * DELETE /admin/certifications/:id - Delete certification
  */
-router.delete("/certifications/:id", (req: Request, res: Response) => {
+router.delete("/certifications/:id", (req: Request, res: Response): void => {
   try {
     const { id } = req.params;
     const success = CertificationModel.delete(Number(id));
 
     if (!success) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         message: "Certification not found",
       });
+      return;
     }
 
     res.json({

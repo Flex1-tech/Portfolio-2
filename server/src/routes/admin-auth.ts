@@ -30,16 +30,17 @@ router.post(
   sanitizeInput,
   loginLimiter,
   validate(loginSchema),
-  (req: Request, res: Response) => {
+  (req: Request, res: Response): void => {
     try {
       const { username, password } = req.body;
 
       const user = AdminUserModel.getByUsername(username);
       if (!user || !user.password_hash) {
-        return res.status(401).json({
+        res.status(401).json({
           success: false,
           message: "Invalid credentials",
         });
+        return;
       }
 
       const isPasswordValid = AdminUserModel.verifyPassword(
@@ -47,10 +48,11 @@ router.post(
         password,
       );
       if (!isPasswordValid) {
-        return res.status(401).json({
+        res.status(401).json({
           success: false,
           message: "Invalid credentials",
         });
+        return;
       }
 
       // Update last login
@@ -83,13 +85,14 @@ router.post(
 /**
  * POST /admin/logout - Admin logout
  */
-router.post("/logout", (req: Request, res: Response) => {
+router.post("/logout", (req: Request, res: Response): void => {
   req.session.destroy((error) => {
     if (error) {
-      return res.status(500).json({
+      res.status(500).json({
         success: false,
         message: "Logout failed",
       });
+      return;
     }
 
     res.clearCookie("connect.sid");
