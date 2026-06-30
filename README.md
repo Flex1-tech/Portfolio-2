@@ -1,69 +1,69 @@
-# 🎯 Portfolio - Frontend + Backend (Production Ready)
+# Portfolio - Frontend + Backend (Production Ready)
 
-## 📋 Project Status: **✅ READY FOR PRODUCTION**
+## Project Status: ** READY FOR PRODUCTION**
 
-- ✅ **Backend**: Express.js REST API with SQLite database
-- ✅ **Frontend**: React 19 + Vite + TypeScript with API integration
-- ✅ **Security**: Authentication, validation, rate limiting, XSS/SQL injection prevention
-- ✅ **Admin Dashboard**: Full CRUD operations for projects, events, certifications
-- ✅ **Documentation**: Complete guides for setup, deployment, and integration
+- **Backend**: Express.js REST API with SQLite database
+- **Frontend**: React 19 + Vite + TypeScript with API integration
+- **Security**: Authentication, validation, rate limiting, XSS/SQL injection prevention
+- **Admin Dashboard**: Full CRUD operations for projects, events, certifications
+- **Documentation**: Complete guides for setup, deployment, and integration
 
 ---
 
-## 🏗️ Project Structure
+## ️ Project Structure
 
 ```
 Portfolio/
-├── server/                      # Backend (Node.js + Express + SQLite)
-│   ├── src/
-│   │   ├── index.ts            # Server entry point
-│   │   ├── config/database.ts  # Database configuration
-│   │   ├── models/             # Data access layer
-│   │   ├── routes/             # API endpoints
-│   │   ├── middleware/         # Auth, validation, error handling
-│   │   ├── schemas/            # Zod validation schemas
-│   │   ├── types/              # TypeScript interfaces
-│   │   └── scripts/            # Utilities (migrate, seed, init-admin)
-│   ├── .env                    # Environment variables (local dev)
-│   ├── .env.example            # Environment template
-│   ├── package.json            # Dependencies
-│   ├── README.md               # Backend API documentation
-│   └── tsconfig.json           # TypeScript config
+├── server/ # Backend (Node.js + Express + SQLite)
+│ ├── src/
+│ │ ├── index.ts # Server entry point
+│ │ ├── config/database.ts # Database configuration
+│ │ ├── models/ # Data access layer
+│ │ ├── routes/ # API endpoints
+│ │ ├── middleware/ # Auth, validation, error handling
+│ │ ├── schemas/ # Zod validation schemas
+│ │ ├── types/ # TypeScript interfaces
+│ │ └── scripts/ # Utilities (migrate, seed, init-admin)
+│ ├── .env # Environment variables (local dev)
+│ ├── .env.example # Environment template
+│ ├── package.json # Dependencies
+│ ├── README.md # Backend API documentation
+│ └── tsconfig.json # TypeScript config
 │
-├── Portfolio/app/              # Frontend (React + Vite + TypeScript)
-│   ├── src/
-│   │   ├── App.tsx             # Main app component
-│   │   ├── pages/              # Page components
-│   │   ├── sections/           # Section components (now with API integration)
-│   │   ├── components/         # Reusable components
-│   │   ├── services/
-│   │   │   └── api.ts          # ✨ NEW: API client for backend communication
-│   │   ├── context/            # React context
-│   │   ├── hooks/              # Custom React hooks
-│   │   ├── types/              # TypeScript types
-│   │   └── lib/                # Utilities
-│   ├── .env.local              # ✨ NEW: Backend URL configuration
-│   ├── package.json            # Dependencies
-│   ├── vite.config.ts          # Vite configuration
-│   └── tsconfig.json           # TypeScript config
+├── Portfolio/app/ # Frontend (React + Vite + TypeScript)
+│ ├── src/
+│ │ ├── App.tsx # Main app component
+│ │ ├── pages/ # Page components
+│ │ ├── sections/ # Section components (now with API integration)
+│ │ ├── components/ # Reusable components
+│ │ ├── services/
+│ │ │ └── api.ts # NEW: API client for backend communication
+│ │ ├── context/ # React context
+│ │ ├── hooks/ # Custom React hooks
+│ │ ├── types/ # TypeScript types
+│ │ └── lib/ # Utilities
+│ ├── .env.local # NEW: Backend URL configuration
+│ ├── package.json # Dependencies
+│ ├── vite.config.ts # Vite configuration
+│ └── tsconfig.json # TypeScript config
 │
 ├── Documentation/
-│   ├── QUICK_START.md          # 5-minute quick start
-│   ├── EXECUTIVE_SUMMARY.md    # Overview for stakeholders
-│   ├── BACKEND_SETUP_GUIDE.md  # Complete backend guide
-│   ├── INTEGRATION_GUIDE.md    # Frontend-backend integration
-│   ├── DATA_MODEL_REFERENCE.md # Data type mappings
-│   ├── FILE_MANIFEST.md        # File descriptions
-│   └── DOCUMENTATION_INDEX.md  # Navigation guide
+│ ├── QUICK_START.md # 5-minute quick start
+│ ├── EXECUTIVE_SUMMARY.md # Overview for stakeholders
+│ ├── BACKEND_SETUP_GUIDE.md # Complete backend guide
+│ ├── INTEGRATION_GUIDE.md # Frontend-backend integration
+│ ├── DATA_MODEL_REFERENCE.md # Data type mappings
+│ ├── FILE_MANIFEST.md # File descriptions
+│ └── DOCUMENTATION_INDEX.md # Navigation guide
 │
-├── start-production.bat        # ✨ NEW: Windows deployment script
-├── start-production.sh         # ✨ NEW: Linux/Mac deployment script
-└── README.md                   # This file
+├── start-production.bat # NEW: Windows deployment script
+├── start-production.sh # NEW: Linux/Mac deployment script
+└── README.md # This file
 ```
 
 ---
 
-## 🚀 Quick Start (5 Minutes)
+## Quick Start (5 Minutes)
 
 ### Option 1: Automated Script (Recommended)
 
@@ -87,10 +87,10 @@ chmod +x start-production.sh
 ```bash
 cd server
 npm install
-npm run migrate          # Initialize database
-npm run init-admin       # Create admin account (enter credentials when prompted)
-npm run seed            # Optional: Add sample data
-npm run dev             # Start backend on :5000
+npm run migrate # Initialize database
+npm run init-admin # Create admin account (enter credentials when prompted)
+npm run seed # Optional: Add sample data
+npm run dev # Start backend on :5000
 ```
 
 **Terminal 2 - Frontend:**
@@ -98,34 +98,34 @@ npm run dev             # Start backend on :5000
 ```bash
 cd Portfolio/app
 npm install
-npm run dev             # Start frontend on :5173
+npm run dev # Start frontend on :5173
 ```
 
 ### Access the Application
 
-- 🌐 **Frontend**: http://localhost:5173
-- 🔌 **Backend API**: http://localhost:5000
-- 📊 **Admin Dashboard**: http://localhost:5173/admin (after login)
+- **Frontend**: http://localhost:5173
+- **Backend API**: http://localhost:5000
+- **Admin Dashboard**: http://localhost:5173/admin (after login)
 
 ---
 
-## ✨ What's New: Frontend-Backend Integration
+## What's New: Frontend-Backend Integration
 
-### 🔗 API Service (`Portfolio/app/src/services/api.ts`)
+### API Service (`Portfolio/app/src/services/api.ts`)
 
 - Complete TypeScript API client for backend communication
 - Functions for fetching Projects, Events, Certifications
 - Error handling and type-safe responses
 - Optional admin authentication functions
 
-### 🔄 Integrated Sections
+### Integrated Sections
 
 - **ProjectsSection**: Now fetches from `/api/projects`
 - **CertificationsSection**: Now fetches from `/api/certifications`
 - **CommunitySection**: Now fetches from `/api/events`
 - All with loading states and error handling
 
-### ⚙️ Configuration (`Portfolio/app/.env.local`)
+### ️ Configuration (`Portfolio/app/.env.local`)
 
 ```env
 VITE_API_URL=http://localhost:5000
@@ -135,35 +135,35 @@ Change this for production deployments.
 
 ---
 
-## 📚 Documentation
+## Documentation
 
-| Document                    | Purpose                          | Read Time |
+| Document | Purpose | Read Time |
 | --------------------------- | -------------------------------- | --------- |
-| **QUICK_START.md**          | Commands and reference           | 5 min     |
-| **EXECUTIVE_SUMMARY.md**    | Project overview & checklist     | 10 min    |
-| **BACKEND_SETUP_GUIDE.md**  | Complete backend setup           | 30 min    |
-| **INTEGRATION_GUIDE.md**    | Frontend integration details     | 20 min    |
-| **DATA_MODEL_REFERENCE.md** | Type mappings & validation       | 15 min    |
-| **FILE_MANIFEST.md**        | File descriptions & architecture | 10 min    |
-| **server/README.md**        | API endpoint documentation       | 20 min    |
+| **QUICK_START.md** | Commands and reference | 5 min |
+| **EXECUTIVE_SUMMARY.md** | Project overview & checklist | 10 min |
+| **BACKEND_SETUP_GUIDE.md** | Complete backend setup | 30 min |
+| **INTEGRATION_GUIDE.md** | Frontend integration details | 20 min |
+| **DATA_MODEL_REFERENCE.md** | Type mappings & validation | 15 min |
+| **FILE_MANIFEST.md** | File descriptions & architecture | 10 min |
+| **server/README.md** | API endpoint documentation | 20 min |
 
 ---
 
-## 🔐 Security Features
+## Security Features
 
-✅ **Authentication & Authorization**
+ **Authentication & Authorization**
 
 - Session-based authentication with HttpOnly cookies
 - Rate limiting on login (5 attempts/15 minutes)
 - Admin role-based access control
 
-✅ **Data Protection**
+ **Data Protection**
 
 - Bcryptjs password hashing (10 rounds)
 - Parameterized SQL queries (no injection)
 - Input sanitization (XSS prevention)
 
-✅ **API Security**
+ **API Security**
 
 - CORS with whitelist
 - Security headers (Helmet)
@@ -172,7 +172,7 @@ Change this for production deployments.
 
 ---
 
-## 🗄️ Database
+## ️ Database
 
 **SQLite** with 4 tables:
 
@@ -184,40 +184,40 @@ Change this for production deployments.
 **Automatic Setup:**
 
 ```bash
-npm run migrate  # Creates all tables
-npm run seed     # Adds sample data
+npm run migrate # Creates all tables
+npm run seed # Adds sample data
 ```
 
 ---
 
-## 📡 API Endpoints
+## API Endpoints
 
 ### Public Endpoints (No Auth)
 
 ```
-GET  /api/projects                 # All projects
-GET  /api/projects?page=1&limit=10 # Paginated projects
-GET  /api/projects/:id             # Single project
-GET  /api/projects/slug/:slug      # Project by slug
+GET /api/projects # All projects
+GET /api/projects?page=1&limit=10 # Paginated projects
+GET /api/projects/:id # Single project
+GET /api/projects/slug/:slug # Project by slug
 
-GET  /api/events                    # All events
-GET  /api/events/:id               # Single event
+GET /api/events # All events
+GET /api/events/:id # Single event
 
-GET  /api/certifications           # All certifications
-GET  /api/certifications/:id       # Single certification
+GET /api/certifications # All certifications
+GET /api/certifications/:id # Single certification
 ```
 
 ### Admin Endpoints (Auth Required)
 
 ```
-POST /admin/login                  # Login
-POST /admin/logout                 # Logout
-GET  /admin/session                # Current session
+POST /admin/login # Login
+POST /admin/logout # Logout
+GET /admin/session # Current session
 
-POST   /admin/projects             # Create
-GET    /admin/projects             # List
-PUT    /admin/projects/:id         # Update
-DELETE /admin/projects/:id         # Delete
+POST /admin/projects # Create
+GET /admin/projects # List
+PUT /admin/projects/:id # Update
+DELETE /admin/projects/:id # Delete
 
 (Same for /admin/events and /admin/certifications)
 ```
@@ -226,7 +226,7 @@ See [server/README.md](server/README.md) for detailed API documentation.
 
 ---
 
-## 🛠️ Technology Stack
+## ️ Technology Stack
 
 ### Backend
 
@@ -250,7 +250,7 @@ See [server/README.md](server/README.md) for detailed API documentation.
 
 ---
 
-## 🚢 Production Deployment
+## Production Deployment
 
 ### Backend Deployment Checklist
 
@@ -271,7 +271,7 @@ See [server/README.md](server/README.md) for detailed API documentation.
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Backend won't start
 
@@ -303,7 +303,7 @@ See **QUICK_START.md** for more troubleshooting.
 
 ---
 
-## 📞 Support
+## Support
 
 All documentation is available in this repository:
 
@@ -315,22 +315,22 @@ All documentation is available in this repository:
 
 ---
 
-## ✅ Verification Checklist
+## Verification Checklist
 
-- ✅ Backend server created and documented
-- ✅ Frontend API integration complete
-- ✅ Database configured with migrations
-- ✅ Authentication system implemented
-- ✅ All CRUD operations working
-- ✅ Security measures in place
-- ✅ Comprehensive documentation included
-- ✅ Both servers run successfully
-- ✅ API data flows to frontend
-- ✅ Ready for production deployment
+- Backend server created and documented
+- Frontend API integration complete
+- Database configured with migrations
+- Authentication system implemented
+- All CRUD operations working
+- Security measures in place
+- Comprehensive documentation included
+- Both servers run successfully
+- API data flows to frontend
+- Ready for production deployment
 
 ---
 
-## 🎯 Next Steps
+## Next Steps
 
 ### Immediate (Now)
 
@@ -353,20 +353,20 @@ All documentation is available in this repository:
 
 ---
 
-## 📄 License
+## License
 
 Created for Portfolio Application
 
 ---
 
-## 🎉 Status
+## Status
 
 ```
-✅ Implementation Complete
-✅ Integration Complete
-✅ Testing Ready
-✅ Production Ready
-🚀 Ready to Deploy
+ Implementation Complete
+ Integration Complete
+ Testing Ready
+ Production Ready
+ Ready to Deploy
 ```
 
 **Last Updated**: 2026-06-29
@@ -375,4 +375,4 @@ Created for Portfolio Application
 
 ---
 
-**Run `start-production.bat` or `./start-production.sh` to start both servers now!** 🚀
+**Run `start-production.bat` or `./start-production.sh` to start both servers now!** 

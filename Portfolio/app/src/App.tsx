@@ -19,77 +19,77 @@ import AdminDashboard from '@/pages/admin/AdminDashboard';
 gsap.registerPlugin(ScrollTrigger);
 
 function SectionTracker({ id, children }: { id: string; children: React.ReactNode }) {
-  const { setActiveSection } = useActiveSection();
+ const { setActiveSection } = useActiveSection();
 
-  useEffect(() => {
-    const trigger = ScrollTrigger.create({
-      trigger: `#${id}`,
-      start: 'top center',
-      end: 'bottom center',
-      onEnter: () => setActiveSection(id),
-      onEnterBack: () => setActiveSection(id),
-    });
+ useEffect(() => {
+ const trigger = ScrollTrigger.create({
+ trigger: `#${id}`,
+ start: 'top center',
+ end: 'bottom center',
+ onEnter: () => setActiveSection(id),
+ onEnterBack: () => setActiveSection(id),
+ });
 
-    return () => {
-      trigger.kill();
-    };
-  }, [id, setActiveSection]);
+ return () => {
+ trigger.kill();
+ };
+ }, [id, setActiveSection]);
 
-  return <>{children}</>;
+ return <>{children}</>;
 }
 
 function AppContent() {
-  return (
-    <>
-      <CustomCursor />
-      <Navigation />
+ return (
+ <>
+ <CustomCursor />
+ <Navigation />
 
-      <main>
-        <SectionTracker id="hero">
-          <HeroSection />
-        </SectionTracker>
+ <main>
+ <SectionTracker id="hero">
+ <HeroSection />
+ </SectionTracker>
 
-        <SectionTracker id="about">
-          <AboutSection />
-        </SectionTracker>
+ <SectionTracker id="about">
+ <AboutSection />
+ </SectionTracker>
 
-        <SectionTracker id="skills">
-          <SkillsSection />
-        </SectionTracker>
+ <SectionTracker id="skills">
+ <SkillsSection />
+ </SectionTracker>
 
-        <SectionTracker id="projects">
-          <ProjectsSection />
-        </SectionTracker>
+ <SectionTracker id="projects">
+ <ProjectsSection />
+ </SectionTracker>
 
-        <SectionTracker id="certifications">
-          <CertificationsSection />
-        </SectionTracker>
+ <SectionTracker id="certifications">
+ <CertificationsSection />
+ </SectionTracker>
 
-        <SectionTracker id="community">
-          <CommunitySection />
-        </SectionTracker>
+ <SectionTracker id="community">
+ <CommunitySection />
+ </SectionTracker>
 
-        <SectionTracker id="contact">
-          <ContactSection />
-        </SectionTracker>
-      </main>
-    </>
-  );
+ <SectionTracker id="contact">
+ <ContactSection />
+ </SectionTracker>
+ </main>
+ </>
+ );
 }
 
 export default function App() {
-  return (
-    <BrowserRouter>
-      <ActiveSectionProvider>
-        <SmoothScrollProvider>
-          <Routes>
-            <Route path="/" element={<AppContent />} />
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </SmoothScrollProvider>
-      </ActiveSectionProvider>
-    </BrowserRouter>
-  );
+ return (
+ <BrowserRouter>
+ <ActiveSectionProvider>
+ <SmoothScrollProvider>
+ <Routes>
+ <Route path="/" element={<AppContent />} />
+ <Route path="/admin/login" element={<AdminLogin />} />
+ <Route path="/admin/dashboard" element={<AdminDashboard />} />
+ <Route path="*" element={<Navigate to="/" replace />} />
+ </Routes>
+ </SmoothScrollProvider>
+ </ActiveSectionProvider>
+ </BrowserRouter>
+ );
 }

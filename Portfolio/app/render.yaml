@@ -1,9 +1,9 @@
 services:
-  - type: web
-    name: portfolio-frontend
-    env: static
-    buildCommand: npm install && npm run build
-    publishDir: dist
-    envVars:
-      - key: VITE_API_URL
-        value: https://portfolio-backend-3w27.onrender.com
+ - type: web
+ name: portfolio-frontend
+ env: static
+ buildCommand: npm install && npm run build
+ publishDir: dist
+ envVars:
+ - key: VITE_API_URL
+ value: https://portfolio-backend-3w27.onrender.com

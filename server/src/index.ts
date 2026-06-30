@@ -16,6 +16,7 @@ import { errorHandler, notFound } from "./middleware/index.js";
 import apiRoutes from "./routes/api.js";
 import adminAuthRoutes from "./routes/admin-auth.js";
 import adminCrudRoutes from "./routes/admin-crud.js";
+import { AdminUserModel } from "./models/AdminUserModel.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -31,35 +32,58 @@ app.set("trust proxy", 1);
 // Initialize database
 initializeDatabase();
 
+// Auto-seed admin if table is empty (Crucial for Render Free Tier)
+try {
+ const adminExists = AdminUserModel.getAll().length > 0;
+
+ if (!adminExists) {
+ console.log(" Admin table is empty. Attempting to auto-seed first admin...");
+ const defaultUsername = process.env.ADMIN_USERNAME || "admin";
+ const defaultPassword = process.env.ADMIN_PASSWORD;
+ const defaultEmail = process.env.ADMIN_EMAIL || undefined;
+
+ if (defaultPassword && defaultPassword.length >= 8) {
+ if (!AdminUserModel.usernameExists(defaultUsername)) {
+ AdminUserModel.create(defaultUsername, defaultPassword, defaultEmail);
+ console.log(` Successfully created default admin: ${defaultUsername}`);
+ }
+ } else {
+ console.warn("️ Admin table is empty but ADMIN_PASSWORD is not set or too short in Render environment variables!");
+ }
+ }
+} catch (seedError) {
+ console.error(" Failed to auto-seed admin user:", seedError);
+}
+
 // Security headers
 app.use(helmet());
 
 // CORS configuration
 app.use(
-  cors({
-    origin: process.env.CORS_ORIGIN?.split(",") || [
-      "http://localhost:5173",
-      "https://seth-akplogan.onrender.com",
-    ],
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  }),
+ cors({
+ origin: process.env.CORS_ORIGIN?.split(",") || [
+ "http://localhost:5173",
+ "https://seth-akplogan.onrender.com",
+ ],
+ credentials: true,
+ methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+ allowedHeaders: ["Content-Type", "Authorization"],
+ }),
 );
 
 // Session configuration
 app.use(
-  session({
-    secret: process.env.SESSION_SECRET || "dev-secret",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: NODE_ENV === "production",
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      sameSite: NODE_ENV === "production" ? ("none" as const) : ("strict" as const),
-    },
-  }),
+ session({
+ secret: process.env.SESSION_SECRET || "dev-secret",
+ resave: false,
+ saveUninitialized: false,
+ cookie: {
+ secure: NODE_ENV === "production",
+ httpOnly: true,
+ maxAge: 24 * 60 * 60 * 1000, // 24 hours
+ sameSite: NODE_ENV === "production" ? ("none" as const) : ("strict" as const),
+ },
+ }),
 );
 
 // Body parsers
@@ -78,11 +102,11 @@ app.use(morgan(NODE_ENV === "production" ? "combined" : "dev"));
 
 // Health check
 app.get("/health", (req: Request, res: Response) => {
-  res.json({
-    success: true,
-    message: "Server is running",
-    timestamp: new Date().toISOString(),
-  });
+ res.json({
+ success: true,
+ message: "Server is running",
+ timestamp: new Date().toISOString(),
+ });
 });
 
 // Public API routes
@@ -109,27 +133,27 @@ app.use(errorHandler);
 // ============================================================================
 
 app.listen(PORT, () => {
-  console.log(`
+ console.log(`
 ╔════════════════════════════════════════╗
-║   Portfolio Backend Server Running    ║
+║ Portfolio Backend Server Running ║
 ╠════════════════════════════════════════╣
-║  Environment: ${NODE_ENV.padEnd(27)}║
-║  Port: ${String(PORT).padEnd(36)}║
-║  API: http://localhost:${String(PORT).padEnd(23)}║
+║ Environment: ${NODE_ENV.padEnd(27)}║
+║ Port: ${String(PORT).padEnd(36)}║
+║ API: http://localhost:${String(PORT).padEnd(23)}║
 ╚════════════════════════════════════════╝
-  `);
+ `);
 
-  if (NODE_ENV === "development") {
-    console.log("📚 API Documentation:");
-    console.log(
-      "  Public API: GET /api/projects, /api/events, /api/certifications",
-    );
-    console.log("  Admin Auth: POST /admin/login, /admin/logout");
-    console.log(
-      "  Admin CRUD: POST/GET/PUT/DELETE /admin/projects|events|certifications",
-    );
-    console.log("");
-  }
+ if (NODE_ENV === "development") {
+ console.log(" API Documentation:");
+ console.log(
+ " Public API: GET /api/projects, /api/events, /api/certifications",
+ );
+ console.log(" Admin Auth: POST /admin/login, /admin/logout");
+ console.log(
+ " Admin CRUD: POST/GET/PUT/DELETE /admin/projects|events|certifications",
+ );
+ console.log("");
+ }
 });
 
 export default app;

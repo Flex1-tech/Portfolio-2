@@ -71,9 +71,9 @@
 
 | Animation | Library | Approach | Complexity |
 |-----------|---------|----------|------------|
-| ASCII audio-visualizer canvas | Canvas 2D API | Custom rAF loop. Grid of characters displaced by sine wave + noise. Continuous scroll + flicker. IntersectionObserver to pause when off-screen. | **High** 🔒 |
-| Character-by-character heading reveal | GSAP + ScrollTrigger | Split text to char spans. Each char: opacity 0→1, translateY 40%→0. Stagger 0.015s. ScrollTrigger start "top 80%". | **High** 🔒 |
-| 3D text perspective scroll | CSS @keyframes + GSAP ScrollTrigger | CSS animation paused, animationDelay driven by scroll progress. rotateY(30deg) translateZ(100px) → flat. Per-word scrub. | **High** 🔒 |
+| ASCII audio-visualizer canvas | Canvas 2D API | Custom rAF loop. Grid of characters displaced by sine wave + noise. Continuous scroll + flicker. IntersectionObserver to pause when off-screen. | **High** |
+| Character-by-character heading reveal | GSAP + ScrollTrigger | Split text to char spans. Each char: opacity 0→1, translateY 40%→0. Stagger 0.015s. ScrollTrigger start "top 80%". | **High** |
+| 3D text perspective scroll | CSS @keyframes + GSAP ScrollTrigger | CSS animation paused, animationDelay driven by scroll progress. rotateY(30deg) translateZ(100px) → flat. Per-word scrub. | **High** |
 | Hero word stagger entrance | GSAP timeline | Words split to spans. translateY 120%→0, opacity 0→1. Stagger 0.06s. Delay 0.4s. cubic-bezier easing. | Medium |
 | Hero element sequence | GSAP timeline | Label → headline → subheadline → punchline → CTAs. Chained with incremental delays. Single timeline on mount. | Medium |
 | Profile image clip-path reveal | GSAP + ScrollTrigger | clip-path: inset(100% 0 0 0) → inset(0). Duration 1.2s. cubic-bezier easing. | Medium |
@@ -186,44 +186,44 @@ A single `prefers-reduced-motion` check at app level:
 
 ```
 src/
-  main.tsx                    # Entry point — no StrictMode
-  App.tsx                     # Root — providers + all sections
-  index.css                   # Tailwind + global styles + CSS keyframes
-  components/
-    Navigation.tsx
-    CustomCursor.tsx
-    SmoothScrollProvider.tsx
-    SectionLabel.tsx
-    SectionHeading.tsx
-    AsciiCanvas.tsx
-    SkillTag.tsx
-    ProjectCard.tsx
-    EventCard.tsx    
-    CertificationRow.tsx
-    ScrollIndicator.tsx
-  sections/
-    HeroSection.tsx
-    AboutSection.tsx
-    SkillsSection.tsx
-    ProjectsSection.tsx
-    CertificationsSection.tsx
-    CommunitySection.tsx
-    ContactSection.tsx
-  hooks/
-    useScrollReveal.ts
-    useCharacterReveal.ts
-    useLenis.ts
-    useReducedMotion.ts
-  context/
-    ActiveSectionContext.tsx
-  types/
-    index.ts
+ main.tsx # Entry point — no StrictMode
+ App.tsx # Root — providers + all sections
+ index.css # Tailwind + global styles + CSS keyframes
+ components/
+ Navigation.tsx
+ CustomCursor.tsx
+ SmoothScrollProvider.tsx
+ SectionLabel.tsx
+ SectionHeading.tsx
+ AsciiCanvas.tsx
+ SkillTag.tsx
+ ProjectCard.tsx
+ EventCard.tsx 
+ CertificationRow.tsx
+ ScrollIndicator.tsx
+ sections/
+ HeroSection.tsx
+ AboutSection.tsx
+ SkillsSection.tsx
+ ProjectsSection.tsx
+ CertificationsSection.tsx
+ CommunitySection.tsx
+ ContactSection.tsx
+ hooks/
+ useScrollReveal.ts
+ useCharacterReveal.ts
+ useLenis.ts
+ useReducedMotion.ts
+ context/
+ ActiveSectionContext.tsx
+ types/
+ index.ts
 public/
-  images/
-    profile.jpg
-    projects/
-      music.jpg
-      2fa.jpg
-      carpool.jpg
-      mllib.jpg
+ images/
+ profile.jpg
+ projects/
+ music.jpg
+ 2fa.jpg
+ carpool.jpg
+ mllib.jpg
 ```
