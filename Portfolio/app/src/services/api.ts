@@ -1,9 +1,9 @@
 /**
  * API Service - Frontend Integration with Backend
- * Communicates with Express backend at http://localhost:5000 (dev) or /api (prod via proxy)
+ * Communicates with Express backend at http://localhost:5000 (dev) or relative paths (prod via Render rewrites)
  */
 
-const API_URL = import.meta.env.PROD ? '' : (import.meta.env.VITE_API_URL || "http://localhost:5000");
+const API_URL = import.meta.env.PROD ? '' : 'http://localhost:5000';
 
 // ============================================================================
 // Types
@@ -364,7 +364,7 @@ export async function adminLogin(
   password: string,
 ): Promise<{ success: boolean; message?: string }> {
   try {
-    const response = await fetch(`${API_URL}/admin/login`, {
+    const response = await fetch(`${API_URL}/admin-api/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -391,7 +391,7 @@ export async function adminLogin(
  */
 export async function adminLogout(): Promise<{ success: boolean }> {
   try {
-    const response = await fetch(`${API_URL}/admin/logout`, {
+    const response = await fetch(`${API_URL}/admin-api/logout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -419,7 +419,7 @@ export async function getAdminSession(): Promise<{
   email: string;
 } | null> {
   try {
-    const response = await fetch(`${API_URL}/admin/session`, {
+    const response = await fetch(`${API_URL}/admin-api/session`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -451,7 +451,7 @@ export async function createProject(
   project: Omit<Project, "id" | "created_at" | "updated_at">,
 ): Promise<Project | null> {
   try {
-    const response = await fetch(`${API_URL}/admin/projects`, {
+    const response = await fetch(`${API_URL}/admin-api/projects`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -476,7 +476,7 @@ export async function updateProject(
   updates: Partial<Project>,
 ): Promise<Project | null> {
   try {
-    const response = await fetch(`${API_URL}/admin/projects/${id}`, {
+    const response = await fetch(`${API_URL}/admin-api/projects/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -498,7 +498,7 @@ export async function updateProject(
  */
 export async function deleteProject(id: number): Promise<boolean> {
   try {
-    const response = await fetch(`${API_URL}/admin/projects/${id}`, {
+    const response = await fetch(`${API_URL}/admin-api/projects/${id}`, {
       method: "DELETE",
       credentials: "include",
     });
@@ -519,7 +519,7 @@ export async function createEvent(
   event: Omit<Event, "id" | "created_at" | "updated_at">,
 ): Promise<Event | null> {
   try {
-    const response = await fetch(`${API_URL}/admin/events`, {
+    const response = await fetch(`${API_URL}/admin-api/events`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -544,7 +544,7 @@ export async function updateEvent(
   updates: Partial<Event>,
 ): Promise<Event | null> {
   try {
-    const response = await fetch(`${API_URL}/admin/events/${id}`, {
+    const response = await fetch(`${API_URL}/admin-api/events/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -566,7 +566,7 @@ export async function updateEvent(
  */
 export async function deleteEvent(id: number): Promise<boolean> {
   try {
-    const response = await fetch(`${API_URL}/admin/events/${id}`, {
+    const response = await fetch(`${API_URL}/admin-api/events/${id}`, {
       method: "DELETE",
       credentials: "include",
     });
@@ -587,7 +587,7 @@ export async function createCertification(
   cert: Omit<Certification, "id" | "created_at" | "updated_at">,
 ): Promise<Certification | null> {
   try {
-    const response = await fetch(`${API_URL}/admin/certifications`, {
+    const response = await fetch(`${API_URL}/admin-api/certifications`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -612,7 +612,7 @@ export async function updateCertification(
   updates: Partial<Certification>,
 ): Promise<Certification | null> {
   try {
-    const response = await fetch(`${API_URL}/admin/certifications/${id}`, {
+    const response = await fetch(`${API_URL}/admin-api/certifications/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -634,7 +634,7 @@ export async function updateCertification(
  */
 export async function deleteCertification(id: number): Promise<boolean> {
   try {
-    const response = await fetch(`${API_URL}/admin/certifications/${id}`, {
+    const response = await fetch(`${API_URL}/admin-api/certifications/${id}`, {
       method: "DELETE",
       credentials: "include",
     });
