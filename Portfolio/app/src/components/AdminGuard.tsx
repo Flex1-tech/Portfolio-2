@@ -11,18 +11,30 @@ export default function AdminGuard({ children }: AdminGuardProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
+
     async function checkSession() {
       try {
         const session = await getAdminSession();
-        setIsAuthenticated(session !== null);
+        if (isMounted) {
+          setIsAuthenticated(session !== null);
+        }
       } catch (error) {
-        setIsAuthenticated(false);
+        if (isMounted) {
+          setIsAuthenticated(false);
+        }
       } finally {
-        setIsLoading(false);
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     }
 
     checkSession();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   if (isLoading) {

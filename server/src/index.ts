@@ -21,6 +21,9 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const NODE_ENV = process.env.NODE_ENV || "development";
 
+// Trust proxy for Render
+app.set("trust proxy", 1);
+
 // ============================================================================
 // Security & Middleware Setup
 // ============================================================================
@@ -54,7 +57,7 @@ app.use(
       secure: NODE_ENV === "production",
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      sameSite: "strict" as const,
+      sameSite: NODE_ENV === "production" ? ("none" as const) : ("strict" as const),
     },
   }),
 );
