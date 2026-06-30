@@ -364,7 +364,6 @@ export async function adminLogin(
  password: string,
 ): Promise<{ success: boolean; message?: string }> {
  try {
-    console.log('[AUTH] Attempting login for username:', username);
     const response = await fetch(`${API_URL}/admin-api/login`, {
  method: "POST",
  headers: {
@@ -375,10 +374,8 @@ export async function adminLogin(
  });
 
     const data: ApiResponse<unknown> = await response.json();
-    console.log('[AUTH] Login response status:', response.status);
-    console.log('[AUTH] Login response data:', data);
 
- if (!response.ok) {
+    if (!response.ok) {
  throw new Error(data.message || "Login failed");
  }
 
@@ -422,7 +419,6 @@ export async function getAdminSession(): Promise<{
  email: string;
 } | null> {
  try {
-    console.log('[AUTH] Fetching admin session...');
     const response = await fetch(`${API_URL}/admin-api/session`, {
  method: "GET",
  headers: {
@@ -432,14 +428,11 @@ export async function getAdminSession(): Promise<{
  });
 
     if (!response.ok) {
-      console.log('[AUTH] Session check failed with status:', response.status);
       return null;
     }
 
-    const data: ApiResponse<{ id: number; username: string; email: string }> =
-    await response.json();
-    console.log('[AUTH] Session data:', data);
-    return data.data || null;
+    const data = await response.json();
+    return data.user || null;
  } catch (error) {
  console.error("Error fetching session:", error);
  return null;

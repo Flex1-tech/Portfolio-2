@@ -15,12 +15,9 @@ export default function AdminGuard({ children }: AdminGuardProps) {
 
  async function checkSession() {
  try {
-      console.log('[AUTH GUARD] Checking session...');
       const session = await getAdminSession();
-      console.log('[AUTH GUARD] Session result:', session);
       if (isMounted) {
         setIsAuthenticated(session !== null);
-        console.log('[AUTH GUARD] isAuthenticated set to:', session !== null);
       }
  } catch (error) {
  if (isMounted) {
