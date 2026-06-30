@@ -3,7 +3,7 @@
  * Communicates with Express backend at http://localhost:5000 (dev) or /api (prod via proxy)
  */
 
-const API_URL = import.meta.env.PROD ? '/api' : (import.meta.env.VITE_API_URL || "http://localhost:5000/api");
+const API_URL = import.meta.env.PROD ? '' : (import.meta.env.VITE_API_URL || "http://localhost:5000");
 
 // ============================================================================
 // Types
