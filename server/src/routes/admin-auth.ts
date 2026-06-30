@@ -32,7 +32,8 @@ router.post(
  validate(loginSchema),
  (req: Request, res: Response): void => {
  try {
- const { username, password } = req.body;
+    console.log('[AUTH BACKEND] Login attempt for username:', req.body.username);
+    const { username, password } = req.body;
 
  const user = AdminUserModel.getByUsername(username);
  if (!user || !user.password_hash) {
@@ -58,10 +59,12 @@ router.post(
  // Update last login
  AdminUserModel.updateLastLogin(user.id!);
 
- // Create session
- req.session.userId = user.id;
- req.session.username = user.username;
- req.session.isAdmin = true;
+    // Create session
+    req.session.userId = user.id;
+    req.session.username = user.username;
+    req.session.isAdmin = true;
+    console.log('[AUTH BACKEND] Session created:', { userId: user.id, username: user.username, isAdmin: true });
+    console.log('[AUTH BACKEND] Session ID:', req.sessionID);
 
  res.json({
  success: true,
@@ -107,7 +110,9 @@ router.post("/logout", (req: Request, res: Response): void => {
  * GET /admin/session - Get current session
  */
 router.get("/session", requireAuth, (req: Request, res: Response) => {
- const user = AdminUserModel.getById(req.session.userId!);
+  console.log('[AUTH BACKEND] Session check request received');
+  console.log('[AUTH BACKEND] Session data:', { userId: req.session.userId, username: req.session.username, isAdmin: req.session.isAdmin });
+  const user = AdminUserModel.getById(req.session.userId!);
 
  res.json({
  success: true,

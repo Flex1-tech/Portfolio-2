@@ -364,7 +364,8 @@ export async function adminLogin(
  password: string,
 ): Promise<{ success: boolean; message?: string }> {
  try {
- const response = await fetch(`${API_URL}/admin-api/login`, {
+    console.log('[AUTH] Attempting login for username:', username);
+    const response = await fetch(`${API_URL}/admin-api/login`, {
  method: "POST",
  headers: {
  "Content-Type": "application/json",
@@ -373,7 +374,9 @@ export async function adminLogin(
  body: JSON.stringify({ username, password }),
  });
 
- const data: ApiResponse<unknown> = await response.json();
+    const data: ApiResponse<unknown> = await response.json();
+    console.log('[AUTH] Login response status:', response.status);
+    console.log('[AUTH] Login response data:', data);
 
  if (!response.ok) {
  throw new Error(data.message || "Login failed");
@@ -419,7 +422,8 @@ export async function getAdminSession(): Promise<{
  email: string;
 } | null> {
  try {
- const response = await fetch(`${API_URL}/admin-api/session`, {
+    console.log('[AUTH] Fetching admin session...');
+    const response = await fetch(`${API_URL}/admin-api/session`, {
  method: "GET",
  headers: {
  "Content-Type": "application/json",
@@ -427,13 +431,15 @@ export async function getAdminSession(): Promise<{
  credentials: "include",
  });
 
- if (!response.ok) {
- return null;
- }
+    if (!response.ok) {
+      console.log('[AUTH] Session check failed with status:', response.status);
+      return null;
+    }
 
- const data: ApiResponse<{ id: number; username: string; email: string }> =
- await response.json();
- return data.data || null;
+    const data: ApiResponse<{ id: number; username: string; email: string }> =
+    await response.json();
+    console.log('[AUTH] Session data:', data);
+    return data.data || null;
  } catch (error) {
  console.error("Error fetching session:", error);
  return null;
