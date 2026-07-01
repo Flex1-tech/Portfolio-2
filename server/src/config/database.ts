@@ -81,6 +81,30 @@ export async function initializeDatabase(): Promise<void> {
  )
  `);
 
+ // Create profile_settings key-value table
+ await pool.query(`
+ CREATE TABLE IF NOT EXISTS profile_settings (
+ key VARCHAR(100) PRIMARY KEY,
+ value TEXT NOT NULL
+ )
+ `);
+
+ // Seed default profile values (safe: ON CONFLICT DO NOTHING)
+ await pool.query(`
+ INSERT INTO profile_settings (key, value) VALUES
+ ('username', 'Seth N. AKPLOGAN'),
+ ('hero_title', 'Étudiant en Intelligence Artificielle & Data Scientist'),
+ ('hero_bio', 'Second-year student in Artificial Intelligence at IFRI, Université d''Abomey-Calavi. I focus on Machine Learning, Deep Learning, and Data Science — turning complex problems into software that works.'),
+ ('citation_text', 'La simplicité est la sophistication suprême.'),
+ ('citation_author', 'Léonard de Vinci'),
+ ('academic_status', 'LICENCE IN ARTIFICIAL INTELLIGENCE'),
+ ('academic_institution', 'IFRI — Université d''Abomey-Calavi'),
+ ('academic_period', '2024 – Present | 2nd Year'),
+ ('hero_label', 'IFRI — UNIVERSITÉ D''ABOMEY-CALAVI'),
+ ('hero_punchline', 'Building reliable and intelligent software that delivers measurable real-world value.')
+ ON CONFLICT (key) DO NOTHING
+ `);
+
  console.log(" Database schema initialized successfully");
  } catch (error) {
  console.error(" Error initializing database schema:", error);

@@ -7,6 +7,7 @@ import { Router, Request, Response } from "express";
 import { ProjectModel } from "../models/ProjectModel.js";
 import { EventModel } from "../models/EventModel.js";
 import { CertificationModel } from "../models/CertificationModel.js";
+import { ProfileModel } from "../models/ProfileModel.js";
 import { validateQuery } from "../middleware/index.js";
 import { paginationSchema } from "../schemas/validation.js";
 
@@ -254,6 +255,19 @@ router.get("/certifications/:id", async (req: Request, res: Response): Promise<v
  success: false,
  message: "Failed to fetch certification",
  });
+ }
+});
+
+/**
+ * GET /api/profile - Get all profile settings
+ */
+router.get("/profile", async (_req: Request, res: Response): Promise<void> => {
+ try {
+  const settings = await ProfileModel.getAll();
+  res.json({ success: true, data: settings });
+ } catch (error) {
+  console.error("Error fetching profile settings:", error);
+  res.status(500).json({ success: false, message: "Failed to fetch profile" });
  }
 });
 

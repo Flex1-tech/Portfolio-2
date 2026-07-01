@@ -7,6 +7,7 @@ import rateLimit from "express-rate-limit";
 import { ProjectModel } from "../models/ProjectModel.js";
 import { EventModel } from "../models/EventModel.js";
 import { CertificationModel } from "../models/CertificationModel.js";
+import { ProfileModel } from "../models/ProfileModel.js";
 import { uploadSingle } from "../middleware/upload.js";
 import {
  createProjectSchema,
@@ -486,6 +487,41 @@ router.delete("/certifications/:id", async (req: Request, res: Response): Promis
  success: false,
  message: "Failed to delete certification",
  });
+ }
+});
+
+// ============================================================================
+// PROFILE SETTINGS
+// ============================================================================
+
+/**
+ * GET /admin/profile - Get all profile settings
+ */
+router.get("/profile", async (_req: Request, res: Response): Promise<void> => {
+ try {
+  const settings = await ProfileModel.getAll();
+  res.json({ success: true, data: settings });
+ } catch (error) {
+  console.error("Error fetching profile settings:", error);
+  res.status(500).json({ success: false, message: "Failed to fetch profile settings" });
+ }
+});
+
+/**
+ * PATCH /admin/profile - Update profile settings (bulk key-value)
+ */
+router.patch("/profile", async (req: Request, res: Response): Promise<void> => {
+ try {
+  const updates = req.body as Record<string, string>;
+  if (!updates || typeof updates !== "object" || Array.isArray(updates)) {
+   res.status(400).json({ success: false, message: "Body must be a key-value object" });
+   return;
+  }
+  const updated = await ProfileModel.setMany(updates);
+  res.json({ success: true, message: "Profile updated successfully", data: updated });
+ } catch (error) {
+  console.error("Error updating profile settings:", error);
+  res.status(500).json({ success: false, message: "Failed to update profile settings" });
  }
 });
 

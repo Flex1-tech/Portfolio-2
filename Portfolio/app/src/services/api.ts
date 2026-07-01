@@ -57,6 +57,20 @@ export interface ApiResponse<T> {
  error?: string;
 }
 
+export interface ProfileSettings {
+ username?: string;
+ hero_title?: string;
+ hero_bio?: string;
+ hero_label?: string;
+ hero_punchline?: string;
+ citation_text?: string;
+ citation_author?: string;
+ academic_status?: string;
+ academic_institution?: string;
+ academic_period?: string;
+ [key: string]: string | undefined;
+}
+
 // ============================================================================
 // Projects API
 // ============================================================================
@@ -654,5 +668,44 @@ export async function deleteCertification(id: number): Promise<boolean> {
  } catch (error) {
  console.error("Error deleting certification:", error);
  return false;
+ }
+}
+
+// ============================================================================
+// Profile Settings API
+// ============================================================================
+
+/** GET /api/profile - public endpoint for homepage */
+export async function getProfile(): Promise<ProfileSettings> {
+ try {
+  const response = await fetch(`${API_URL}/api/profile`, {
+  credentials: "include",
+  });
+  if (!response.ok) return {};
+  const data: ApiResponse<ProfileSettings> = await response.json();
+  return data.data || {};
+ } catch (error) {
+  console.error("Error fetching profile:", error);
+  return {};
+ }
+}
+
+/** PATCH /admin-api/profile - admin update */
+export async function updateProfile(
+ updates: Partial<ProfileSettings>,
+): Promise<ProfileSettings | null> {
+ try {
+  const response = await fetch(`${API_URL}/admin-api/profile`, {
+  method: "PATCH",
+  headers: { "Content-Type": "application/json" },
+  credentials: "include",
+  body: JSON.stringify(updates),
+  });
+  if (!response.ok) throw new Error("Failed to update profile");
+  const data: ApiResponse<ProfileSettings> = await response.json();
+  return data.data || null;
+ } catch (error) {
+  console.error("Error updating profile:", error);
+  return null;
  }
 }

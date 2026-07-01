@@ -10,6 +10,7 @@ import type { Project, Event, Certification } from '@/services/api';
 import ProjectsTab from '@/components/admin/ProjectsTab';
 import CertificationsTab from '@/components/admin/CertificationsTab';
 import EventsTab from '@/components/admin/EventsTab';
+import ProfileTab from '@/components/admin/ProfileTab';
 
 export default function AdminDashboard() {
  const navigate = useNavigate();
@@ -113,6 +114,9 @@ export default function AdminDashboard() {
  <TabsTrigger value="events" className="data-[state=active]:bg-[#2A2A2A] text-[#F5F5F5]">
  Events
  </TabsTrigger>
+ <TabsTrigger value="profile" className="data-[state=active]:bg-[#2A2A2A] text-[#F5F5F5]">
+ Profil
+ </TabsTrigger>
  </TabsList>
 
  <TabsContent value="projects">
@@ -134,6 +138,10 @@ export default function AdminDashboard() {
  events={events}
  onRefresh={refreshData}
  />
+ </TabsContent>
+
+ <TabsContent value="profile">
+ <ProfileTab />
  </TabsContent>
  </Tabs>
  </main>

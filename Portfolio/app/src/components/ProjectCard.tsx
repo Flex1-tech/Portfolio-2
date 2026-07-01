@@ -99,7 +99,7 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
  </div>
 
  <div className="project-animate flex flex-wrap gap-2 mt-5">
- {project.tech.map((t) => (
+ {(Array.isArray(project.tech) ? project.tech : []).map((t) => (
  <span
  key={t}
  className="font-mono text-[11px] text-[#737373] border border-[#1E1E1E] px-3 py-1.5"
