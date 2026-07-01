@@ -16,6 +16,7 @@ export function validate(schema: z.ZodSchema) {
  next();
  } catch (error) {
  if (error instanceof z.ZodError) {
+ console.error("Détails des erreurs Zod :", error);
  res.status(400).json({
  success: false,
  message: "Validation error",

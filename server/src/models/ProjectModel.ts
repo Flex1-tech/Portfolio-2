@@ -6,6 +6,26 @@ import { pool } from "../config/database.js";
 import type { Project } from "../types/index.js";
 
 export class ProjectModel {
+  /**
+   * Helper to map raw database rows to Project objects,
+   * parsing tech_stack JSON strings back to arrays.
+   */
+  private static mapRow(row: any): Project | null {
+    if (!row) return null;
+    let tech_stack = row.tech_stack;
+    if (typeof tech_stack === "string") {
+      try {
+        tech_stack = JSON.parse(tech_stack);
+      } catch {
+        tech_stack = tech_stack.split(",").map((t: string) => t.trim()).filter(Boolean);
+      }
+    }
+    return {
+      ...row,
+      tech_stack,
+    };
+  }
+
  /**
  * Create a new project
  */
@@ -33,12 +53,7 @@ export class ProjectModel {
  ]
  );
 
- return {
- ...project,
- id: result.rows[0].id,
- created_at: result.rows[0].created_at,
- updated_at: result.rows[0].updated_at,
- };
+ return this.mapRow(result.rows[0])!;
  }
 
  /**
@@ -46,7 +61,7 @@ export class ProjectModel {
  */
  static async getAll(): Promise<Project[]> {
  const result = await pool.query("SELECT * FROM projects ORDER BY created_at DESC");
- return result.rows;
+ return result.rows.map(row => this.mapRow(row)!);
  }
 
  /**
@@ -85,7 +100,7 @@ export class ProjectModel {
  const total = parseInt(countResult.rows[0].count);
 
  return {
- projects: projectsResult.rows,
+ projects: projectsResult.rows.map((row) => this.mapRow(row)!),
  total,
  page,
  pages: Math.ceil(total / limit),
@@ -97,7 +112,7 @@ export class ProjectModel {
  */
  static async getById(id: number): Promise<Project | null> {
  const result = await pool.query("SELECT * FROM projects WHERE id = $1", [id]);
- return result.rows[0] || null;
+ return this.mapRow(result.rows[0]);
  }
 
  /**
@@ -105,7 +120,7 @@ export class ProjectModel {
  */
  static async getBySlug(slug: string): Promise<Project | null> {
  const result = await pool.query("SELECT * FROM projects WHERE slug = $1", [slug]);
- return result.rows[0] || null;
+ return this.mapRow(result.rows[0]);
  }
 
  /**
