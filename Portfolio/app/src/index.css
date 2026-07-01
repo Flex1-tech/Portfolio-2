@@ -65,4 +65,9 @@
  padding-top: clamp(100px, 15vh, 200px);
  padding-bottom: clamp(100px, 15vh, 200px);
  }
+
+ .admin-scroll {
+ overflow-y: auto;
+ -webkit-overflow-scrolling: touch;
+ }
 }

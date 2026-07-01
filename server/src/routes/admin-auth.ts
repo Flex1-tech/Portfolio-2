@@ -30,11 +30,11 @@ router.post(
  sanitizeInput,
  loginLimiter,
  validate(loginSchema),
- (req: Request, res: Response): void => {
+ async (req: Request, res: Response): Promise<void> => {
  try {
     const { username, password } = req.body;
 
- const user = AdminUserModel.getByUsername(username);
+ const user = await AdminUserModel.getByUsername(username);
  if (!user || !user.password_hash) {
  res.status(401).json({
  success: false,
@@ -56,7 +56,7 @@ router.post(
  }
 
  // Update last login
- AdminUserModel.updateLastLogin(user.id!);
+ await AdminUserModel.updateLastLogin(user.id!);
 
     // Create session
     req.session.userId = user.id;
@@ -106,8 +106,8 @@ router.post("/logout", (req: Request, res: Response): void => {
 /**
  * GET /admin/session - Get current session
  */
-router.get("/session", requireAuth, (req: Request, res: Response) => {
-  const user = AdminUserModel.getById(req.session.userId!);
+router.get("/session", requireAuth, async (req: Request, res: Response): Promise<void> => {
+  const user = await AdminUserModel.getById(req.session.userId!);
 
  res.json({
  success: true,

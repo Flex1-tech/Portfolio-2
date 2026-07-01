@@ -1,39 +1,27 @@
 /**
  * Database Configuration & Initialization
- * Handles SQLite database connection and setup
+ * Handles PostgreSQL database connection and setup
  */
 
-import Database from "better-sqlite3";
-import path from "path";
-import { fileURLToPath } from "url";
-import fs from "fs";
+import "dotenv/config";
+import { Pool } from "pg";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DB_PATH =
- process.env.DATABASE_PATH ||
- (process.env.RENDER ? "/opt/render/project/data/portfolio.db" : path.join(__dirname, "..", "..", "data", "portfolio.db"));
-
-// Ensure data directory exists
-const dataDir = path.dirname(DB_PATH);
-if (!fs.existsSync(dataDir)) {
- fs.mkdirSync(dataDir, { recursive: true });
-}
-
-// Initialize database connection
-export const db: Database.Database = new Database(DB_PATH, { verbose: console.log });
-
-// Enable foreign keys
-db.pragma("foreign_keys = ON");
+// Initialize PostgreSQL connection pool
+export const pool = new Pool({
+ connectionString: process.env.DATABASE_URL,
+ // Supabase pooler requires SSL in all environments (including dev)
+ ssl: { rejectUnauthorized: false },
+});
 
 /**
  * Initialize database schema
  */
-export function initializeDatabase(): void {
+export async function initializeDatabase(): Promise<void> {
  try {
  // Create projects table
- db.exec(`
+ await pool.query(`
  CREATE TABLE IF NOT EXISTS projects (
- id INTEGER PRIMARY KEY AUTOINCREMENT,
+ id SERIAL PRIMARY KEY,
  title TEXT NOT NULL,
  slug TEXT UNIQUE NOT NULL,
  short_desc TEXT NOT NULL,
@@ -42,50 +30,54 @@ export function initializeDatabase(): void {
  tech_stack TEXT NOT NULL,
  github_link TEXT,
  live_demo_link TEXT,
+ image_url TEXT,
+ video_url TEXT,
  status TEXT CHECK(status IN ('in_progress', 'completed')) NOT NULL DEFAULT 'completed',
- created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
- updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
  )
  `);
 
  // Create events table
- db.exec(`
+ await pool.query(`
  CREATE TABLE IF NOT EXISTS events (
- id INTEGER PRIMARY KEY AUTOINCREMENT,
+ id SERIAL PRIMARY KEY,
  title TEXT NOT NULL,
  organization TEXT NOT NULL,
  year TEXT NOT NULL,
  role TEXT CHECK(role IN ('participant', 'mentor', 'speaker')) NOT NULL,
  description TEXT NOT NULL,
- created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
- updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+ image_url TEXT,
+ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
  )
  `);
 
  // Create certifications table
- db.exec(`
+ await pool.query(`
  CREATE TABLE IF NOT EXISTS certifications (
- id INTEGER PRIMARY KEY AUTOINCREMENT,
+ id SERIAL PRIMARY KEY,
  platform TEXT NOT NULL,
  title TEXT NOT NULL,
  status TEXT CHECK(status IN ('in_progress', 'completed')) NOT NULL DEFAULT 'completed',
  credential_url TEXT,
+ image_url TEXT,
  date_earned DATE,
- created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
- updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
  )
  `);
 
  // Create admin users table for authentication
- db.exec(`
+ await pool.query(`
  CREATE TABLE IF NOT EXISTS admin_users (
- id INTEGER PRIMARY KEY AUTOINCREMENT,
+ id SERIAL PRIMARY KEY,
  username TEXT UNIQUE NOT NULL,
  password_hash TEXT NOT NULL,
  email TEXT UNIQUE,
- last_login DATETIME,
- created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
- updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+ last_login TIMESTAMP,
+ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
  )
  `);
 
@@ -97,16 +89,16 @@ export function initializeDatabase(): void {
 }
 
 /**
- * Get database connection
+ * Get database connection pool
  */
-export function getDatabase(): Database.Database {
- return db;
+export function getDatabase(): Pool {
+ return pool;
 }
 
 /**
  * Close database connection
  */
-export function closeDatabase(): void {
- db.close();
+export async function closeDatabase(): Promise<void> {
+ await pool.end();
  console.log(" Database connection closed");
 }

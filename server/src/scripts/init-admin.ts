@@ -26,7 +26,7 @@ async function main() {
  console.log(" Admin User Initialization\n");
 
  // Initialize database
- initializeDatabase();
+ await initializeDatabase();
 
  // Get username
  const username = await prompt("Enter admin username: ");
@@ -36,7 +36,7 @@ async function main() {
  }
 
  // Check if username already exists
- if (AdminUserModel.usernameExists(username)) {
+ if (await AdminUserModel.usernameExists(username)) {
  console.log(" Username already exists");
  process.exit(1);
  }
@@ -58,7 +58,7 @@ async function main() {
  const email = await prompt("Enter admin email (optional): ");
 
  // Create admin user
- const user = AdminUserModel.create(username, password, email || undefined);
+ const user = await AdminUserModel.create(username, password, email || undefined);
  console.log("\n Admin user created successfully");
  console.log(` Username: ${user.username}`);
  console.log(` Email: ${user.email || "Not set"}`);

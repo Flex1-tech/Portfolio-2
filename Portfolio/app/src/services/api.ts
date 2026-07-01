@@ -3,7 +3,7 @@
  * Communicates with Express backend at http://localhost:5000 (dev) or relative paths (prod via Render rewrites)
  */
 
-const API_URL = import.meta.env.PROD ? '' : 'http://localhost:5000';
+const API_URL = '';
 
 // ============================================================================
 // Types
@@ -19,6 +19,8 @@ export interface Project {
  tech_stack: string[];
  github_link?: string;
  live_demo_link?: string;
+ image_url?: string;
+ video_url?: string;
  status: "in_progress" | "completed";
  created_at: string;
  updated_at: string;
@@ -31,6 +33,7 @@ export interface Event {
  year: string;
  role: "participant" | "mentor" | "speaker";
  description: string;
+ image_url?: string;
  created_at: string;
  updated_at: string;
 }
@@ -41,6 +44,7 @@ export interface Certification {
  title: string;
  status: "in_progress" | "completed";
  credential_url?: string;
+ image_url?: string;
  date_earned?: string;
  created_at: string;
  updated_at: string;
@@ -447,14 +451,15 @@ export async function getAdminSession(): Promise<{
  * Create project
  */
 export async function createProject(
- project: Omit<Project, "id" | "created_at" | "updated_at">,
+ project: Omit<Project, "id" | "created_at" | "updated_at"> | FormData,
 ): Promise<Project | null> {
  try {
+ const isFormData = project instanceof FormData;
  const response = await fetch(`${API_URL}/admin-api/projects`, {
  method: "POST",
- headers: { "Content-Type": "application/json" },
+ headers: isFormData ? {} : { "Content-Type": "application/json" },
  credentials: "include",
- body: JSON.stringify(project),
+ body: isFormData ? project : JSON.stringify(project),
  });
 
  if (!response.ok) throw new Error("Failed to create project");
@@ -472,14 +477,15 @@ export async function createProject(
  */
 export async function updateProject(
  id: number,
- updates: Partial<Project>,
+ updates: Partial<Project> | FormData,
 ): Promise<Project | null> {
  try {
+ const isFormData = updates instanceof FormData;
  const response = await fetch(`${API_URL}/admin-api/projects/${id}`, {
  method: "PUT",
- headers: { "Content-Type": "application/json" },
+ headers: isFormData ? {} : { "Content-Type": "application/json" },
  credentials: "include",
- body: JSON.stringify(updates),
+ body: isFormData ? updates : JSON.stringify(updates),
  });
 
  if (!response.ok) throw new Error("Failed to update project");
@@ -515,14 +521,15 @@ export async function deleteProject(id: number): Promise<boolean> {
  * Create event
  */
 export async function createEvent(
- event: Omit<Event, "id" | "created_at" | "updated_at">,
+ event: Omit<Event, "id" | "created_at" | "updated_at"> | FormData,
 ): Promise<Event | null> {
  try {
+ const isFormData = event instanceof FormData;
  const response = await fetch(`${API_URL}/admin-api/events`, {
  method: "POST",
- headers: { "Content-Type": "application/json" },
+ headers: isFormData ? {} : { "Content-Type": "application/json" },
  credentials: "include",
- body: JSON.stringify(event),
+ body: isFormData ? event : JSON.stringify(event),
  });
 
  if (!response.ok) throw new Error("Failed to create event");
@@ -540,14 +547,15 @@ export async function createEvent(
  */
 export async function updateEvent(
  id: number,
- updates: Partial<Event>,
+ updates: Partial<Event> | FormData,
 ): Promise<Event | null> {
  try {
+ const isFormData = updates instanceof FormData;
  const response = await fetch(`${API_URL}/admin-api/events/${id}`, {
  method: "PUT",
- headers: { "Content-Type": "application/json" },
+ headers: isFormData ? {} : { "Content-Type": "application/json" },
  credentials: "include",
- body: JSON.stringify(updates),
+ body: isFormData ? updates : JSON.stringify(updates),
  });
 
  if (!response.ok) throw new Error("Failed to update event");
@@ -583,14 +591,15 @@ export async function deleteEvent(id: number): Promise<boolean> {
  * Create certification
  */
 export async function createCertification(
- cert: Omit<Certification, "id" | "created_at" | "updated_at">,
+ cert: Omit<Certification, "id" | "created_at" | "updated_at"> | FormData,
 ): Promise<Certification | null> {
  try {
+ const isFormData = cert instanceof FormData;
  const response = await fetch(`${API_URL}/admin-api/certifications`, {
  method: "POST",
- headers: { "Content-Type": "application/json" },
+ headers: isFormData ? {} : { "Content-Type": "application/json" },
  credentials: "include",
- body: JSON.stringify(cert),
+ body: isFormData ? cert : JSON.stringify(cert),
  });
 
  if (!response.ok) throw new Error("Failed to create certification");
@@ -608,14 +617,15 @@ export async function createCertification(
  */
 export async function updateCertification(
  id: number,
- updates: Partial<Certification>,
+ updates: Partial<Certification> | FormData,
 ): Promise<Certification | null> {
  try {
+ const isFormData = updates instanceof FormData;
  const response = await fetch(`${API_URL}/admin-api/certifications/${id}`, {
  method: "PUT",
- headers: { "Content-Type": "application/json" },
+ headers: isFormData ? {} : { "Content-Type": "application/json" },
  credentials: "include",
- body: JSON.stringify(updates),
+ body: isFormData ? updates : JSON.stringify(updates),
  });
 
  if (!response.ok) throw new Error("Failed to update certification");

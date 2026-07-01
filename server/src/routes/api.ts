@@ -15,9 +15,9 @@ const router = Router();
 /**
  * GET /api/projects - Get all projects
  */
-router.get("/projects", (req: Request, res: Response) => {
+router.get("/projects", async (req: Request, res: Response): Promise<void> => {
  try {
- const projects = ProjectModel.getAll();
+ const projects = await ProjectModel.getAll();
  res.json({
  success: true,
  data: projects,
@@ -37,10 +37,10 @@ router.get("/projects", (req: Request, res: Response) => {
 router.get(
  "/projects/paginated",
  validateQuery(paginationSchema),
- (req: Request, res: Response) => {
+ async (req: Request, res: Response): Promise<void> => {
  try {
  const { page = 1, limit = 10, search } = req.query as any;
- const result = ProjectModel.getPaginated(page, limit, search);
+ const result = await ProjectModel.getPaginated(page, limit, search);
  res.json({
  success: true,
  data: result,
@@ -58,10 +58,10 @@ router.get(
 /**
  * GET /api/projects/:id - Get project by ID
  */
-router.get("/projects/:id", (req: Request, res: Response): void => {
+router.get("/projects/:id", async (req: Request, res: Response): Promise<void> => {
  try {
  const { id } = req.params;
- const project = ProjectModel.getById(Number(id));
+ const project = await ProjectModel.getById(Number(id));
 
  if (!project) {
  res.status(404).json({
@@ -87,10 +87,10 @@ router.get("/projects/:id", (req: Request, res: Response): void => {
 /**
  * GET /api/projects/slug/:slug - Get project by slug
  */
-router.get("/projects/slug/:slug", (req: Request, res: Response): void => {
+router.get("/projects/slug/:slug", async (req: Request, res: Response): Promise<void> => {
  try {
  const { slug } = req.params;
- const project = ProjectModel.getBySlug(slug);
+ const project = await ProjectModel.getBySlug(slug);
 
  if (!project) {
  res.status(404).json({
@@ -116,9 +116,9 @@ router.get("/projects/slug/:slug", (req: Request, res: Response): void => {
 /**
  * GET /api/events - Get all events
  */
-router.get("/events", (req: Request, res: Response) => {
+router.get("/events", async (req: Request, res: Response): Promise<void> => {
  try {
- const events = EventModel.getAll();
+ const events = await EventModel.getAll();
  res.json({
  success: true,
  data: events,
@@ -138,10 +138,10 @@ router.get("/events", (req: Request, res: Response) => {
 router.get(
  "/events/paginated",
  validateQuery(paginationSchema),
- (req: Request, res: Response) => {
+ async (req: Request, res: Response): Promise<void> => {
  try {
  const { page = 1, limit = 10 } = req.query as any;
- const result = EventModel.getPaginated(page, limit);
+ const result = await EventModel.getPaginated(page, limit);
  res.json({
  success: true,
  data: result,
@@ -159,10 +159,10 @@ router.get(
 /**
  * GET /api/events/:id - Get event by ID
  */
-router.get("/events/:id", (req: Request, res: Response): void => {
+router.get("/events/:id", async (req: Request, res: Response): Promise<void> => {
  try {
  const { id } = req.params;
- const event = EventModel.getById(Number(id));
+ const event = await EventModel.getById(Number(id));
 
  if (!event) {
  res.status(404).json({
@@ -188,9 +188,9 @@ router.get("/events/:id", (req: Request, res: Response): void => {
 /**
  * GET /api/certifications - Get all certifications
  */
-router.get("/certifications", (req: Request, res: Response) => {
+router.get("/certifications", async (req: Request, res: Response): Promise<void> => {
  try {
- const certifications = CertificationModel.getAll();
+ const certifications = await CertificationModel.getAll();
  res.json({
  success: true,
  data: certifications,
@@ -210,10 +210,10 @@ router.get("/certifications", (req: Request, res: Response) => {
 router.get(
  "/certifications/paginated",
  validateQuery(paginationSchema),
- (req: Request, res: Response) => {
+ async (req: Request, res: Response): Promise<void> => {
  try {
  const { page = 1, limit = 10 } = req.query as any;
- const result = CertificationModel.getPaginated(page, limit);
+ const result = await CertificationModel.getPaginated(page, limit);
  res.json({
  success: true,
  data: result,
@@ -231,10 +231,10 @@ router.get(
 /**
  * GET /api/certifications/:id - Get certification by ID
  */
-router.get("/certifications/:id", (req: Request, res: Response): void => {
+router.get("/certifications/:id", async (req: Request, res: Response): Promise<void> => {
  try {
  const { id } = req.params;
- const certification = CertificationModel.getById(Number(id));
+ const certification = await CertificationModel.getById(Number(id));
 
  if (!certification) {
  res.status(404).json({

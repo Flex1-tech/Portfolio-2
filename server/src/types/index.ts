@@ -12,6 +12,8 @@ export interface Project {
  tech_stack: string[]; // JSON array
  github_link?: string;
  live_demo_link?: string;
+ image_url?: string;
+ video_url?: string;
  status: "in_progress" | "completed";
  created_at?: string;
  updated_at?: string;
@@ -24,6 +26,7 @@ export interface Event {
  year: string;
  role: "participant" | "mentor" | "speaker";
  description: string;
+ image_url?: string;
  created_at?: string;
  updated_at?: string;
 }
@@ -34,6 +37,7 @@ export interface Certification {
  title: string;
  status: "in_progress" | "completed";
  credential_url?: string;
+ image_url?: string;
  date_earned?: string;
  created_at?: string;
  updated_at?: string;

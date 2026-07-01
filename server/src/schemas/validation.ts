@@ -7,47 +7,60 @@ import { z } from "zod";
 
 // Project schemas
 export const createProjectSchema = z.object({
- title: z.string().min(3, "Title must be at least 3 characters").max(255),
- slug: z
- .string()
- .regex(
- /^[a-z0-9-]+$/,
- "Slug must contain only lowercase letters, numbers, and hyphens",
- ),
- short_desc: z.string().min(10).max(500),
- core_problem: z.string().min(20).max(2000),
- technical_solution: z.string().min(20).max(2000),
- tech_stack: z.array(z.string()).min(1, "At least one technology is required"),
- github_link: z.string().url().optional().or(z.literal("")),
- live_demo_link: z.string().url().optional().or(z.literal("")),
- status: z.enum(["in_progress", "completed"]),
+  title: z.string().min(3, "Title must be at least 3 characters").max(255),
+  slug: z
+    .string()
+    .regex(
+      /^[a-z0-9-]+$/,
+      "Slug must contain only lowercase letters, numbers, and hyphens",
+    ),
+  short_desc: z.string().min(10).max(500),
+  core_problem: z.string().min(20).max(2000),
+  technical_solution: z.string().min(20).max(2000),
+  tech_stack: z.preprocess((val) => {
+    if (typeof val === "string") {
+      try {
+        return JSON.parse(val);
+      } catch {
+        return val.split(",").map((t) => t.trim()).filter(Boolean);
+      }
+    }
+    return val;
+  }, z.array(z.string()).min(1, "At least one technology is required")),
+  github_link: z.string().url().optional().or(z.literal("")),
+  live_demo_link: z.string().url().optional().or(z.literal("")),
+  image_url: z.string().optional().nullable().or(z.literal("")),
+  video_url: z.string().optional().nullable().or(z.literal("")),
+  status: z.enum(["in_progress", "completed"]),
 });
 
 export const updateProjectSchema = createProjectSchema.partial();
 
 // Event schemas
 export const createEventSchema = z.object({
- title: z.string().min(3).max(255),
- organization: z.string().min(3).max(255),
- year: z
- .string()
- .regex(
- /^\d{4}(\s*–\s*\d{4})?$|^(\d{4}\s*–\s*)?Present$/,
- "Invalid year format",
- ),
- role: z.enum(["participant", "mentor", "speaker"]),
- description: z.string().min(10).max(1000),
+  title: z.string().min(3).max(255),
+  organization: z.string().min(3).max(255),
+  year: z
+    .string()
+    .regex(
+      /^\d{4}(\s*–\s*\d{4})?$|^(\d{4}\s*–\s*)?Present$/,
+      "Invalid year format",
+    ),
+  role: z.enum(["participant", "mentor", "speaker"]),
+  description: z.string().min(10).max(1000),
+  image_url: z.string().optional().nullable().or(z.literal("")),
 });
 
 export const updateEventSchema = createEventSchema.partial();
 
 // Certification schemas
 export const createCertificationSchema = z.object({
- platform: z.string().min(2).max(255),
- title: z.string().min(3).max(500),
- status: z.enum(["in_progress", "completed"]),
- credential_url: z.string().url().optional().or(z.literal("")),
- date_earned: z.string().date().optional().or(z.literal("")),
+  platform: z.string().min(2).max(255),
+  title: z.string().min(3).max(500),
+  status: z.enum(["in_progress", "completed"]),
+  credential_url: z.string().url().optional().or(z.literal("")),
+  date_earned: z.string().date().optional().or(z.literal("")),
+  image_url: z.string().optional().nullable().or(z.literal("")),
 });
 
 export const updateCertificationSchema = createCertificationSchema.partial();

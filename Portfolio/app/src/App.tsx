@@ -81,14 +81,16 @@ export default function App() {
  return (
  <BrowserRouter>
  <ActiveSectionProvider>
- <SmoothScrollProvider>
  <Routes>
- <Route path="/" element={<AppContent />} />
+ <Route path="/" element={
+ <SmoothScrollProvider>
+ <AppContent />
+ </SmoothScrollProvider>
+ } />
  <Route path="/admin/login" element={<AdminLogin />} />
  <Route path="/admin/dashboard" element={<AdminDashboard />} />
  <Route path="*" element={<Navigate to="/" replace />} />
  </Routes>
- </SmoothScrollProvider>
  </ActiveSectionProvider>
  </BrowserRouter>
  );

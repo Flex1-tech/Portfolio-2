@@ -7,6 +7,7 @@ import rateLimit from "express-rate-limit";
 import { ProjectModel } from "../models/ProjectModel.js";
 import { EventModel } from "../models/EventModel.js";
 import { CertificationModel } from "../models/CertificationModel.js";
+import { uploadSingle } from "../middleware/upload.js";
 import {
  createProjectSchema,
  updateProjectSchema,
@@ -48,13 +49,15 @@ router.use(requireAuth, requireAdmin, crudLimiter, sanitizeInput);
  */
 router.post(
  "/projects",
+ uploadSingle("image", "projects"),
+ uploadSingle("video", "projects"),
  validate(createProjectSchema),
- (req: Request, res: Response): void => {
+ async (req: Request, res: Response): Promise<void> => {
  try {
  const { slug } = req.body;
 
  // Check slug uniqueness
- if (!ProjectModel.isSlugUnique(slug)) {
+ if (!(await ProjectModel.isSlugUnique(slug))) {
  res.status(400).json({
  success: false,
  message: "Slug already exists",
@@ -62,7 +65,7 @@ router.post(
  return;
  }
 
- const project = ProjectModel.create(req.body);
+ const project = await ProjectModel.create(req.body);
  res.status(201).json({
  success: true,
  message: "Project created successfully",
@@ -81,9 +84,9 @@ router.post(
 /**
  * GET /admin/projects - Get all projects (for admin panel)
  */
-router.get("/projects", (req: Request, res: Response) => {
+router.get("/projects", async (req: Request, res: Response): Promise<void> => {
  try {
- const projects = ProjectModel.getAll();
+ const projects = await ProjectModel.getAll();
  res.json({
  success: true,
  data: projects,
@@ -100,10 +103,10 @@ router.get("/projects", (req: Request, res: Response) => {
 /**
  * GET /admin/projects/:id - Get project by ID
  */
-router.get("/projects/:id", (req: Request, res: Response): void => {
+router.get("/projects/:id", async (req: Request, res: Response): Promise<void> => {
  try {
  const { id } = req.params;
- const project = ProjectModel.getById(Number(id));
+ const project = await ProjectModel.getById(Number(id));
 
  if (!project) {
  res.status(404).json({
@@ -131,13 +134,15 @@ router.get("/projects/:id", (req: Request, res: Response): void => {
  */
 router.put(
  "/projects/:id",
+ uploadSingle("image", "projects"),
+ uploadSingle("video", "projects"),
  validate(updateProjectSchema),
- (req: Request, res: Response): void => {
+ async (req: Request, res: Response): Promise<void> => {
  try {
  const { id } = req.params;
  const projectId = Number(id);
 
- const existingProject = ProjectModel.getById(projectId);
+ const existingProject = await ProjectModel.getById(projectId);
  if (!existingProject) {
  res.status(404).json({
  success: false,
@@ -148,7 +153,7 @@ router.put(
 
  // Check slug uniqueness if slug is being updated
  if (req.body.slug && req.body.slug !== existingProject.slug) {
- if (!ProjectModel.isSlugUnique(req.body.slug, projectId)) {
+ if (!(await ProjectModel.isSlugUnique(req.body.slug, projectId))) {
  res.status(400).json({
  success: false,
  message: "Slug already exists",
@@ -157,7 +162,7 @@ router.put(
  }
  }
 
- const updatedProject = ProjectModel.update(projectId, req.body);
+ const updatedProject = await ProjectModel.update(projectId, req.body);
  res.json({
  success: true,
  message: "Project updated successfully",
@@ -176,10 +181,10 @@ router.put(
 /**
  * DELETE /admin/projects/:id - Delete project
  */
-router.delete("/projects/:id", (req: Request, res: Response): void => {
+router.delete("/projects/:id", async (req: Request, res: Response): Promise<void> => {
  try {
  const { id } = req.params;
- const success = ProjectModel.delete(Number(id));
+ const success = await ProjectModel.delete(Number(id));
 
  if (!success) {
  res.status(404).json({
@@ -211,10 +216,11 @@ router.delete("/projects/:id", (req: Request, res: Response): void => {
  */
 router.post(
  "/events",
+ uploadSingle("image", "events"),
  validate(createEventSchema),
- (req: Request, res: Response) => {
+ async (req: Request, res: Response): Promise<void> => {
  try {
- const event = EventModel.create(req.body);
+ const event = await EventModel.create(req.body);
  res.status(201).json({
  success: true,
  message: "Event created successfully",
@@ -233,9 +239,9 @@ router.post(
 /**
  * GET /admin/events - Get all events
  */
-router.get("/events", (req: Request, res: Response) => {
+router.get("/events", async (req: Request, res: Response): Promise<void> => {
  try {
- const events = EventModel.getAll();
+ const events = await EventModel.getAll();
  res.json({
  success: true,
  data: events,
@@ -252,10 +258,10 @@ router.get("/events", (req: Request, res: Response) => {
 /**
  * GET /admin/events/:id - Get event by ID
  */
-router.get("/events/:id", (req: Request, res: Response): void => {
+router.get("/events/:id", async (req: Request, res: Response): Promise<void> => {
  try {
  const { id } = req.params;
- const event = EventModel.getById(Number(id));
+ const event = await EventModel.getById(Number(id));
 
  if (!event) {
  res.status(404).json({
@@ -283,11 +289,12 @@ router.get("/events/:id", (req: Request, res: Response): void => {
  */
 router.put(
  "/events/:id",
+ uploadSingle("image", "events"),
  validate(updateEventSchema),
- (req: Request, res: Response): void => {
+ async (req: Request, res: Response): Promise<void> => {
  try {
  const { id } = req.params;
- const updatedEvent = EventModel.update(Number(id), req.body);
+ const updatedEvent = await EventModel.update(Number(id), req.body);
 
  if (!updatedEvent) {
  res.status(404).json({
@@ -315,10 +322,10 @@ router.put(
 /**
  * DELETE /admin/events/:id - Delete event
  */
-router.delete("/events/:id", (req: Request, res: Response): void => {
+router.delete("/events/:id", async (req: Request, res: Response): Promise<void> => {
  try {
  const { id } = req.params;
- const success = EventModel.delete(Number(id));
+ const success = await EventModel.delete(Number(id));
 
  if (!success) {
  res.status(404).json({
@@ -350,10 +357,11 @@ router.delete("/events/:id", (req: Request, res: Response): void => {
  */
 router.post(
  "/certifications",
+ uploadSingle("image", "certifications"),
  validate(createCertificationSchema),
- (req: Request, res: Response) => {
+ async (req: Request, res: Response): Promise<void> => {
  try {
- const certification = CertificationModel.create(req.body);
+ const certification = await CertificationModel.create(req.body);
  res.status(201).json({
  success: true,
  message: "Certification created successfully",
@@ -372,9 +380,9 @@ router.post(
 /**
  * GET /admin/certifications - Get all certifications
  */
-router.get("/certifications", (req: Request, res: Response) => {
+router.get("/certifications", async (req: Request, res: Response): Promise<void> => {
  try {
- const certifications = CertificationModel.getAll();
+ const certifications = await CertificationModel.getAll();
  res.json({
  success: true,
  data: certifications,
@@ -391,10 +399,10 @@ router.get("/certifications", (req: Request, res: Response) => {
 /**
  * GET /admin/certifications/:id - Get certification by ID
  */
-router.get("/certifications/:id", (req: Request, res: Response): void => {
+router.get("/certifications/:id", async (req: Request, res: Response): Promise<void> => {
  try {
  const { id } = req.params;
- const certification = CertificationModel.getById(Number(id));
+ const certification = await CertificationModel.getById(Number(id));
 
  if (!certification) {
  res.status(404).json({
@@ -422,11 +430,12 @@ router.get("/certifications/:id", (req: Request, res: Response): void => {
  */
 router.put(
  "/certifications/:id",
+ uploadSingle("image", "certifications"),
  validate(updateCertificationSchema),
- (req: Request, res: Response): void => {
+ async (req: Request, res: Response): Promise<void> => {
  try {
  const { id } = req.params;
- const updatedCert = CertificationModel.update(Number(id), req.body);
+ const updatedCert = await CertificationModel.update(Number(id), req.body);
 
  if (!updatedCert) {
  res.status(404).json({
@@ -454,10 +463,10 @@ router.put(
 /**
  * DELETE /admin/certifications/:id - Delete certification
  */
-router.delete("/certifications/:id", (req: Request, res: Response): void => {
+router.delete("/certifications/:id", async (req: Request, res: Response): Promise<void> => {
  try {
  const { id } = req.params;
- const success = CertificationModel.delete(Number(id));
+ const success = await CertificationModel.delete(Number(id));
 
  if (!success) {
  res.status(404).json({

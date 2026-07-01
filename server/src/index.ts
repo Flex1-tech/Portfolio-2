@@ -29,12 +29,13 @@ app.set("trust proxy", 1);
 // Security & Middleware Setup
 // ============================================================================
 
-// Initialize database
-initializeDatabase();
+// Initialize database and auto-seed admin
+async function initializeApp() {
+ await initializeDatabase();
 
-// Auto-seed admin if table is empty (Crucial for Render Free Tier)
-try {
- const adminExists = AdminUserModel.getAll().length > 0;
+ // Auto-seed admin if table is empty (Crucial for Render Free Tier)
+ try {
+ const adminExists = (await AdminUserModel.getAll()).length > 0;
 
  if (!adminExists) {
  console.log(" Admin table is empty. Attempting to auto-seed first admin...");
@@ -43,17 +44,20 @@ try {
  const defaultEmail = process.env.ADMIN_EMAIL || undefined;
 
  if (defaultPassword && defaultPassword.length >= 8) {
- if (!AdminUserModel.usernameExists(defaultUsername)) {
- AdminUserModel.create(defaultUsername, defaultPassword, defaultEmail);
+ if (!(await AdminUserModel.usernameExists(defaultUsername))) {
+ await AdminUserModel.create(defaultUsername, defaultPassword, defaultEmail);
  console.log(` Successfully created default admin: ${defaultUsername}`);
  }
  } else {
  console.warn("️ Admin table is empty but ADMIN_PASSWORD is not set or too short in Render environment variables!");
  }
  }
-} catch (seedError) {
+ } catch (seedError) {
  console.error(" Failed to auto-seed admin user:", seedError);
+ }
 }
+
+initializeApp();
 
 // Security headers
 app.use(helmet());

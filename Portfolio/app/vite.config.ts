@@ -7,12 +7,23 @@ import { inspectAttr } from 'kimi-plugin-inspect-react'
 export default defineConfig({
  base: '/',
  plugins: [inspectAttr(), react()],
- server: {
- port: 3000,
- },
- resolve: {
- alias: {
- "@": path.resolve(__dirname, "./src"),
- },
- },
+  server: {
+    port: 3000,
+    proxy: {
+      '/admin-api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/admin-api/, '/admin'),
+      },
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      },
+    },
+  },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
 });
