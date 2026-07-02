@@ -14,146 +14,146 @@ import ProfileTab from '@/components/admin/ProfileTab';
 import AdminsTab from '@/components/admin/AdminsTab';
 
 export default function AdminDashboard() {
- const navigate = useNavigate();
- const [projects, setProjects] = useState<Project[]>([]);
- const [events, setEvents] = useState<Event[]>([]);
- const [certifications, setCertifications] = useState<Certification[]>([]);
- const [isLoading, setIsLoading] = useState(true);
- const containerRef = useRef<HTMLDivElement>(null);
+    const navigate = useNavigate();
+    const [projects, setProjects] = useState<Project[]>([]);
+    const [events, setEvents] = useState<Event[]>([]);
+    const [certifications, setCertifications] = useState<Certification[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const containerRef = useRef<HTMLDivElement>(null);
 
- useEffect(() => {
- async function loadData() {
- try {
- const [projectsData, eventsData, certsData] = await Promise.all([
- getProjects(),
- getEvents(),
- getCertifications(),
- ]);
- setProjects(projectsData);
- setEvents(eventsData);
- setCertifications(certsData);
- } catch (error) {
- console.error('Error loading data:', error);
- } finally {
- setIsLoading(false);
- }
- }
+    useEffect(() => {
+        async function loadData() {
+            try {
+                const [projectsData, eventsData, certsData] = await Promise.all([
+                    getProjects(),
+                    getEvents(),
+                    getCertifications(),
+                ]);
+                setProjects(projectsData);
+                setEvents(eventsData);
+                setCertifications(certsData);
+            } catch (error) {
+                console.error('Error loading data:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        }
 
- loadData();
- }, []);
+        loadData();
+    }, []);
 
- useEffect(() => {
- if (!isLoading && containerRef.current) {
- gsap.from(containerRef.current.children, {
- opacity: 0,
- y: 20,
- duration: 0.6,
- stagger: 0.1,
- ease: 'power2.out',
- });
- }
- }, [isLoading]);
+    useEffect(() => {
+        if (!isLoading && containerRef.current) {
+            gsap.from(containerRef.current.children, {
+                opacity: 0,
+                y: 20,
+                duration: 0.6,
+                stagger: 0.1,
+                ease: 'power2.out',
+            });
+        }
+    }, [isLoading]);
 
- const handleLogout = async () => {
- await adminLogout();
- navigate('/admin/login');
- };
+    const handleLogout = async () => {
+        await adminLogout();
+        navigate('/admin/login');
+    };
 
- const refreshData = async () => {
- setIsLoading(true);
- try {
- const [projectsData, eventsData, certsData] = await Promise.all([
- getProjects(),
- getEvents(),
- getCertifications(),
- ]);
- setProjects(projectsData);
- setEvents(eventsData);
- setCertifications(certsData);
- } catch (error) {
- console.error('Error refreshing data:', error);
- } finally {
- setIsLoading(false);
- }
- };
+    const refreshData = async () => {
+        setIsLoading(true);
+        try {
+            const [projectsData, eventsData, certsData] = await Promise.all([
+                getProjects(),
+                getEvents(),
+                getCertifications(),
+            ]);
+            setProjects(projectsData);
+            setEvents(eventsData);
+            setCertifications(certsData);
+        } catch (error) {
+            console.error('Error refreshing data:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
- if (isLoading) {
- return (
- <AdminGuard>
- <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
- <div className="text-[#CFCFCF]">Loading dashboard...</div>
- </div>
- </AdminGuard>
- );
- }
+    if (isLoading) {
+        return (
+            <AdminGuard>
+                <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
+                    <div className="text-[#CFCFCF]">Loading dashboard...</div>
+                </div>
+            </AdminGuard>
+        );
+    }
 
- return (
- <AdminGuard>
- <div ref={containerRef} className="min-h-screen bg-[#0A0A0A]">
- <header className="border-b border-[#2A2A2A] bg-[#0A0A0A]">
- <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
- <h1 className="text-2xl font-bold text-[#F5F5F5]">Admin Dashboard</h1>
- <Button
- onClick={handleLogout}
- variant="outline"
- className="border-[#2A2A2A] text-[#F5F5F5] hover:bg-[#1A1A1A]"
- >
- Logout
- </Button>
- </div>
- </header>
+    return (
+        <AdminGuard>
+            <div ref={containerRef} className="min-h-screen bg-[#0A0A0A]">
+                <header className="border-b border-[#2A2A2A] bg-[#0A0A0A]">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+                        <h1 className="text-2xl font-bold text-[#F5F5F5]">Admin Dashboard</h1>
+                        <Button
+                            onClick={handleLogout}
+                            variant="outline"
+                            className="border-[#2A2A2A] text-[#F5F5F5] hover:bg-[#1A1A1A]"
+                        >
+                            Logout
+                        </Button>
+                    </div>
+                </header>
 
- <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
- <Tabs defaultValue="projects" className="space-y-6">
- <TabsList className="bg-[#1A1A1A] border border-[#2A2A2A]">
- <TabsTrigger value="projects" className="data-[state=active]:bg-[#2A2A2A] text-[#F5F5F5]">
- Projects
- </TabsTrigger>
- <TabsTrigger value="certifications" className="data-[state=active]:bg-[#2A2A2A] text-[#F5F5F5]">
- Certifications
- </TabsTrigger>
- <TabsTrigger value="events" className="data-[state=active]:bg-[#2A2A2A] text-[#F5F5F5]">
- Events
- </TabsTrigger>
- <TabsTrigger value="profile" className="data-[state=active]:bg-[#2A2A2A] text-[#F5F5F5]">
- Profil
- </TabsTrigger>
- <TabsTrigger value="admins" className="data-[state=active]:bg-[#2A2A2A] text-[#F5F5F5]">
- Gestion Admins
- </TabsTrigger>
- </TabsList>
+                <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    <Tabs defaultValue="projects" className="space-y-6">
+                        <TabsList className="bg-[#1A1A1A] border border-[#2A2A2A]">
+                            <TabsTrigger value="projects" className="data-[state=active]:bg-[#2A2A2A] text-[#F5F5F5]">
+                                Projects
+                            </TabsTrigger>
+                            <TabsTrigger value="certifications" className="data-[state=active]:bg-[#2A2A2A] text-[#F5F5F5]">
+                                Certifications
+                            </TabsTrigger>
+                            <TabsTrigger value="events" className="data-[state=active]:bg-[#2A2A2A] text-[#F5F5F5]">
+                                Events
+                            </TabsTrigger>
+                            <TabsTrigger value="profile" className="data-[state=active]:bg-[#2A2A2A] text-[#F5F5F5]">
+                                Profil
+                            </TabsTrigger>
+                            <TabsTrigger value="admins" className="data-[state=active]:bg-[#2A2A2A] text-[#F5F5F5]">
+                                Gestion Admins
+                            </TabsTrigger>
+                        </TabsList>
 
- <TabsContent value="projects">
- <ProjectsTab 
- projects={projects} 
- onRefresh={refreshData}
- />
- </TabsContent>
+                        <TabsContent value="projects">
+                            <ProjectsTab
+                                projects={projects}
+                                onRefresh={refreshData}
+                            />
+                        </TabsContent>
 
- <TabsContent value="certifications">
- <CertificationsTab 
- certifications={certifications}
- onRefresh={refreshData}
- />
- </TabsContent>
+                        <TabsContent value="certifications">
+                            <CertificationsTab
+                                certifications={certifications}
+                                onRefresh={refreshData}
+                            />
+                        </TabsContent>
 
- <TabsContent value="events">
- <EventsTab 
- events={events}
- onRefresh={refreshData}
- />
- </TabsContent>
+                        <TabsContent value="events">
+                            <EventsTab
+                                events={events}
+                                onRefresh={refreshData}
+                            />
+                        </TabsContent>
 
- <TabsContent value="profile">
- <ProfileTab />
- </TabsContent>
+                        <TabsContent value="profile">
+                            <ProfileTab />
+                        </TabsContent>
 
- <TabsContent value="admins">
- <AdminsTab />
- </TabsContent>
- </Tabs>
- </main>
- </div>
- </AdminGuard>
- );
+                        <TabsContent value="admins">
+                            <AdminsTab />
+                        </TabsContent>
+                    </Tabs>
+                </main>
+            </div>
+        </AdminGuard>
+    );
 }
