@@ -4,6 +4,7 @@ import AsciiCanvas from '@/components/AsciiCanvas';
 import ScrollIndicator from '@/components/ScrollIndicator';
 import { getProfile } from '@/services/api';
 import type { ProfileSettings } from '@/services/api';
+import { downloadCV } from '@/lib/downloadCV';
 
 export default function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -142,17 +143,14 @@ export default function HeroSection() {
           >
             {profile.hero_cta_primary || 'Discover My Projects'}
           </a>
-          <a
-            href={profile.cv_url || '/CV_Seth_AKPLOGAN.pdf'}
-            target={profile.cv_url ? '_blank' : undefined}
-            rel={profile.cv_url ? 'noopener noreferrer' : undefined}
-            download={!profile.cv_url}
+          <button
+            onClick={() => downloadCV(profile.cv_url, profile.username || 'Seth N. AKPLOGAN')}
             className="inline-flex items-center justify-center px-7 py-3.5 bg-transparent border border-[#1E1E1E] text-[#CFCFCF] font-body text-[13px] font-medium uppercase tracking-[0.04em] hover:border-[#737373] hover:text-[#F5F5F5] transition-all duration-200"
             style={{ opacity: 0, transform: 'translateY(20px)' }}
             data-cursor-hover
           >
             {profile.hero_cta_secondary || 'Download CV'}
-          </a>
+          </button>
         </div>
       </div>
 

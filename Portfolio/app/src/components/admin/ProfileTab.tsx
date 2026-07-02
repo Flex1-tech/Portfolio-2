@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { getProfile, updateProfile, uploadCVFile } from '@/services/api';
 import type { ProfileSettings } from '@/services/api';
+import { downloadCV } from '@/lib/downloadCV';
 
 const FIELD_CONFIG: { key: keyof ProfileSettings; label: string; type: 'input' | 'textarea'; placeholder?: string }[] = [
   { key: 'username',             label: 'Nom complet',                  type: 'input',    placeholder: 'Seth N. AKPLOGAN' },
@@ -147,14 +148,13 @@ export default function ProfileTab() {
             {settings.cv_url && (
               <div className="text-xs text-emerald-400 mb-1">
                 Lien CV actuel :{' '}
-                <a
-                  href={settings.cv_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline hover:text-emerald-300 break-all"
+                <button
+                  type="button"
+                  onClick={() => downloadCV(settings.cv_url, settings.username || 'Seth N. AKPLOGAN')}
+                  className="underline hover:text-emerald-300 break-all text-left"
                 >
                   {settings.cv_url}
-                </a>
+                </button>
               </div>
             )}
             <div className="flex items-center gap-3">

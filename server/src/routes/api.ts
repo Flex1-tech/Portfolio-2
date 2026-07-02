@@ -271,4 +271,38 @@ router.get("/profile", async (_req: Request, res: Response): Promise<void> => {
  }
 });
 
+/**
+ * GET /api/profile/cv/download - Download CV with dynamic filename and PDF content type
+ */
+router.get("/profile/cv/download", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const settings = await ProfileModel.getAll();
+    const cvUrl = settings["cv_url"];
+    const username = settings["username"] || "Seth_N_AKPLOGAN";
+    const sanitizedName = username.replace(/[^a-zA-Z0-9]/g, "_").replace(/_+/g, "_");
+
+    if (!cvUrl) {
+      res.status(404).json({ success: false, message: "CV not uploaded yet" });
+      return;
+    }
+
+    // Fetch the file content from Cloudinary/external storage
+    const fileResponse = await fetch(cvUrl);
+    if (!fileResponse.ok) {
+      res.status(fileResponse.status).json({ success: false, message: "Failed to download CV file from storage" });
+      return;
+    }
+
+    const arrayBuffer = await fileResponse.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `attachment; filename="CV_${sanitizedName}.pdf"`);
+    res.send(buffer);
+  } catch (error) {
+    console.error("Error downloading CV:", error);
+    res.status(500).json({ success: false, message: "Internal server error during CV download" });
+  }
+});
+
 export default router;
