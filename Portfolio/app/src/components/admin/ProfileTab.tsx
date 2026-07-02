@@ -8,25 +8,25 @@ import type { ProfileSettings } from '@/services/api';
 import { downloadCV } from '@/lib/downloadCV';
 
 const FIELD_CONFIG: { key: keyof ProfileSettings; label: string; type: 'input' | 'textarea'; placeholder?: string }[] = [
-  { key: 'username',             label: 'Nom complet',                  type: 'input',    placeholder: 'Seth N. AKPLOGAN' },
-  { key: 'hero_label',           label: 'Label héro (mono)',             type: 'input',    placeholder: 'IFRI — UNIVERSITÉ D\'ABOMEY-CALAVI' },
-  { key: 'hero_title',           label: 'Titre héro',                    type: 'input',    placeholder: 'Étudiant en IA & Data Scientist' },
-  { key: 'hero_punchline',       label: 'Accroche héro',                 type: 'textarea', placeholder: 'Building reliable and intelligent software...' },
-  { key: 'hero_bio',             label: 'Biographie Paragraphe 1 (À propos)', type: 'textarea', placeholder: 'Second-year student in Artificial Intelligence...' },
-  { key: 'about_para2',          label: 'Biographie Paragraphe 2 (À propos)', type: 'textarea', placeholder: 'From music recommendation engines...' },
-  { key: 'about_para3',          label: 'Biographie Paragraphe 3 (À propos)', type: 'textarea', placeholder: 'Active in Benin\'s AI community...' },
-  { key: 'citation_text',        label: 'Citation',                      type: 'input',    placeholder: 'La simplicité est la sophistication suprême.' },
-  { key: 'citation_author',      label: 'Auteur de la citation',         type: 'input',    placeholder: 'Léonard de Vinci' },
-  { key: 'academic_status',      label: 'Diplôme (mono)',                type: 'input',    placeholder: 'LICENCE IN ARTIFICIAL INTELLIGENCE' },
-  { key: 'academic_institution', label: 'Établissement',                 type: 'input',    placeholder: 'IFRI — Université d\'Abomey-Calavi' },
-  { key: 'academic_period',      label: 'Période académique',            type: 'input',    placeholder: '2024 – Present | 2nd Year' },
-  { key: 'hero_cta_primary',     label: 'Texte Bouton CTA Principal',    type: 'input',    placeholder: 'Discover My Projects' },
-  { key: 'hero_cta_secondary',   label: 'Texte Bouton CTA Secondaire',   type: 'input',    placeholder: 'Download CV' },
-  { key: 'contact_bio',          label: 'Intro section Contact',         type: 'textarea', placeholder: 'I\'m open to collaborations...' },
-  { key: 'contact_email',        label: 'Email de Contact',              type: 'input',    placeholder: 'sethakplogan@gmail.com' },
-  { key: 'contact_linkedin',     label: 'Lien LinkedIn (Contact)',       type: 'input',    placeholder: 'linkedin.com/in/seth-akplogan' },
-  { key: 'contact_github',       label: 'Lien GitHub (Contact)',         type: 'input',    placeholder: 'github.com/Flex1-tech' },
-  { key: 'contact_footer_tagline', label: 'Phrase bas de page (Footer)', type: 'input',    placeholder: 'Built with discipline & code.' },
+  { key: 'username', label: 'Nom complet', type: 'input', placeholder: 'Seth N. AKPLOGAN' },
+  { key: 'hero_label', label: 'Label héro (mono)', type: 'input', placeholder: 'IFRI — UNIVERSITÉ D\'ABOMEY-CALAVI' },
+  { key: 'hero_title', label: 'Titre héro', type: 'input', placeholder: 'Étudiant en IA & Data Scientist' },
+  { key: 'hero_punchline', label: 'Accroche héro', type: 'textarea', placeholder: 'Building reliable and intelligent software...' },
+  { key: 'hero_bio', label: 'Biographie Paragraphe 1 (À propos)', type: 'textarea', placeholder: 'Second-year student in Artificial Intelligence...' },
+  { key: 'about_para2', label: 'Biographie Paragraphe 2 (À propos)', type: 'textarea', placeholder: 'From music recommendation engines...' },
+  { key: 'about_para3', label: 'Biographie Paragraphe 3 (À propos)', type: 'textarea', placeholder: 'Active in Benin\'s AI community...' },
+  { key: 'citation_text', label: 'Citation', type: 'input', placeholder: 'La simplicité est la sophistication suprême.' },
+  { key: 'citation_author', label: 'Auteur de la citation', type: 'input', placeholder: 'Léonard de Vinci' },
+  { key: 'academic_status', label: 'Diplôme (mono)', type: 'input', placeholder: 'LICENCE IN ARTIFICIAL INTELLIGENCE' },
+  { key: 'academic_institution', label: 'Établissement', type: 'input', placeholder: 'IFRI — Université d\'Abomey-Calavi' },
+  { key: 'academic_period', label: 'Période académique', type: 'input', placeholder: '2024 – Present | 2nd Year' },
+  { key: 'hero_cta_primary', label: 'Texte Bouton CTA Principal', type: 'input', placeholder: 'Discover My Projects' },
+  { key: 'hero_cta_secondary', label: 'Texte Bouton CTA Secondaire', type: 'input', placeholder: 'Download CV' },
+  { key: 'contact_bio', label: 'Intro section Contact', type: 'textarea', placeholder: 'I\'m open to collaborations...' },
+  { key: 'contact_email', label: 'Email de Contact', type: 'input', placeholder: 'sethakplogan@gmail.com' },
+  { key: 'contact_linkedin', label: 'Lien LinkedIn (Contact)', type: 'input', placeholder: 'linkedin.com/in/seth-akplogan' },
+  { key: 'contact_github', label: 'Lien GitHub (Contact)', type: 'input', placeholder: 'github.com/Flex1-tech' },
+  { key: 'contact_footer_tagline', label: 'Phrase bas de page (Footer)', type: 'input', placeholder: 'Built with discipline & code.' },
 ];
 
 export default function ProfileTab() {
@@ -83,13 +83,13 @@ export default function ProfileTab() {
       const url = await uploadCVFile(cvFile);
       if (url) {
         setSettings(prev => ({ ...prev, cv_url: url }));
-        setCvUploadMsg('✓ CV téléchargé avec succès !');
+        setCvUploadMsg('CV téléchargé avec succès !');
         setCvFile(null);
       } else {
-        setCvUploadMsg('❌ Échec du téléchargement du CV.');
+        setCvUploadMsg('Échec du téléchargement du CV.');
       }
     } catch (err: any) {
-      setCvUploadMsg(`❌ Erreur: ${err.message || err}`);
+      setCvUploadMsg(`Erreur: ${err.message || err}`);
     } finally {
       setUploadingCv(false);
     }
