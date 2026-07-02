@@ -34,38 +34,38 @@ export class CertificationModel {
  };
  }
 
- /**
- * Get all certifications
- */
- static async getAll(): Promise<Certification[]> {
- const result = await pool.query(
- "SELECT * FROM certifications ORDER BY date_earned DESC, created_at DESC"
- );
- return result.rows;
- }
+  /**
+   * Get all certifications
+   */
+  static async getAll(): Promise<Certification[]> {
+    const result = await pool.query(
+      "SELECT * FROM certifications ORDER BY order_index ASC, date_earned DESC, created_at DESC"
+    );
+    return result.rows;
+  }
 
- /**
- * Get paginated certifications
- */
- static async getPaginated(
- page: number = 1,
- limit: number = 10,
- ): Promise<{
- certifications: Certification[];
- total: number;
- page: number;
- pages: number;
- }> {
- const offset = (page - 1) * limit;
- const countResult = await pool.query(
- "SELECT COUNT(*) as count FROM certifications"
- );
- const total = parseInt(countResult.rows[0].count);
+  /**
+   * Get paginated certifications
+   */
+  static async getPaginated(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<{
+    certifications: Certification[];
+    total: number;
+    page: number;
+    pages: number;
+  }> {
+    const offset = (page - 1) * limit;
+    const countResult = await pool.query(
+      "SELECT COUNT(*) as count FROM certifications"
+    );
+    const total = parseInt(countResult.rows[0].count);
 
- const result = await pool.query(
- "SELECT * FROM certifications ORDER BY date_earned DESC, created_at DESC LIMIT $1 OFFSET $2",
- [limit, offset]
- );
+    const result = await pool.query(
+      "SELECT * FROM certifications ORDER BY order_index ASC, date_earned DESC, created_at DESC LIMIT $1 OFFSET $2",
+      [limit, offset]
+    );
 
  return {
  certifications: result.rows,

@@ -11,6 +11,7 @@ import ProjectsTab from '@/components/admin/ProjectsTab';
 import CertificationsTab from '@/components/admin/CertificationsTab';
 import EventsTab from '@/components/admin/EventsTab';
 import ProfileTab from '@/components/admin/ProfileTab';
+import AdminsTab from '@/components/admin/AdminsTab';
 
 export default function AdminDashboard() {
  const navigate = useNavigate();
@@ -117,6 +118,9 @@ export default function AdminDashboard() {
  <TabsTrigger value="profile" className="data-[state=active]:bg-[#2A2A2A] text-[#F5F5F5]">
  Profil
  </TabsTrigger>
+ <TabsTrigger value="admins" className="data-[state=active]:bg-[#2A2A2A] text-[#F5F5F5]">
+ Gestion Admins
+ </TabsTrigger>
  </TabsList>
 
  <TabsContent value="projects">
@@ -142,6 +146,10 @@ export default function AdminDashboard() {
 
  <TabsContent value="profile">
  <ProfileTab />
+ </TabsContent>
+
+ <TabsContent value="admins">
+ <AdminsTab />
  </TabsContent>
  </Tabs>
  </main>

@@ -7,7 +7,7 @@ export interface Project {
  tech: string[];
  githubUrl?: string;
  demoUrl?: string;
- image: string;
+ image?: string;
 }
 
 export interface Certification {
@@ -15,6 +15,7 @@ export interface Certification {
  title: string;
  status: 'completed' | 'in-progress';
  verifyUrl?: string;
+ imageUrl?: string;
 }
 
 export interface Event {
@@ -23,6 +24,7 @@ export interface Event {
  role: 'participant' | 'mentor' | 'speaker';
  description: string;
  year: string;
+ imageUrl?: string;
 }
 
 export interface SkillCategory {

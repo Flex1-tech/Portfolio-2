@@ -37,7 +37,7 @@ export class EventModel {
  */
  static async getAll(): Promise<Event[]> {
  const result = await pool.query(
- "SELECT * FROM events ORDER BY year DESC, created_at DESC"
+ "SELECT * FROM events ORDER BY order_index ASC, year DESC, created_at DESC"
  );
  return result.rows;
  }
@@ -59,7 +59,7 @@ export class EventModel {
  const total = parseInt(countResult.rows[0].count);
 
  const result = await pool.query(
- "SELECT * FROM events ORDER BY year DESC, created_at DESC LIMIT $1 OFFSET $2",
+ "SELECT * FROM events ORDER BY order_index ASC, year DESC, created_at DESC LIMIT $1 OFFSET $2",
  [limit, offset]
  );
 

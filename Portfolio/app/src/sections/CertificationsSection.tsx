@@ -16,26 +16,31 @@ export default function CertificationsSection() {
  const [loading, setLoading] = useState(true);
 
  useEffect(() => {
- const fetchCertifications = async () => {
- try {
- const data = await getCertifications();
- // Transform backend data to frontend format
- const transformedCerts: Certification[] = data.map((cert) => ({
- platform: cert.platform,
- title: cert.title,
- status: cert.status === "in_progress" ? "in-progress" : "completed",
- verifyUrl: cert.credential_url,
- }));
- setCertifications(transformedCerts);
- } catch (error) {
- console.error("Failed to fetch certifications:", error);
- } finally {
- setLoading(false);
- }
- };
+  const fetchCertifications = async () => {
+  try {
+  const data = await getCertifications();
+  
+  // Sort certifications by order_index ascending
+  const sortedData = [...data].sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0));
 
- fetchCertifications();
- }, []);
+  // Transform backend data to frontend format
+  const transformedCerts: Certification[] = sortedData.map((cert) => ({
+  platform: cert.platform,
+  title: cert.title,
+  status: cert.status === "in_progress" ? "in-progress" : "completed",
+  verifyUrl: cert.credential_url,
+  imageUrl: cert.image_url || undefined,
+  }));
+  setCertifications(transformedCerts);
+  } catch (error) {
+  console.error("Failed to fetch certifications:", error);
+  } finally {
+  setLoading(false);
+  }
+  };
+
+  fetchCertifications();
+  }, []);
 
  useEffect(() => {
  const list = listRef.current;

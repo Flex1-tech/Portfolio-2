@@ -109,21 +109,23 @@ npm run dev # Start frontend on :5173
 
 ---
 
-## What's New: Frontend-Backend Integration
+## What's New: Advanced Dynamic Features & Admin Management
 
-### API Service (`Portfolio/app/src/services/api.ts`)
+### 🚀 100% Dynamisation & Profile Configuration
+- **Total Dynamic Home**: Hero title/bio/label, citation, and social link buttons are fully read from `profile_settings` DB table.
+- **Robust Fallback Strategy**: Instant UI rendering using built-in high-quality static fallbacks if profile values are missing or loading.
+- **Dynamic CV PDF/Image Upload**: Admin can upload their CV file (PDF or image) which pushes to Cloudinary raw storage and updates the CTA link on the home page automatically.
 
-- Complete TypeScript API client for backend communication
-- Functions for fetching Projects, Events, Certifications
-- Error handling and type-safe responses
-- Optional admin authentication functions
+### 🔌 Reordering & UI Operations
+- **Dynamic Order Indexes**: Added manual ordering (`order_index`) for Projects, Events, and Certifications.
+- **Admin Reorder Actions**: Simple `▲ Monter` / `▼ Descendre` control buttons in the dashboard to change section orders instantly.
 
-### Integrated Sections
+### 🛡️ Admin Management & Security
+- **Admin Accounts CRUD**: Create and manage multiple admin accounts securely.
+- **Auto-Deletion Prevention**: Critical self-deletion checks and protection for the primary admin user account (ID=1).
 
-- **ProjectsSection**: Now fetches from `/api/projects`
-- **CertificationsSection**: Now fetches from `/api/certifications`
-- **CommunitySection**: Now fetches from `/api/events`
-- All with loading states and error handling
+### 🖋️ Automatic Slugification (UX Premium)
+- **Real-Time Slugs**: Manual slug entry has been replaced by automatic, real-time URL-safe slug generation based on the title inputs.
 
 ### ️ Configuration (`Portfolio/app/.env.local`)
 

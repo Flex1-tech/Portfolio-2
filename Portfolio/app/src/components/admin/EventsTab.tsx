@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { Event } from '@/services/api';
-import { createEvent, updateEvent, deleteEvent } from '@/services/api';
+import { createEvent, updateEvent, deleteEvent, reorderItems } from '@/services/api';
 import MediaInput from './MediaInput';
 
 interface EventsTabProps {
@@ -20,6 +20,24 @@ export default function EventsTab({ events, onRefresh }: EventsTabProps) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isReordering, setIsReordering] = useState(false);
+
+  // Sorted by order_index for display
+  const sorted = [...events].sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0));
+
+  const handleMove = async (index: number, direction: 'up' | 'down') => {
+    if (isReordering) return;
+    const arr = [...sorted];
+    const swapIdx = direction === 'up' ? index - 1 : index + 1;
+    if (swapIdx < 0 || swapIdx >= arr.length) return;
+    setIsReordering(true);
+    [arr[index], arr[swapIdx]] = [arr[swapIdx], arr[index]];
+    const orders = arr.map((ev, i) => ({ id: ev.id, order_index: i }));
+    await reorderItems('events', orders);
+    setIsReordering(false);
+    onRefresh();
+  };
+
   const [formData, setFormData] = useState({
     title: '',
     organization: '',
@@ -224,6 +242,7 @@ export default function EventsTab({ events, onRefresh }: EventsTabProps) {
         <Table>
           <TableHeader className="bg-[#1A1A1A]">
             <TableRow>
+              <TableHead className="text-[#F5F5F5] w-16">Ordre</TableHead>
               <TableHead className="text-[#F5F5F5]">Title</TableHead>
               <TableHead className="text-[#F5F5F5]">Organization</TableHead>
               <TableHead className="text-[#F5F5F5]">Year</TableHead>
@@ -232,8 +251,24 @@ export default function EventsTab({ events, onRefresh }: EventsTabProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {events.map((event) => (
+            {sorted.map((event, idx) => (
               <TableRow key={event.id} className="border-[#2A2A2A]">
+                <TableCell>
+                  <div className="flex flex-col gap-0.5">
+                    <button
+                      onClick={() => handleMove(idx, 'up')}
+                      disabled={idx === 0 || isReordering}
+                      className="text-[#808080] hover:text-white disabled:opacity-20 text-xs leading-none"
+                      title="Monter"
+                    >▲</button>
+                    <button
+                      onClick={() => handleMove(idx, 'down')}
+                      disabled={idx === sorted.length - 1 || isReordering}
+                      className="text-[#808080] hover:text-white disabled:opacity-20 text-xs leading-none"
+                      title="Descendre"
+                    >▼</button>
+                  </div>
+                </TableCell>
                 <TableCell className="text-[#CFCFCF]">{event.title}</TableCell>
                 <TableCell className="text-[#CFCFCF]">{event.organization}</TableCell>
                 <TableCell className="text-[#CFCFCF]">{event.year}</TableCell>

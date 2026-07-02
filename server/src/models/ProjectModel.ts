@@ -56,13 +56,13 @@ export class ProjectModel {
  return this.mapRow(result.rows[0])!;
  }
 
- /**
- * Get all projects
- */
- static async getAll(): Promise<Project[]> {
- const result = await pool.query("SELECT * FROM projects ORDER BY created_at DESC");
- return result.rows.map(row => this.mapRow(row)!);
- }
+  /**
+   * Get all projects
+   */
+  static async getAll(): Promise<Project[]> {
+    const result = await pool.query("SELECT * FROM projects ORDER BY order_index ASC, created_at DESC");
+    return result.rows.map(row => this.mapRow(row)!);
+  }
 
  /**
  * Get paginated projects
@@ -92,7 +92,7 @@ export class ProjectModel {
  countParams.push(searchPattern, searchPattern);
  }
 
- query += " ORDER BY created_at DESC LIMIT $" + (params.length + 1) + " OFFSET $" + (params.length + 2);
+ query += " ORDER BY order_index ASC, created_at DESC LIMIT $" + (params.length + 1) + " OFFSET $" + (params.length + 2);
  params.push(limit, offset);
 
  const projectsResult = await pool.query(query, params);

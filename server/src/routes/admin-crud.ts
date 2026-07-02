@@ -8,7 +8,9 @@ import { ProjectModel } from "../models/ProjectModel.js";
 import { EventModel } from "../models/EventModel.js";
 import { CertificationModel } from "../models/CertificationModel.js";
 import { ProfileModel } from "../models/ProfileModel.js";
-import { uploadSingle, uploadFields } from "../middleware/upload.js";
+import { AdminUserModel } from "../models/AdminUserModel.js";
+import { pool } from "../config/database.js";
+import { uploadSingle, uploadFields, uploadCV } from "../middleware/upload.js";
 import {
  createProjectSchema,
  updateProjectSchema,
@@ -493,7 +495,6 @@ router.delete("/certifications/:id", async (req: Request, res: Response): Promis
  });
  }
 });
-
 // ============================================================================
 // PROFILE SETTINGS
 // ============================================================================
@@ -527,6 +528,152 @@ router.patch("/profile", async (req: Request, res: Response): Promise<void> => {
   console.error("Error updating profile settings:", error);
   res.status(500).json({ success: false, message: "Failed to update profile settings" });
  }
+});
+
+/**
+ * POST /admin/profile/cv - Upload CV file
+ */
+router.post(
+  "/profile/cv",
+  uploadCV("cv", "portfolio/cv"),
+  async (req: Request, res: Response): Promise<void> => {
+    try {
+      const cvUrl = req.body.cv_url;
+      if (!cvUrl) {
+        res.status(400).json({ success: false, message: "No CV file uploaded or processing failed" });
+        return;
+      }
+      await ProfileModel.setMany({ cv_url: cvUrl });
+      res.json({
+        success: true,
+        message: "CV uploaded successfully",
+        data: { cv_url: cvUrl }
+      });
+    } catch (error) {
+      console.error("Error saving CV URL:", error);
+      res.status(500).json({ success: false, message: "Failed to save CV URL" });
+    }
+  }
+);
+
+// ============================================================================
+// GENERIC REORDERING
+// ============================================================================
+
+/**
+ * POST /admin/reorder
+ * Transactional reordering of any whitelisted resource.
+ * Body: { resource: 'projects'|'events'|'certifications', orders: [{id, order_index}] }
+ */
+router.post("/reorder", async (req: Request, res: Response): Promise<void> => {
+  const ALLOWED = ["projects", "events", "certifications"];
+  const { resource, orders } = req.body;
+
+  if (!ALLOWED.includes(resource)) {
+    res.status(400).json({ success: false, message: "Invalid resource type" });
+    return;
+  }
+  if (!Array.isArray(orders) || orders.length === 0) {
+    res.status(400).json({ success: false, message: "orders must be a non-empty array" });
+    return;
+  }
+
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    for (const item of orders) {
+      const id = Number(item.id);
+      const idx = Number(item.order_index);
+      if (!Number.isInteger(id) || !Number.isInteger(idx)) throw new Error("Invalid values");
+      await client.query(`UPDATE ${resource} SET order_index=$1 WHERE id=$2`, [idx, id]);
+    }
+    await client.query("COMMIT");
+    res.json({ success: true, message: `${resource} reordered` });
+  } catch (err) {
+    await client.query("ROLLBACK");
+    console.error("Reorder error:", err);
+    res.status(500).json({ success: false, message: "Failed to reorder" });
+  } finally {
+    client.release();
+  }
+});
+
+// ============================================================================
+// ADMIN USER MANAGEMENT
+// ============================================================================
+
+/**
+ * GET /admin/users — list all admin accounts (passwords excluded)
+ */
+router.get("/users", async (_req: Request, res: Response): Promise<void> => {
+  try {
+    const users = await AdminUserModel.getAll();
+    res.json({ success: true, data: users });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Failed to fetch admins" });
+  }
+});
+
+/**
+ * POST /admin/users — create a new admin
+ * Body: { username, password, email? }
+ */
+router.post("/users", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { username, password, email } = req.body as { username: string; password: string; email?: string };
+
+    if (!username || typeof username !== "string" || username.trim().length < 3) {
+      res.status(400).json({ success: false, message: "Username must be at least 3 characters" });
+      return;
+    }
+    if (!password || typeof password !== "string" || password.length < 6) {
+      res.status(400).json({ success: false, message: "Password must be at least 6 characters" });
+      return;
+    }
+
+    const exists = await AdminUserModel.usernameExists(username.trim());
+    if (exists) {
+      res.status(409).json({ success: false, message: "Username already exists" });
+      return;
+    }
+
+    const user = await AdminUserModel.create(username.trim(), password, email?.trim() || undefined);
+    res.status(201).json({ success: true, data: user, message: "Admin created" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Failed to create admin" });
+  }
+});
+
+/**
+ * DELETE /admin/users/:id — remove an admin account
+ * Cannot delete yourself (session) or the primary admin (id=1)
+ */
+router.delete("/users/:id", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const targetId = Number(req.params.id);
+    const sessionUserId = (req.session as any)?.user?.id;
+
+    if (targetId === 1) {
+      res.status(403).json({ success: false, message: "Cannot delete the primary admin" });
+      return;
+    }
+    if (sessionUserId && targetId === Number(sessionUserId)) {
+      res.status(403).json({ success: false, message: "Cannot delete your own account" });
+      return;
+    }
+
+    const ok = await AdminUserModel.delete(targetId);
+    if (!ok) {
+      res.status(404).json({ success: false, message: "Admin not found" });
+      return;
+    }
+    res.json({ success: true, message: "Admin deleted" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Failed to delete admin" });
+  }
 });
 
 export default router;

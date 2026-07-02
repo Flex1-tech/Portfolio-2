@@ -6,12 +6,26 @@ interface CertificationRowProps {
 
 export default function CertificationRow({ cert }: CertificationRowProps) {
  const isCompleted = cert.status === 'completed';
+ const hasImage = !!cert.imageUrl;
 
  return (
  <div
- className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-6 border-b border-graphite transition-colors duration-200 hover:bg-white/[0.02]"
+ className="flex flex-col sm:flex-row sm:items-center py-6 border-b border-graphite transition-colors duration-200 hover:bg-white/[0.02] gap-4"
  data-cursor-hover
  >
+  {/* Logo container */}
+  <div className="shrink-0">
+    {hasImage ? (
+      <div className="w-12 h-12 rounded-lg overflow-hidden border border-graphite flex items-center justify-center bg-[#0A0A0A]">
+        <img src={cert.imageUrl} alt={cert.platform} className="w-full h-full object-contain" />
+      </div>
+    ) : (
+      <div className="w-12 h-12 rounded-lg border border-graphite bg-gradient-to-br from-[#1e1e1e] to-[#0a0a0a] flex items-center justify-center font-mono text-sm text-[#2F8F8F] font-bold">
+        {cert.platform.substring(0, 2).toUpperCase()}
+      </div>
+    )}
+  </div>
+
  <div className="flex-1">
  <div className="flex items-center gap-2">
  <h3 className="font-body text-base font-medium text-[#F5F5F5]">
@@ -39,7 +53,7 @@ export default function CertificationRow({ cert }: CertificationRowProps) {
  href={cert.verifyUrl}
  target="_blank"
  rel="noopener noreferrer"
- className="text-[13px] text-[#B5423F] hover:translate-x-1 transition-transform duration-200 inline-flex items-center gap-1 mt-2 sm:mt-0 shrink-0"
+ className="text-[13px] text-[#B5423F] hover:translate-x-1 transition-transform duration-200 inline-flex items-center gap-1 mt-2 sm:mt-0 shrink-0 self-start sm:self-center"
  >
  Verify <span>→</span>
  </a>

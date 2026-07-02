@@ -63,6 +63,10 @@ export default function AboutSection() {
 
   const bio = profile.hero_bio ||
     "Second-year student in Artificial Intelligence at IFRI, Université d'Abomey-Calavi. I focus on Machine Learning, Deep Learning, and Data Science — turning complex problems into software that works.";
+  const bio2 = profile.about_para2 ||
+    "From music recommendation engines using MusiCNN and ONNX to secure multi-channel authentication systems, I build at the intersection of research and production.";
+  const bio3 = profile.about_para3 ||
+    "Active in Benin's AI community through IndabaX and BWAI. I mentor new students and contribute to open-source projects that demystify machine learning.";
   const citationText = profile.citation_text || 'La simplicité est la sophistication suprême.';
   const citationAuthor = profile.citation_author || 'Léonard de Vinci';
   const academicStatus = profile.academic_status || 'LICENCE IN ARTIFICIAL INTELLIGENCE';
@@ -86,13 +90,11 @@ export default function AboutSection() {
           </p>
 
           <p className="about-animate text-[15px] leading-relaxed text-[#CFCFCF] mt-4">
-            From music recommendation engines using MusiCNN and ONNX to secure multi-channel
-            authentication systems, I build at the intersection of research and production.
+            {bio2}
           </p>
 
           <p className="about-animate text-[15px] leading-relaxed text-[#CFCFCF] mt-4">
-            Active in Benin's AI community through IndabaX and BWAI. I mentor new students and
-            contribute to open-source projects that demystify machine learning.
+            {bio3}
           </p>
 
           <div className="quote-animate flex items-start gap-4 mt-8">

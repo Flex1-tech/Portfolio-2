@@ -33,6 +33,7 @@ export async function initializeDatabase(): Promise<void> {
  image_url TEXT,
  video_url TEXT,
  status TEXT CHECK(status IN ('in_progress', 'completed')) NOT NULL DEFAULT 'completed',
+ order_index INTEGER DEFAULT 0,
  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
  )
@@ -48,6 +49,7 @@ export async function initializeDatabase(): Promise<void> {
  role TEXT CHECK(role IN ('participant', 'mentor', 'speaker')) NOT NULL,
  description TEXT NOT NULL,
  image_url TEXT,
+ order_index INTEGER DEFAULT 0,
  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
  )
@@ -63,6 +65,7 @@ export async function initializeDatabase(): Promise<void> {
  credential_url TEXT,
  image_url TEXT,
  date_earned DATE,
+ order_index INTEGER DEFAULT 0,
  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
  )
@@ -89,6 +92,11 @@ export async function initializeDatabase(): Promise<void> {
  )
  `);
 
+ // Alter existing tables to add order_index if they don't have it
+ await pool.query(`ALTER TABLE projects ADD COLUMN IF NOT EXISTS order_index INTEGER DEFAULT 0`);
+ await pool.query(`ALTER TABLE events ADD COLUMN IF NOT EXISTS order_index INTEGER DEFAULT 0`);
+ await pool.query(`ALTER TABLE certifications ADD COLUMN IF NOT EXISTS order_index INTEGER DEFAULT 0`);
+
  // Seed default profile values (safe: ON CONFLICT DO NOTHING)
  await pool.query(`
  INSERT INTO profile_settings (key, value) VALUES
@@ -101,7 +109,16 @@ export async function initializeDatabase(): Promise<void> {
  ('academic_institution', 'IFRI — Université d''Abomey-Calavi'),
  ('academic_period', '2024 – Present | 2nd Year'),
  ('hero_label', 'IFRI — UNIVERSITÉ D''ABOMEY-CALAVI'),
- ('hero_punchline', 'Building reliable and intelligent software that delivers measurable real-world value.')
+ ('hero_punchline', 'Building reliable and intelligent software that delivers measurable real-world value.'),
+ ('about_para2', 'From music recommendation engines using MusiCNN and ONNX to secure multi-channel authentication systems, I build at the intersection of research and production.'),
+ ('about_para3', 'Active in Benin''s AI community through IndabaX and BWAI. I mentor new students and contribute to open-source projects that demystify machine learning.'),
+ ('hero_cta_primary', 'Discover My Projects'),
+ ('hero_cta_secondary', 'Download CV'),
+ ('contact_bio', 'I''m open to collaborations, internships, and research opportunities in AI and software engineering.'),
+ ('contact_email', 'sethakplogan@gmail.com'),
+ ('contact_linkedin', 'linkedin.com/in/seth-akplogan'),
+ ('contact_github', 'github.com/Flex1-tech'),
+ ('contact_footer_tagline', 'Built with discipline & code.')
  ON CONFLICT (key) DO NOTHING
  `);
 

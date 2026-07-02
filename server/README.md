@@ -289,6 +289,70 @@ Content-Type: application/json
 
 **Update & Delete similar to Projects**
 
+#### Profile Settings
+
+| Method | Endpoint                  | Description                                   |
+| ------ | ------------------------- | --------------------------------------------- |
+| GET    | `/admin-api/profile`      | Get all profile settings (key-value map)      |
+| PATCH  | `/admin-api/profile`      | Update any profile settings (bulk key-value)  |
+| POST   | `/admin-api/profile/cv`   | Upload CV file (PDF or image) to Cloudinary   |
+
+**PATCH body example:**
+```json
+{
+  "username": "Seth N. AKPLOGAN",
+  "hero_title": "Étudiant en IA",
+  "contact_email": "me@example.com",
+  "cv_url": "https://res.cloudinary.com/..."
+}
+```
+
+**CV Upload (multipart/form-data):**
+```bash
+POST /admin-api/profile/cv
+Content-Type: multipart/form-data
+
+# Field name: cv
+# Accepted: PDF, JPEG, PNG, WebP (max 10 MB)
+# Returns: { success: true, data: { cv_url: "https://..." } }
+```
+
+#### Reordering Items
+
+| Method | Endpoint          | Description                                 |
+| ------ | ----------------- | ------------------------------------------- |
+| POST   | `/admin-api/reorder` | Reorder projects, events, or certifications |
+
+**Body:**
+```json
+{
+  "resource": "projects",
+  "orders": [
+    { "id": 1, "order_index": 0 },
+    { "id": 3, "order_index": 1 },
+    { "id": 2, "order_index": 2 }
+  ]
+}
+```
+`resource` must be one of: `projects`, `events`, `certifications`
+
+#### Admin User Management
+
+| Method | Endpoint              | Description                              |
+| ------ | --------------------- | ---------------------------------------- |
+| GET    | `/admin-api/users`    | List all admin accounts (no passwords)   |
+| POST   | `/admin-api/users`    | Create a new admin account               |
+| DELETE | `/admin-api/users/:id`| Delete an admin (not self, not primary)  |
+
+**POST body:**
+```json
+{
+  "username": "john",
+  "password": "securePass123",
+  "email": "john@example.com"
+}
+```
+
 ---
 
 ## Security Features

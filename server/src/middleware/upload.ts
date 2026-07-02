@@ -230,4 +230,73 @@ export const uploadFields = (fields: { name: string; maxCount: number }[], folde
   };
 };
 
+export const uploadCV = (fieldName: string, folder: string = "portfolio/cv") => {
+  const cvFileFilter = (
+    req: Request,
+    file: Express.Multer.File,
+    callback: multer.FileFilterCallback,
+  ) => {
+    const allowedMimeTypes = ["image/jpeg", "image/png", "image/webp", "application/pdf"];
+    if (allowedMimeTypes.includes(file.mimetype)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Invalid file type. Only PDF, JPEG, PNG, and WebP files are allowed for CV."));
+    }
+  };
+
+  const uploadCVInstance = multer({
+    storage,
+    limits: {
+      fileSize: 10 * 1024 * 1024, // 10MB limit for CV
+    },
+    fileFilter: cvFileFilter,
+  });
+
+  return async (req: Request, res: Response, next: NextFunction) => {
+    const uploadHandler = uploadCVInstance.single(fieldName);
+
+    uploadHandler(req, res, async (err) => {
+      if (err) {
+        return res.status(400).json({
+          success: false,
+          message: err.message,
+        });
+      }
+
+      if (!req.file) {
+        return next();
+      }
+
+      try {
+        const isPdf = req.file.mimetype === "application/pdf";
+        const cloudinaryUrl = await new Promise<string>((resolve, reject) => {
+          const uploadStream = cloudinary.uploader.upload_stream(
+            {
+              folder,
+              resource_type: isPdf ? "raw" : "image",
+            },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result?.secure_url || "");
+            }
+          );
+          const readableStream = new Readable();
+          readableStream.push(req.file!.buffer);
+          readableStream.push(null);
+          readableStream.pipe(uploadStream);
+        });
+
+        req.body[fieldName + "_url"] = cloudinaryUrl;
+        next();
+      } catch (error) {
+        console.error("Cloudinary CV upload error:", error);
+        return res.status(500).json({
+          success: false,
+          message: "Failed to upload CV to Cloudinary",
+        });
+      }
+    });
+  };
+};
+
 export { cloudinary, upload };

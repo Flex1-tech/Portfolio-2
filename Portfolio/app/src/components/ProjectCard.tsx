@@ -14,18 +14,22 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
  const cardRef = useRef<HTMLDivElement>(null);
  const imageRef = useRef<HTMLDivElement>(null);
  const isEven = index % 2 === 1;
+ const hasImage = !!project.image;
 
  useEffect(() => {
  const card = cardRef.current;
  const image = imageRef.current;
- if (!card || !image) return;
+ if (!card) return;
 
  const contentEls = card.querySelectorAll('.project-animate');
 
  gsap.set(contentEls, { opacity: 0, y: 40 });
- gsap.set(image, {
- clipPath: isEven ? 'inset(0 0 0 100%)' : 'inset(0 100% 0 0)',
- });
+
+ if (hasImage && image) {
+  gsap.set(image, {
+  clipPath: isEven ? 'inset(0 0 0 100%)' : 'inset(0 100% 0 0)',
+  });
+ }
 
  const tl = gsap.timeline({
  scrollTrigger: {
@@ -35,12 +39,15 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
  },
  });
 
- tl.to(image, {
- clipPath: 'inset(0 0% 0 0%)',
- duration: 1,
- ease: 'cubic-bezier(0.19, 1, 0.22, 1)',
- })
- .to(
+ if (hasImage && image) {
+  tl.to(image, {
+  clipPath: 'inset(0 0% 0 0%)',
+  duration: 1,
+  ease: 'cubic-bezier(0.19, 1, 0.22, 1)',
+  });
+ }
+
+ tl.to(
  contentEls,
  {
  opacity: 1,
@@ -49,22 +56,22 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
  stagger: 0.15,
  ease: 'cubic-bezier(0.19, 1, 0.22, 1)',
  },
- '-=0.6'
+ hasImage ? '-=0.6' : undefined
  );
 
  return () => {
  tl.kill();
  };
- }, [isEven]);
+ }, [isEven, hasImage]);
 
  return (
  <div
  ref={cardRef}
- className={`grid grid-cols-1 md:grid-cols-[55%_45%] gap-12 ${
+ className={hasImage ? `grid grid-cols-1 md:grid-cols-[55%_45%] gap-12 ${
  isEven ? 'md:[direction:rtl]' : ''
- }`}
+ }` : `w-full max-w-4xl mx-auto`}
  >
- <div className={`flex flex-col ${isEven ? 'md:[direction:ltr]' : ''}`}>
+ <div className={`flex flex-col ${isEven && hasImage ? 'md:[direction:ltr]' : ''}`}>
  <span className="project-animate font-mono text-5xl text-[#1E1E1E] leading-none">
  {project.number}
  </span>
@@ -133,6 +140,7 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
  </div>
  </div>
 
+ {hasImage && (
  <div
  ref={imageRef}
  className={`overflow-hidden border border-[#1E1E1E] hover:border-[#737373] transition-colors duration-300 ${
@@ -146,6 +154,7 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
  className="w-full h-full object-cover aspect-[16/10] hover:scale-[1.03] transition-transform duration-600"
  />
  </div>
+ )}
  </div>
  );
 }

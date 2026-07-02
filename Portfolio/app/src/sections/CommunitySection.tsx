@@ -16,27 +16,32 @@ export default function CommunitySection() {
  const [loading, setLoading] = useState(true);
 
  useEffect(() => {
- const fetchEvents = async () => {
- try {
- const data = await getEvents();
- // Transform backend data to frontend format
- const transformedEvents: Event[] = data.map((event) => ({
- title: event.title,
- organization: event.organization,
- role: event.role,
- description: event.description,
- year: event.year,
- }));
- setEvents(transformedEvents);
- } catch (error) {
- console.error("Failed to fetch events:", error);
- } finally {
- setLoading(false);
- }
- };
+  const fetchEvents = async () => {
+  try {
+  const data = await getEvents();
+  
+  // Sort events by order_index ascending
+  const sortedData = [...data].sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0));
 
- fetchEvents();
- }, []);
+  // Transform backend data to frontend format
+  const transformedEvents: Event[] = sortedData.map((event) => ({
+  title: event.title,
+  organization: event.organization,
+  role: event.role,
+  description: event.description,
+  year: event.year,
+  imageUrl: event.image_url || undefined,
+  }));
+  setEvents(transformedEvents);
+  } catch (error) {
+  console.error("Failed to fetch events:", error);
+  } finally {
+  setLoading(false);
+  }
+  };
+
+  fetchEvents();
+  }, []);
 
  useEffect(() => {
  const grid = gridRef.current;

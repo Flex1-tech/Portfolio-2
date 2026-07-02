@@ -22,6 +22,7 @@ export interface Project {
  image_url?: string;
  video_url?: string;
  status: "in_progress" | "completed";
+ order_index?: number;
  created_at: string;
  updated_at: string;
 }
@@ -34,6 +35,7 @@ export interface Event {
  role: "participant" | "mentor" | "speaker";
  description: string;
  image_url?: string;
+ order_index?: number;
  created_at: string;
  updated_at: string;
 }
@@ -46,6 +48,7 @@ export interface Certification {
  credential_url?: string;
  image_url?: string;
  date_earned?: string;
+ order_index?: number;
  created_at: string;
  updated_at: string;
 }
@@ -58,16 +61,30 @@ export interface ApiResponse<T> {
 }
 
 export interface ProfileSettings {
+ // Hero section
  username?: string;
- hero_title?: string;
- hero_bio?: string;
  hero_label?: string;
+ hero_title?: string;
  hero_punchline?: string;
+ hero_cta_primary?: string;
+ hero_cta_secondary?: string;
+ cv_url?: string;
+ // About section
+ hero_bio?: string;
+ about_para2?: string;
+ about_para3?: string;
  citation_text?: string;
  citation_author?: string;
  academic_status?: string;
  academic_institution?: string;
  academic_period?: string;
+ // Contact section
+ contact_bio?: string;
+ contact_email?: string;
+ contact_linkedin?: string;
+ contact_github?: string;
+ contact_footer_tagline?: string;
+ // Allows future arbitrary keys without breaking the type
  [key: string]: string | undefined;
 }
 
@@ -709,3 +726,122 @@ export async function updateProfile(
   return null;
  }
 }
+
+// ============================================================================
+// Reorder API  (DRY - works for projects, events, certifications)
+// ============================================================================
+
+export type ReorderPayload = { id: number; order_index: number }[];
+export type ResourceType = "projects" | "events" | "certifications";
+
+export async function reorderItems(
+  resource: ResourceType,
+  orders: ReorderPayload,
+): Promise<boolean> {
+  try {
+    const response = await fetch(`${API_URL}/admin-api/reorder`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ resource, orders }),
+    });
+    return response.ok;
+  } catch (error) {
+    console.error("Error reordering:", error);
+    return false;
+  }
+}
+
+// ============================================================================
+// Admin Users API
+// ============================================================================
+
+export interface AdminUser {
+  id: number;
+  username: string;
+  email?: string;
+  created_at?: string;
+}
+
+export async function getAdminUsers(): Promise<AdminUser[]> {
+  try {
+    const response = await fetch(`${API_URL}/admin-api/users`, {
+      credentials: "include",
+    });
+    if (!response.ok) throw new Error("Failed to fetch admins");
+    const data: ApiResponse<AdminUser[]> = await response.json();
+    return data.data || [];
+  } catch (error) {
+    console.error("Error fetching admin users:", error);
+    return [];
+  }
+}
+
+export async function createAdminUser(payload: {
+  username: string;
+  password: string;
+  email?: string;
+}): Promise<AdminUser | null> {
+  try {
+    const response = await fetch(`${API_URL}/admin-api/users`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) {
+      const err: ApiResponse<null> = await response.json();
+      throw new Error(err.message || "Failed to create admin");
+    }
+    const data: ApiResponse<AdminUser> = await response.json();
+    return data.data || null;
+  } catch (error) {
+    console.error("Error creating admin user:", error);
+    throw error;
+  }
+}
+
+export async function deleteAdminUser(id: number): Promise<boolean> {
+  try {
+    const response = await fetch(`${API_URL}/admin-api/users/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+    if (!response.ok) {
+      const err: ApiResponse<null> = await response.json();
+      throw new Error(err.message || "Failed to delete admin");
+    }
+    return true;
+  } catch (error) {
+    console.error("Error deleting admin user:", error);
+    throw error;
+  }
+}
+
+/**
+ * Upload CV file (PDF or image)
+ */
+export async function uploadCVFile(file: File): Promise<string | null> {
+  try {
+    const formData = new FormData();
+    formData.append("cv", file);
+
+    const response = await fetch(`${API_URL}/admin-api/profile/cv`, {
+      method: "POST",
+      credentials: "include",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to upload CV: ${response.statusText}`);
+    }
+
+    const data: ApiResponse<Record<string, string>> = await response.json();
+    // In database.ts, ProfileModel.setMany returns the updated settings map, or just fetch from data
+    return data.data?.cv_url || null;
+  } catch (error) {
+    console.error("Error uploading CV file:", error);
+    return null;
+  }
+}
+

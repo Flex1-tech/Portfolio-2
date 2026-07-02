@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { Certification } from '@/services/api';
-import { createCertification, updateCertification, deleteCertification } from '@/services/api';
+import { createCertification, updateCertification, deleteCertification, reorderItems } from '@/services/api';
 import MediaInput from './MediaInput';
 
 interface CertificationsTabProps {
@@ -19,6 +19,24 @@ export default function CertificationsTab({ certifications, onRefresh }: Certifi
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingCert, setEditingCert] = useState<Certification | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isReordering, setIsReordering] = useState(false);
+
+  // Sorted by order_index for display
+  const sorted = [...certifications].sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0));
+
+  const handleMove = async (index: number, direction: 'up' | 'down') => {
+    if (isReordering) return;
+    const arr = [...sorted];
+    const swapIdx = direction === 'up' ? index - 1 : index + 1;
+    if (swapIdx < 0 || swapIdx >= arr.length) return;
+    setIsReordering(true);
+    [arr[index], arr[swapIdx]] = [arr[swapIdx], arr[index]];
+    const orders = arr.map((c, i) => ({ id: c.id, order_index: i }));
+    await reorderItems('certifications', orders);
+    setIsReordering(false);
+    onRefresh();
+  };
+
   const [formData, setFormData] = useState({
     platform: '',
     title: '',
@@ -225,6 +243,7 @@ export default function CertificationsTab({ certifications, onRefresh }: Certifi
         <Table>
           <TableHeader className="bg-[#1A1A1A]">
             <TableRow>
+              <TableHead className="text-[#F5F5F5] w-16">Ordre</TableHead>
               <TableHead className="text-[#F5F5F5]">Platform</TableHead>
               <TableHead className="text-[#F5F5F5]">Title</TableHead>
               <TableHead className="text-[#F5F5F5]">Status</TableHead>
@@ -232,8 +251,24 @@ export default function CertificationsTab({ certifications, onRefresh }: Certifi
             </TableRow>
           </TableHeader>
           <TableBody>
-            {certifications.map((cert) => (
+            {sorted.map((cert, idx) => (
               <TableRow key={cert.id} className="border-[#2A2A2A]">
+                <TableCell>
+                  <div className="flex flex-col gap-0.5">
+                    <button
+                      onClick={() => handleMove(idx, 'up')}
+                      disabled={idx === 0 || isReordering}
+                      className="text-[#808080] hover:text-white disabled:opacity-20 text-xs leading-none"
+                      title="Monter"
+                    >▲</button>
+                    <button
+                      onClick={() => handleMove(idx, 'down')}
+                      disabled={idx === sorted.length - 1 || isReordering}
+                      className="text-[#808080] hover:text-white disabled:opacity-20 text-xs leading-none"
+                      title="Descendre"
+                    >▼</button>
+                  </div>
+                </TableCell>
                 <TableCell className="text-[#CFCFCF]">{cert.platform}</TableCell>
                 <TableCell className="text-[#CFCFCF]">{cert.title}</TableCell>
                 <TableCell className="text-[#CFCFCF]">

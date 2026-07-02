@@ -7,7 +7,9 @@
 import { ProjectModel } from "../models/ProjectModel.js";
 import { EventModel } from "../models/EventModel.js";
 import { CertificationModel } from "../models/CertificationModel.js";
-import { initializeDatabase } from "../config/database.js";
+import { ProfileModel } from "../models/ProfileModel.js";
+import { initializeDatabase, pool } from "../config/database.js";
+
 
 // Note le async ici
 async function seedProjects() {
@@ -132,13 +134,53 @@ async function seedCertifications() {
   console.log(` ${certs.length} certifications seeded`);
 }
 
+/**
+ * Seed profile_settings with default values.
+ * Safe to re-run: ON CONFLICT DO NOTHING preserves manual edits.
+ */
+async function seedProfileSettings() {
+  console.log(" Seeding profile settings...");
+
+  const defaults: Record<string, string> = {
+    username: "Seth N. AKPLOGAN",
+    hero_label: "IFRI — UNIVERSITÉ D'ABOMEY-CALAVI",
+    hero_title: "Étudiant en Intelligence Artificielle & Data Scientist",
+    hero_punchline: "Building reliable and intelligent software that delivers measurable real-world value.",
+    hero_cta_primary: "Discover My Projects",
+    hero_cta_secondary: "Download CV",
+    hero_bio: "Second-year student in Artificial Intelligence at IFRI, Université d'Abomey-Calavi. I focus on Machine Learning, Deep Learning, and Data Science — turning complex problems into software that works.",
+    about_para2: "From music recommendation engines using MusiCNN and ONNX to secure multi-channel authentication systems, I build at the intersection of research and production.",
+    about_para3: "Active in Benin's AI community through IndabaX and BWAI. I mentor new students and contribute to open-source projects that demystify machine learning.",
+    citation_text: "La simplicité est la sophistication suprême.",
+    citation_author: "Léonard de Vinci",
+    academic_status: "LICENCE IN ARTIFICIAL INTELLIGENCE",
+    academic_institution: "IFRI — Université d'Abomey-Calavi",
+    academic_period: "2024 – Present | 2nd Year",
+    contact_bio: "I'm open to collaborations, internships, and research opportunities in AI and software engineering.",
+    contact_email: "sethakplogan@gmail.com",
+    contact_linkedin: "linkedin.com/in/seth-akplogan",
+    contact_github: "github.com/Flex1-tech",
+    contact_footer_tagline: "Built with discipline & code.",
+  };
+
+  // Uses raw INSERT ON CONFLICT DO NOTHING — never overwrites manually edited values
+  for (const [key, value] of Object.entries(defaults)) {
+    await pool.query(
+      `INSERT INTO profile_settings (key, value) VALUES ($1, $2) ON CONFLICT (key) DO NOTHING`,
+      [key, value],
+    );
+  }
+
+  console.log(` ${Object.keys(defaults).length} profile settings seeded`);
+}
+
 async function main() {
   try {
     console.log(" Starting database seeding...\n");
 
     initializeDatabase();
 
-    // Ajout des await cruciaux ici pour attendre chaque fonction
+    await seedProfileSettings();
     await seedProjects();
     await seedEvents();
     await seedCertifications();

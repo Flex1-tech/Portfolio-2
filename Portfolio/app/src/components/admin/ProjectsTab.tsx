@@ -7,8 +7,10 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { Project } from '@/services/api';
-import { createProject, updateProject, deleteProject } from '@/services/api';
+import { createProject, updateProject, deleteProject, reorderItems } from '@/services/api';
 import MediaInput from './MediaInput';
+import { slugify } from '@/lib/slugify';
+
 
 interface ProjectsTabProps {
   projects: Project[];
@@ -20,6 +22,24 @@ export default function ProjectsTab({ projects, onRefresh }: ProjectsTabProps) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isReordering, setIsReordering] = useState(false);
+
+  // Sorted by order_index for display
+  const sorted = [...projects].sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0));
+
+  const handleMove = async (index: number, direction: 'up' | 'down') => {
+    if (isReordering) return;
+    const arr = [...sorted];
+    const swapIdx = direction === 'up' ? index - 1 : index + 1;
+    if (swapIdx < 0 || swapIdx >= arr.length) return;
+    setIsReordering(true);
+    [arr[index], arr[swapIdx]] = [arr[swapIdx], arr[index]];
+    const orders = arr.map((p, i) => ({ id: p.id, order_index: i }));
+    await reorderItems('projects', orders);
+    setIsReordering(false);
+    onRefresh();
+  };
+
   const [formData, setFormData] = useState({
     title: '',
     slug: '',
@@ -210,7 +230,10 @@ export default function ProjectsTab({ projects, onRefresh }: ProjectsTabProps) {
                 <Input
                   id="title"
                   value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  onChange={(e) => {
+                    const title = e.target.value;
+                    setFormData({ ...formData, title, slug: slugify(title) });
+                  }}
                   required
                   className="bg-[#0A0A0A] border-[#2A2A2A]"
                 />
@@ -220,9 +243,10 @@ export default function ProjectsTab({ projects, onRefresh }: ProjectsTabProps) {
                 <Input
                   id="slug"
                   value={formData.slug}
-                  onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                  required
-                  className="bg-[#0A0A0A] border-[#2A2A2A]"
+                  readOnly
+                  disabled
+                  placeholder="Généré automatiquement..."
+                  className="bg-[#151515] border-[#2A2A2A] text-gray-500 cursor-not-allowed"
                 />
               </div>
               <div className="space-y-2">
@@ -325,14 +349,31 @@ export default function ProjectsTab({ projects, onRefresh }: ProjectsTabProps) {
         <Table>
           <TableHeader className="bg-[#1A1A1A]">
             <TableRow>
+              <TableHead className="text-[#F5F5F5] w-16">Ordre</TableHead>
               <TableHead className="text-[#F5F5F5]">Title</TableHead>
               <TableHead className="text-[#F5F5F5]">Status</TableHead>
               <TableHead className="text-[#F5F5F5]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {projects.map((project) => (
+            {sorted.map((project, idx) => (
               <TableRow key={project.id} className="border-[#2A2A2A]">
+                <TableCell>
+                  <div className="flex flex-col gap-0.5">
+                    <button
+                      onClick={() => handleMove(idx, 'up')}
+                      disabled={idx === 0 || isReordering}
+                      className="text-[#808080] hover:text-white disabled:opacity-20 text-xs leading-none"
+                      title="Monter"
+                    >▲</button>
+                    <button
+                      onClick={() => handleMove(idx, 'down')}
+                      disabled={idx === sorted.length - 1 || isReordering}
+                      className="text-[#808080] hover:text-white disabled:opacity-20 text-xs leading-none"
+                      title="Descendre"
+                    >▼</button>
+                  </div>
+                </TableCell>
                 <TableCell className="text-[#CFCFCF]">{project.title}</TableCell>
                 <TableCell className="text-[#CFCFCF]">
                   <span className={`px-2 py-1 rounded text-xs ${
@@ -373,26 +414,29 @@ export default function ProjectsTab({ projects, onRefresh }: ProjectsTabProps) {
             <DialogTitle>Edit Project</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleEdit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="edit-title">Title</Label>
-              <Input
-                id="edit-title"
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                required
-                className="bg-[#0A0A0A] border-[#2A2A2A]"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-slug">Slug</Label>
-              <Input
-                id="edit-slug"
-                value={formData.slug}
-                onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                required
-                className="bg-[#0A0A0A] border-[#2A2A2A]"
-              />
-            </div>
+             <div className="space-y-2">
+               <Label htmlFor="edit-title">Title</Label>
+               <Input
+                 id="edit-title"
+                 value={formData.title}
+                 onChange={(e) => {
+                   const title = e.target.value;
+                   setFormData({ ...formData, title, slug: slugify(title) });
+                 }}
+                 required
+                 className="bg-[#0A0A0A] border-[#2A2A2A]"
+               />
+             </div>
+             <div className="space-y-2">
+               <Label htmlFor="edit-slug">Slug</Label>
+               <Input
+                 id="edit-slug"
+                 value={formData.slug}
+                 readOnly
+                 disabled
+                 className="bg-[#151515] border-[#2A2A2A] text-gray-500 cursor-not-allowed"
+               />
+             </div>
             <div className="space-y-2">
               <Label htmlFor="edit-short_desc">Short Description</Label>
               <Textarea
