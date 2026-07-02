@@ -3,7 +3,7 @@
  * Communicates with Express backend at http://localhost:5000 (dev) or relative paths (prod via Render rewrites)
  */
 
-const API_URL = '';
+export const API_URL = '';
 
 // ============================================================================
 // Types
