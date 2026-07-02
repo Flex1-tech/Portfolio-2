@@ -13,17 +13,22 @@ export default function HeroSection() {
   const ctaRef = useRef<HTMLDivElement>(null);
   const labelRef = useRef<HTMLParagraphElement>(null);
   const [profile, setProfile] = useState<ProfileSettings>({});
+  const animatedUsernameRef = useRef<string | null>(null);
 
   useEffect(() => {
     getProfile().then(setProfile).catch(() => {});
   }, []);
 
   useEffect(() => {
+    const username = profile.username || 'Seth N. AKPLOGAN';
+    if (animatedUsernameRef.current === username) return;
+    animatedUsernameRef.current = username;
+
     document.fonts.ready.then(() => {
       const headline = headlineRef.current;
       if (!headline) return;
 
-      const words = headline.textContent?.split(' ') || [];
+      const words = username.split(' ');
       headline.innerHTML = '';
       const wordSpans: HTMLSpanElement[] = [];
 

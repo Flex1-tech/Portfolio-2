@@ -5,8 +5,8 @@
 
 import { z } from "zod";
 
-// Helper to preprocess empty strings to undefined
-const emptyToUndefined = z.preprocess((val) => (val === "" ? undefined : val), z.string().url().optional().nullable());
+// Helper to preprocess empty strings to null
+const emptyToNull = z.preprocess((val) => (val === "" ? null : val), z.string().url().optional().nullable());
 
 // Project schemas
 export const createProjectSchema = z.object({
@@ -30,10 +30,10 @@ export const createProjectSchema = z.object({
     }
     return val;
   }, z.array(z.string()).min(1, "At least one technology is required")),
-  github_link: emptyToUndefined,
-  live_demo_link: emptyToUndefined,
-  image_url: emptyToUndefined,
-  video_url: emptyToUndefined,
+  github_link: emptyToNull,
+  live_demo_link: emptyToNull,
+  image_url: emptyToNull,
+  video_url: emptyToNull,
   status: z.enum(["in_progress", "completed"]),
 });
 
@@ -51,7 +51,7 @@ export const createEventSchema = z.object({
     ),
   role: z.enum(["participant", "mentor", "speaker"]),
   description: z.string().min(10).max(1000),
-  image_url: emptyToUndefined,
+  image_url: emptyToNull,
 });
 
 export const updateEventSchema = createEventSchema.partial();
@@ -61,12 +61,12 @@ export const createCertificationSchema = z.object({
   platform: z.string().min(2).max(255),
   title: z.string().min(3).max(500),
   status: z.enum(["in_progress", "completed"]),
-  credential_url: emptyToUndefined,
+  credential_url: emptyToNull,
   date_earned: z.preprocess(
-    (val) => (val === "" ? undefined : val),
+    (val) => (val === "" ? null : val),
     z.string().date().optional().nullable()
   ),
-  image_url: emptyToUndefined,
+  image_url: emptyToNull,
 });
 
 export const updateCertificationSchema = createCertificationSchema.partial();

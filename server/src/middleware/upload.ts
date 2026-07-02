@@ -182,4 +182,52 @@ export const uploadMultiple = (fieldName: string, maxCount: number = 5, folder: 
  };
 };
 
+/**
+ * Middleware to handle multiple file fields (e.g. image and video)
+ */
+export const uploadFields = (fields: { name: string; maxCount: number }[], folder: string = "portfolio") => {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    const uploadHandler = upload.fields(fields);
+
+    uploadHandler(req, res, async (err) => {
+      if (err) {
+        if (err instanceof multer.MulterError) {
+          return res.status(400).json({
+            success: false,
+            message: err.message,
+          });
+        }
+        return res.status(400).json({
+          success: false,
+          message: err.message,
+        });
+      }
+
+      // If req.files is not populated, continue
+      const files = req.files as { [fieldname: string]: Express.Multer.File[] } | undefined;
+      if (!files) {
+        return next();
+      }
+
+      try {
+        // Upload each field's file to Cloudinary if it exists
+        for (const field of fields) {
+          const fieldFiles = files[field.name];
+          if (fieldFiles && fieldFiles.length > 0) {
+            const cloudinaryUrl = await uploadToCloudinary(fieldFiles[0], folder);
+            req.body[field.name + "_url"] = cloudinaryUrl;
+          }
+        }
+        next();
+      } catch (error) {
+        console.error("Cloudinary upload error:", error);
+        return res.status(500).json({
+          success: false,
+          message: "Failed to upload files to Cloudinary",
+        });
+      }
+    });
+  };
+};
+
 export { cloudinary, upload };

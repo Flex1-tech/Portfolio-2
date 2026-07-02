@@ -1,14 +1,24 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import SectionLabel from '@/components/SectionLabel';
 import SectionHeading from '@/components/SectionHeading';
+import { getProfile } from '@/services/api';
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function ContactSection() {
  const sectionRef = useRef<HTMLElement>(null);
  const contentRef = useRef<HTMLDivElement>(null);
+ const [username, setUsername] = useState('Seth N. AKPLOGAN');
+
+ useEffect(() => {
+  getProfile()
+    .then((data) => {
+      if (data.username) setUsername(data.username);
+    })
+    .catch(() => {});
+ }, []);
 
  useEffect(() => {
  const content = contentRef.current;
@@ -149,7 +159,7 @@ export default function ContactSection() {
  {/* Footer */}
  <div className="contact-footer mt-24 pt-6 border-t border-graphite flex flex-col sm:flex-row justify-between gap-2">
  <p className="font-mono text-[11px] text-graphite">
- © 2025 Seth N. AKPLOGAN. All rights reserved.
+ © {new Date().getFullYear()} {username}. All rights reserved.
  </p>
  <p className="font-mono text-[11px] text-graphite">
  Built with discipline & code.

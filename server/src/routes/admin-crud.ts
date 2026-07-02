@@ -8,7 +8,7 @@ import { ProjectModel } from "../models/ProjectModel.js";
 import { EventModel } from "../models/EventModel.js";
 import { CertificationModel } from "../models/CertificationModel.js";
 import { ProfileModel } from "../models/ProfileModel.js";
-import { uploadSingle } from "../middleware/upload.js";
+import { uploadSingle, uploadFields } from "../middleware/upload.js";
 import {
  createProjectSchema,
  updateProjectSchema,
@@ -50,8 +50,10 @@ router.use(requireAuth, requireAdmin, crudLimiter, sanitizeInput);
  */
 router.post(
  "/projects",
- uploadSingle("image", "projects"),
- uploadSingle("video", "projects"),
+ uploadFields([
+   { name: "image", maxCount: 1 },
+   { name: "video", maxCount: 1 },
+ ], "projects"),
  validate(createProjectSchema),
  async (req: Request, res: Response): Promise<void> => {
  try {
@@ -135,8 +137,10 @@ router.get("/projects/:id", async (req: Request, res: Response): Promise<void> =
  */
 router.put(
  "/projects/:id",
- uploadSingle("image", "projects"),
- uploadSingle("video", "projects"),
+ uploadFields([
+   { name: "image", maxCount: 1 },
+   { name: "video", maxCount: 1 },
+ ], "projects"),
  validate(updateProjectSchema),
  async (req: Request, res: Response): Promise<void> => {
  try {

@@ -1,65 +1,75 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useActiveSection } from '@/context/ActiveSectionContext';
+import { getProfile } from '@/services/api';
 
 const NAV_LINKS = [
- { label: 'About', href: '#about' },
- { label: 'Projects', href: '#projects' },
- { label: 'Community', href: '#community' },
- { label: 'Contact', href: '#contact' },
+  { label: 'About', href: '#about' },
+  { label: 'Projects', href: '#projects' },
+  { label: 'Community', href: '#community' },
+  { label: 'Contact', href: '#contact' },
 ];
 
 export default function Navigation() {
- const [isMenuOpen, setIsMenuOpen] = useState(false);
- const [isVisible, setIsVisible] = useState(false);
- const { activeSection } = useActiveSection();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [username, setUsername] = useState('Seth N. AKPLOGAN');
+  const { activeSection } = useActiveSection();
 
- useEffect(() => {
- const timer = setTimeout(() => setIsVisible(true), 200);
- return () => clearTimeout(timer);
- }, []);
+  useEffect(() => {
+    getProfile()
+      .then((data) => {
+        if (data.username) setUsername(data.username);
+      })
+      .catch(() => {});
+  }, []);
 
- const scrollTo = useCallback(
- (href: string) => {
- setIsMenuOpen(false);
- const el = document.querySelector(href);
- if (el) {
- el.scrollIntoView({ behavior: 'smooth' });
- }
- },
- []
- );
+  useEffect(() => {
+    const timer = setTimeout(() => setIsVisible(true), 200);
+    return () => clearTimeout(timer);
+  }, []);
 
- useEffect(() => {
- if (isMenuOpen) {
- document.body.style.overflow = 'hidden';
- } else {
- document.body.style.overflow = '';
- }
- return () => {
- document.body.style.overflow = '';
- };
- }, [isMenuOpen]);
+  const scrollTo = useCallback(
+    (href: string) => {
+      setIsMenuOpen(false);
+      const el = document.querySelector(href);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    },
+    []
+  );
 
- return (
- <>
- <nav
- className="fixed top-0 left-0 right-0 h-16 flex items-center justify-between page-padding transition-opacity duration-600"
- style={{
- backgroundColor: 'rgba(20, 20, 20, 0.8)',
- backdropFilter: 'blur(12px)',
- WebkitBackdropFilter: 'blur(12px)',
- borderBottom: '1px solid #1E1E1E',
- zIndex: 100,
- opacity: isVisible ? 1 : 0,
- transitionTimingFunction: 'cubic-bezier(0.19, 1, 0.22, 1)',
- }}
- >
- <button
- onClick={() => scrollTo('#hero')}
- className="font-mono text-xs uppercase tracking-[0.1em] text-[#F5F5F5] hover:opacity-80 transition-opacity"
- >
- Seth N. AKPLOGAN
- </button>
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMenuOpen]);
+
+  return (
+    <>
+      <nav
+        className="fixed top-0 left-0 right-0 h-16 flex items-center justify-between page-padding transition-opacity duration-600"
+        style={{
+          backgroundColor: 'rgba(20, 20, 20, 0.8)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          borderBottom: '1px solid #1E1E1E',
+          zIndex: 100,
+          opacity: isVisible ? 1 : 0,
+          transitionTimingFunction: 'cubic-bezier(0.19, 1, 0.22, 1)',
+        }}
+      >
+        <button
+          onClick={() => scrollTo('#hero')}
+          className="font-mono text-xs uppercase tracking-[0.1em] text-[#F5F5F5] hover:opacity-80 transition-opacity"
+        >
+          {username}
+        </button>
 
  {/* Desktop nav */}
  <div className="hidden md:flex items-center gap-8">
