@@ -57,5 +57,8 @@
  "ts-node": {
   "esm": true,
   "experimentalSpecifierResolution": "node"
+ },
+ "overrides": {
+  "minimatch": "^9.0.7"
  }
 }
