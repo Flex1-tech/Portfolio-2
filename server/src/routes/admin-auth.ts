@@ -109,14 +109,56 @@ router.post("/logout", (req: Request, res: Response): void => {
 router.get("/session", requireAuth, async (req: Request, res: Response): Promise<void> => {
   const user = await AdminUserModel.getById(req.session.userId!);
 
- res.json({
- success: true,
- user: {
- id: user?.id,
- username: user?.username,
- email: user?.email,
- },
- });
+  res.json({
+    success: true,
+    user: {
+      id: user?.id,
+      username: user?.username,
+      email: user?.email,
+    },
+  });
+});
+
+/**
+ * PUT /admin/update-password - Change password for currently logged-in admin
+ */
+router.put("/update-password", requireAuth, async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      res.status(400).json({ success: false, message: "Les deux champs sont requis" });
+      return;
+    }
+
+    if (newPassword.length < 8) {
+      res.status(400).json({ success: false, message: "Le nouveau mot de passe doit faire au moins 8 caractères" });
+      return;
+    }
+
+    const userId = req.session.userId!;
+    const user = await AdminUserModel.getById(userId);
+
+    if (!user || !user.password_hash) {
+      res.status(404).json({ success: false, message: "Utilisateur introuvable" });
+      return;
+    }
+
+    // Verify current password
+    const isValid = AdminUserModel.verifyPassword(user.password_hash, currentPassword);
+    if (!isValid) {
+      res.status(401).json({ success: false, message: "Mot de passe actuel incorrect" });
+      return;
+    }
+
+    // Hash & save new password
+    await AdminUserModel.updatePassword(userId, newPassword);
+
+    res.json({ success: true, message: "Mot de passe mis à jour avec succès" });
+  } catch (error) {
+    console.error("Error updating password:", error);
+    res.status(500).json({ success: false, message: "Erreur interne du serveur" });
+  }
 });
 
 export default router;

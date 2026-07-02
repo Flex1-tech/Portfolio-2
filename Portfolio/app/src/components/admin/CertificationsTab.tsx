@@ -11,10 +11,11 @@ import MediaInput from './MediaInput';
 
 interface CertificationsTabProps {
   certifications: Certification[];
+  setCertifications: (certifications: Certification[]) => void;
   onRefresh: () => void;
 }
 
-export default function CertificationsTab({ certifications, onRefresh }: CertificationsTabProps) {
+export default function CertificationsTab({ certifications, setCertifications, onRefresh }: CertificationsTabProps) {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingCert, setEditingCert] = useState<Certification | null>(null);
@@ -29,12 +30,31 @@ export default function CertificationsTab({ certifications, onRefresh }: Certifi
     const arr = [...sorted];
     const swapIdx = direction === 'up' ? index - 1 : index + 1;
     if (swapIdx < 0 || swapIdx >= arr.length) return;
+
+    // Swap order_index values optimistically
+    const firstItem = { ...arr[index] };
+    const secondItem = { ...arr[swapIdx] };
+    const tempIndex = firstItem.order_index;
+    firstItem.order_index = secondItem.order_index;
+    secondItem.order_index = tempIndex;
+
+    // Apply swap in local array
+    arr[index] = secondItem;
+    arr[swapIdx] = firstItem;
+
+    // Update parent state immediately to prevent layout jumps/scintillement
+    setCertifications(arr);
+
     setIsReordering(true);
-    [arr[index], arr[swapIdx]] = [arr[swapIdx], arr[index]];
-    const orders = arr.map((c, i) => ({ id: c.id, order_index: i }));
-    await reorderItems('certifications', orders);
-    setIsReordering(false);
-    onRefresh();
+    try {
+      const orders = arr.map((c, i) => ({ id: c.id, order_index: i }));
+      await reorderItems('certifications', orders);
+    } catch (err) {
+      console.error("Reorder failed, reverting:", err);
+      onRefresh(); // Rollback if backend fails
+    } finally {
+      setIsReordering(false);
+    }
   };
 
   const [formData, setFormData] = useState({

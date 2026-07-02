@@ -12,6 +12,7 @@ import CertificationsTab from '@/components/admin/CertificationsTab';
 import EventsTab from '@/components/admin/EventsTab';
 import ProfileTab from '@/components/admin/ProfileTab';
 import AdminsTab from '@/components/admin/AdminsTab';
+import SecurityTab from '@/components/admin/SecurityTab';
 
 export default function AdminDashboard() {
     const navigate = useNavigate();
@@ -121,11 +122,15 @@ export default function AdminDashboard() {
                             <TabsTrigger value="admins" className="data-[state=active]:bg-[#2A2A2A] text-[#F5F5F5]">
                                 Gestion Admins
                             </TabsTrigger>
+                            <TabsTrigger value="security" className="data-[state=active]:bg-[#2A2A2A] text-[#F5F5F5]">
+                                Sécurité
+                            </TabsTrigger>
                         </TabsList>
 
                         <TabsContent value="projects">
                             <ProjectsTab
                                 projects={projects}
+                                setProjects={setProjects}
                                 onRefresh={refreshData}
                             />
                         </TabsContent>
@@ -133,6 +138,7 @@ export default function AdminDashboard() {
                         <TabsContent value="certifications">
                             <CertificationsTab
                                 certifications={certifications}
+                                setCertifications={setCertifications}
                                 onRefresh={refreshData}
                             />
                         </TabsContent>
@@ -140,6 +146,7 @@ export default function AdminDashboard() {
                         <TabsContent value="events">
                             <EventsTab
                                 events={events}
+                                setEvents={setEvents}
                                 onRefresh={refreshData}
                             />
                         </TabsContent>
@@ -150,6 +157,10 @@ export default function AdminDashboard() {
 
                         <TabsContent value="admins">
                             <AdminsTab />
+                        </TabsContent>
+
+                        <TabsContent value="security">
+                            <SecurityTab />
                         </TabsContent>
                     </Tabs>
                 </main>

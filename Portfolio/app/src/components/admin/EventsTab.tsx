@@ -12,10 +12,11 @@ import MediaInput from './MediaInput';
 
 interface EventsTabProps {
   events: Event[];
+  setEvents: (events: Event[]) => void;
   onRefresh: () => void;
 }
 
-export default function EventsTab({ events, onRefresh }: EventsTabProps) {
+export default function EventsTab({ events, setEvents, onRefresh }: EventsTabProps) {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
@@ -30,12 +31,31 @@ export default function EventsTab({ events, onRefresh }: EventsTabProps) {
     const arr = [...sorted];
     const swapIdx = direction === 'up' ? index - 1 : index + 1;
     if (swapIdx < 0 || swapIdx >= arr.length) return;
+
+    // Swap order_index values optimistically
+    const firstItem = { ...arr[index] };
+    const secondItem = { ...arr[swapIdx] };
+    const tempIndex = firstItem.order_index;
+    firstItem.order_index = secondItem.order_index;
+    secondItem.order_index = tempIndex;
+
+    // Apply swap in local array
+    arr[index] = secondItem;
+    arr[swapIdx] = firstItem;
+
+    // Update parent state immediately to prevent layout jumps/scintillement
+    setEvents(arr);
+
     setIsReordering(true);
-    [arr[index], arr[swapIdx]] = [arr[swapIdx], arr[index]];
-    const orders = arr.map((ev, i) => ({ id: ev.id, order_index: i }));
-    await reorderItems('events', orders);
-    setIsReordering(false);
-    onRefresh();
+    try {
+      const orders = arr.map((ev, i) => ({ id: ev.id, order_index: i }));
+      await reorderItems('events', orders);
+    } catch (err) {
+      console.error("Reorder failed, reverting:", err);
+      onRefresh(); // Rollback if backend fails
+    } finally {
+      setIsReordering(false);
+    }
   };
 
   const [formData, setFormData] = useState({

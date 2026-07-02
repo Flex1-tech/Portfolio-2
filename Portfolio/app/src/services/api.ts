@@ -845,3 +845,29 @@ export async function uploadCVFile(file: File): Promise<string | null> {
   }
 }
 
+/**
+ * Update current admin password
+ */
+export async function updateAdminPassword(currentPassword: string, newPassword: string): Promise<boolean> {
+  try {
+    const response = await fetch(`${API_URL}/admin-api/update-password`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({ currentPassword, newPassword }),
+    });
+
+    if (!response.ok) {
+      const err: ApiResponse<null> = await response.json();
+      throw new Error(err.message || "Impossible de mettre à jour le mot de passe");
+    }
+    return true;
+  } catch (error) {
+    console.error("Error updating password:", error);
+    throw error;
+  }
+}
+
+

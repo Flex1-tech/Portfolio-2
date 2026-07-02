@@ -14,10 +14,11 @@ import { slugify } from '@/lib/slugify';
 
 interface ProjectsTabProps {
   projects: Project[];
+  setProjects: (projects: Project[]) => void;
   onRefresh: () => void;
 }
 
-export default function ProjectsTab({ projects, onRefresh }: ProjectsTabProps) {
+export default function ProjectsTab({ projects, setProjects, onRefresh }: ProjectsTabProps) {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
@@ -32,12 +33,31 @@ export default function ProjectsTab({ projects, onRefresh }: ProjectsTabProps) {
     const arr = [...sorted];
     const swapIdx = direction === 'up' ? index - 1 : index + 1;
     if (swapIdx < 0 || swapIdx >= arr.length) return;
+
+    // Swap order_index values optimistically
+    const firstItem = { ...arr[index] };
+    const secondItem = { ...arr[swapIdx] };
+    const tempIndex = firstItem.order_index;
+    firstItem.order_index = secondItem.order_index;
+    secondItem.order_index = tempIndex;
+
+    // Apply swap in local array
+    arr[index] = secondItem;
+    arr[swapIdx] = firstItem;
+
+    // Update parent state immediately to prevent layout jumps/scintillement
+    setProjects(arr);
+
     setIsReordering(true);
-    [arr[index], arr[swapIdx]] = [arr[swapIdx], arr[index]];
-    const orders = arr.map((p, i) => ({ id: p.id, order_index: i }));
-    await reorderItems('projects', orders);
-    setIsReordering(false);
-    onRefresh();
+    try {
+      const orders = arr.map((p, i) => ({ id: p.id, order_index: i }));
+      await reorderItems('projects', orders);
+    } catch (err) {
+      console.error("Reorder failed, reverting:", err);
+      onRefresh(); // Rollback if backend fails
+    } finally {
+      setIsReordering(false);
+    }
   };
 
   const [formData, setFormData] = useState({
