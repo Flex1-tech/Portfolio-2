@@ -111,23 +111,23 @@ npm run dev # Start frontend on :5173
 
 ## What's New: Advanced Dynamic Features & Admin Management
 
-### 🚀 100% Dynamisation & Profile Configuration
+### 100% Dynamisation & Profile Configuration
 - **Total Dynamic Home**: Hero title/bio/label, citation, and social link buttons are fully read from `profile_settings` DB table.
 - **Robust Fallback Strategy**: Instant UI rendering using built-in high-quality static fallbacks if profile values are missing or loading.
 - **Dynamic CV PDF/Image Upload**: Admin can upload their CV file (PDF or image) which pushes to Cloudinary raw storage and updates the CTA link on the home page automatically.
 
-### 🔌 Reordering & UI Operations
+### Reordering & UI Operations
 - **Dynamic Order Indexes**: Added manual ordering (`order_index`) for Projects, Events, and Certifications.
 - **Admin Reorder Actions**: Simple `▲ Monter` / `▼ Descendre` control buttons in the dashboard to change section orders instantly.
 
-### 🛡️ Admin Management & Security
+### Admin Management & Security
 - **Admin Accounts CRUD**: Create and manage multiple admin accounts securely.
 - **Auto-Deletion Prevention**: Critical self-deletion checks and protection for the primary admin user account (ID=1).
 
-### 🖋️ Automatic Slugification (UX Premium)
+### Automatic Slugification (UX Premium)
 - **Real-Time Slugs**: Manual slug entry has been replaced by automatic, real-time URL-safe slug generation based on the title inputs.
 
-### ️ Configuration (`Portfolio/app/.env.local`)
+### Configuration (`Portfolio/app/.env.local`)
 
 ```env
 VITE_API_URL=http://localhost:5000
