@@ -16,6 +16,7 @@ export interface Certification {
  status: 'completed' | 'in-progress';
  verifyUrl?: string;
  imageUrl?: string;
+ dateEarned?: string;
 }
 
 export interface Event {

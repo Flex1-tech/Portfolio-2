@@ -1,103 +1,105 @@
 import { useEffect, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionLabel from "@/components/SectionLabel";
 import SectionHeading from "@/components/SectionHeading";
-import CertificationRow from "@/components/CertificationRow";
+import CertificationCard from "@/components/CertificationCard";
+import CertificationModal from "@/components/CertificationModal";
 import { getCertifications } from "@/services/api";
 import type { Certification } from "@/types";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function CertificationsSection() {
- const sectionRef = useRef<HTMLElement>(null);
- const listRef = useRef<HTMLDivElement>(null);
- const [certifications, setCertifications] = useState<Certification[]>([]);
- const [loading, setLoading] = useState(true);
+  const sectionRef = useRef<HTMLElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const [selectedCert, setSelectedCert] = useState<Certification | null>(null);
 
- useEffect(() => {
-  const fetchCertifications = async () => {
-  try {
-  const data = await getCertifications();
-  
-  // Sort certifications by order_index ascending
-  const sortedData = [...data].sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0));
+  const { data: certifications = [], isLoading: loading } = useQuery({
+    queryKey: ["certifications"],
+    queryFn: async () => {
+      const data = await getCertifications();
+      const sortedData = [...data].sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0));
+      return sortedData.map((cert): Certification => ({
+        platform: cert.platform,
+        title: cert.title,
+        status: cert.status === "in_progress" ? "in-progress" : "completed",
+        verifyUrl: cert.credential_url,
+        imageUrl: cert.image_url || undefined,
+        dateEarned: cert.date_earned,
+      }));
+    },
+  });
 
-  // Transform backend data to frontend format
-  const transformedCerts: Certification[] = sortedData.map((cert) => ({
-  platform: cert.platform,
-  title: cert.title,
-  status: cert.status === "in_progress" ? "in-progress" : "completed",
-  verifyUrl: cert.credential_url,
-  imageUrl: cert.image_url || undefined,
-  }));
-  setCertifications(transformedCerts);
-  } catch (error) {
-  console.error("Failed to fetch certifications:", error);
-  } finally {
-  setLoading(false);
-  }
-  };
+  useEffect(() => {
+    const grid = gridRef.current;
+    if (!grid || loading || certifications.length === 0) return;
 
-  fetchCertifications();
-  }, []);
+    const cards = grid.querySelectorAll(".cert-card");
+    gsap.set(cards, { opacity: 0, y: 30 });
 
- useEffect(() => {
- const list = listRef.current;
- if (!list) return;
+    const animation = gsap.to(cards, {
+      opacity: 1,
+      y: 0,
+      duration: 0.6,
+      stagger: 0.1,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: grid,
+        start: "top 85%",
+        toggleActions: "play none none none",
+      },
+    });
 
- const rows = list.querySelectorAll(".cert-row");
- gsap.set(rows, { opacity: 0, x: -30 });
+    return () => {
+      animation.kill();
+    };
+  }, [loading, certifications]);
 
- const animation = gsap.to(rows, {
- opacity: 1,
- x: 0,
- duration: 0.6,
- stagger: 0.1,
- ease: "power2.out",
- scrollTrigger: {
- trigger: list,
- start: "top 80%",
- toggleActions: "play none none none",
- },
- });
+  return (
+    <section
+      id="certifications"
+      ref={sectionRef}
+      className="bg-obsidian border-t border-graphite py-20"
+    >
+      <div
+        className="page-padding"
+        style={{ maxWidth: "1280px", margin: "0 auto" }}
+      >
+        <SectionLabel text="04 — CERTIFICATIONS" />
+        <SectionHeading text="Credentials & Learning" className="mb-12" />
 
- return () => {
- animation.kill();
- };
- }, []);
+        {loading ? (
+          <div className="text-center py-12">
+            <p className="text-[#A3A3A3]">Loading certifications...</p>
+          </div>
+        ) : certifications.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-[#A3A3A3]">No certifications available</p>
+          </div>
+        ) : (
+          <div
+            ref={gridRef}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {certifications.map((cert) => (
+              <div key={cert.platform + cert.title} className="cert-card">
+                <CertificationCard
+                  cert={cert}
+                  onViewCert={(c) => setSelectedCert(c)}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
- return (
- <section
- id="certifications"
- ref={sectionRef}
- className="bg-obsidian border-t border-graphite"
- >
- <div
- className="section-gap page-padding"
- style={{ maxWidth: "1280px", margin: "0 auto" }}
- >
- <SectionLabel text="04 — CERTIFICATIONS" />
- <SectionHeading text="Credentials & Learning" className="mb-12" />
-
- <div ref={listRef}>
- {loading ? (
- <div className="text-center py-8">
- <p className="text-gray-400">Loading certifications...</p>
- </div>
- ) : certifications.length === 0 ? (
- <div className="text-center py-8">
- <p className="text-gray-400">No certifications available</p>
- </div>
- ) : (
- certifications.map((cert) => (
- <div key={cert.platform + cert.title} className="cert-row">
- <CertificationRow cert={cert} />
- </div>
- ))
- )}
- </div>
- </div>
- </section>
- );
+      {/* Interactive Certification Modal */}
+      <CertificationModal
+        cert={selectedCert}
+        onClose={() => setSelectedCert(null)}
+      />
+    </section>
+  );
 }
