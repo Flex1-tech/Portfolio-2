@@ -17,8 +17,39 @@ import AdminLogin from '@/pages/admin/AdminLogin';
 import AdminDashboard from '@/pages/admin/AdminDashboard';
 import Articles from '@/pages/Articles';
 import ArticleDetail from '@/pages/ArticleDetail';
+import SEO from '@/components/SEO';
 
 gsap.registerPlugin(ScrollTrigger);
+
+const homeSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': 'https://seth-akplogan.onrender.com/#person',
+      name: 'Seth N. AKPLOGAN',
+      jobTitle: 'Artificial Intelligence & Data Science Student',
+      worksFor: {
+        '@type': 'EducationalOrganization',
+        name: "IFRI — Université d'Abomey-Calavi",
+      },
+      url: 'https://seth-akplogan.onrender.com',
+      sameAs: [
+        'https://linkedin.com/in/seth-akplogan',
+        'https://github.com/Flex1-tech',
+      ],
+    },
+    {
+      '@type': 'ProfilePage',
+      '@id': 'https://seth-akplogan.onrender.com/#webpage',
+      url: 'https://seth-akplogan.onrender.com',
+      name: 'Seth N. AKPLOGAN — AI & Data Science Portfolio',
+      mainEntity: {
+        '@id': 'https://seth-akplogan.onrender.com/#person',
+      },
+    },
+  ],
+};
 
 function SectionTracker({ id, children }: { id: string; children: React.ReactNode }) {
  const { setActiveSection } = useActiveSection();
@@ -43,6 +74,7 @@ function SectionTracker({ id, children }: { id: string; children: React.ReactNod
 function AppContent() {
  return (
  <>
+ <SEO jsonLd={homeSchema} />
  <CustomCursor />
  <Navigation />
 

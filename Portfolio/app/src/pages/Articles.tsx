@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { getArticles } from '@/services/api';
 import type { Article } from '@/services/api';
 import { Link } from 'react-router';
+import SEO from '@/components/SEO';
 
 export default function Articles() {
   const [articles, setArticles] = useState<Article[]>([]);
@@ -20,6 +21,7 @@ export default function Articles() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
+        <SEO title="Articles & Insights" description="Articles and research insights by Seth N. AKPLOGAN." />
         <div className="text-[#CFCFCF]">Loading...</div>
       </div>
     );
@@ -28,6 +30,7 @@ export default function Articles() {
   if (articles.length === 0) {
     return (
       <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
+        <SEO title="Articles & Insights" description="Articles and research insights by Seth N. AKPLOGAN." />
         <div className="text-center">
           <h1 className="text-2xl font-semibold text-[#F5F5F5] mb-2">Articles</h1>
           <p className="text-[#CFCFCF]">No articles published yet.</p>
@@ -38,6 +41,10 @@ export default function Articles() {
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] py-16 px-4">
+      <SEO
+        title="Technical Articles & Insights"
+        description="Articles and research insights on Artificial Intelligence, Machine Learning, and Software Engineering by Seth N. AKPLOGAN."
+      />
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold text-[#F5F5F5] mb-8">Articles</h1>
         <div className="space-y-8">

@@ -11,7 +11,8 @@ import helmet from "helmet";
 import compression from "compression";
 import morgan from "morgan";
 
-import { initializeDatabase } from "./config/database.js";
+import connectPgSimple from "connect-pg-simple";
+import { pool, initializeDatabase } from "./config/database.js";
 import { errorHandler, notFound } from "./middleware/index.js";
 import apiRoutes from "./routes/api.js";
 import adminAuthRoutes from "./routes/admin-auth.js";
@@ -21,6 +22,8 @@ import { AdminUserModel } from "./models/AdminUserModel.js";
 const app = express();
 const PORT = process.env.PORT || 5000;
 const NODE_ENV = process.env.NODE_ENV || "development";
+
+const PgStore = connectPgSimple(session);
 
 // Trust proxy for Render
 app.set("trust proxy", 1);
@@ -75,9 +78,13 @@ app.use(
  }),
 );
 
-// Session configuration
+// Session configuration using PostgreSQL store
 app.use(
  session({
+ store: new PgStore({
+ pool,
+ createTableIfMissing: true,
+ }),
  secret: process.env.SESSION_SECRET || "dev-secret",
  resave: false,
  saveUninitialized: false,
