@@ -7,6 +7,7 @@ import SectionHeading from "@/components/SectionHeading";
 import CertificationCard from "@/components/CertificationCard";
 import CertificationModal from "@/components/CertificationModal";
 import { getCertifications } from "@/services/api";
+import { formatCertDate } from "@/lib/utils";
 import type { Certification } from "@/types";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -27,7 +28,7 @@ export default function CertificationsSection() {
         status: cert.status === "in_progress" ? "in-progress" : "completed",
         verifyUrl: cert.credential_url,
         imageUrl: cert.image_url || undefined,
-        dateEarned: cert.date_earned,
+        dateEarned: formatCertDate(cert.date_earned),
       }));
     },
   });

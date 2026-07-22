@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import type { Certification } from '@/services/api';
 import { createCertification, updateCertification, deleteCertification, reorderItems } from '@/services/api';
 import MediaInput from './MediaInput';
+import { formatCertDate } from '@/lib/utils';
 
 interface CertificationsTabProps {
   certifications: Certification[];
@@ -168,7 +169,7 @@ export default function CertificationsTab({ certifications, setCertifications, o
       title: cert.title,
       status: cert.status,
       credential_url: cert.credential_url || '',
-      date_earned: cert.date_earned || '',
+      date_earned: cert.date_earned ? cert.date_earned.split('T')[0] : '',
       image_url: cert.image_url || '',
     });
     setIsEditDialogOpen(true);
@@ -266,6 +267,7 @@ export default function CertificationsTab({ certifications, setCertifications, o
               <TableHead className="text-[#F5F5F5] w-16">Ordre</TableHead>
               <TableHead className="text-[#F5F5F5]">Platform</TableHead>
               <TableHead className="text-[#F5F5F5]">Title</TableHead>
+              <TableHead className="text-[#F5F5F5]">Date Earned</TableHead>
               <TableHead className="text-[#F5F5F5]">Status</TableHead>
               <TableHead className="text-[#F5F5F5]">Actions</TableHead>
             </TableRow>
@@ -291,6 +293,9 @@ export default function CertificationsTab({ certifications, setCertifications, o
                 </TableCell>
                 <TableCell className="text-[#CFCFCF]">{cert.platform}</TableCell>
                 <TableCell className="text-[#CFCFCF]">{cert.title}</TableCell>
+                <TableCell className="text-[#CFCFCF] text-xs font-mono">
+                  {formatCertDate(cert.date_earned) || '-'}
+                </TableCell>
                 <TableCell className="text-[#CFCFCF]">
                   <span className={`px-2 py-1 rounded text-xs ${
                     cert.status === 'completed' ? 'bg-green-900 text-green-300' : 'bg-yellow-900 text-yellow-300'

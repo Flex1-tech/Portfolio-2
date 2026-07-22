@@ -1,6 +1,7 @@
 import type { Certification } from '@/types';
 import { Award, ExternalLink } from 'lucide-react';
 import { getCertificationLogo } from '@/lib/cloudinary';
+import { formatCertDate } from '@/lib/utils';
 
 interface CertificationCardProps {
   cert: Certification;
@@ -86,7 +87,7 @@ export default function CertificationCard({ cert, onViewCert }: CertificationCar
         {cert.dateEarned ? (
           <span className="font-mono text-xs text-[#A3A3A3] flex items-center gap-1.5">
             <Award className="w-3.5 h-3.5 text-[#2F8F8F]" />
-            {cert.dateEarned}
+            {formatCertDate(cert.dateEarned)}
           </span>
         ) : (
           <span className="font-mono text-xs text-[#A3A3A3]">Verified Credential</span>

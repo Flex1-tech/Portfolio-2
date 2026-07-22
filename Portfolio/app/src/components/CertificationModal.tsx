@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import type { Certification } from '@/types';
 import { X, ExternalLink, Award, Calendar, CheckCircle2 } from 'lucide-react';
+import { formatCertDate } from '@/lib/utils';
 
 interface CertificationModalProps {
   cert: Certification | null;
@@ -91,7 +92,7 @@ export default function CertificationModal({ cert, onClose }: CertificationModal
             <Calendar className="w-4 h-4 text-[#A3A3A3] shrink-0" />
             <div>
               <p className="text-[10px] text-[#A3A3A3] uppercase">Date d'obtention</p>
-              <p className="text-[#CFCFCF]">{cert.dateEarned || 'Non spécifiée'}</p>
+              <p className="text-[#CFCFCF]">{formatCertDate(cert.dateEarned) || 'Non spécifiée'}</p>
             </div>
           </div>
         </div>
