@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import SectionLabel from '@/components/SectionLabel';
 import SectionHeading from '@/components/SectionHeading';
+import FooterTerminal from '@/components/FooterTerminal';
 import { getProfile } from '@/services/api';
 import type { ProfileSettings } from '@/services/api';
 
@@ -169,12 +170,15 @@ export default function ContactSection() {
           </a>
         </div>
 
+        {/* CLI Terminal */}
+        <FooterTerminal />
+
         {/* Footer */}
-        <div className="contact-footer mt-24 pt-6 border-t border-graphite flex flex-col sm:flex-row justify-between gap-2">
-          <p className="font-mono text-[11px] text-graphite">
+        <div className="contact-footer mt-12 pt-6 border-t border-graphite flex flex-col sm:flex-row justify-between gap-2">
+          <p className="font-mono text-[11px] text-[#A3A3A3]">
             © {new Date().getFullYear()} {username}. All rights reserved.
           </p>
-          <p className="font-mono text-[11px] text-graphite">
+          <p className="font-mono text-[11px] text-[#A3A3A3]">
             {contactFooterTagline}
           </p>
         </div>

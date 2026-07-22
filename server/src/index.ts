@@ -148,8 +148,9 @@ app.use(errorHandler);
 // Server Start
 // ============================================================================
 
-app.listen(PORT, () => {
- console.log(`
+if (process.env.NODE_ENV !== "test") {
+  app.listen(PORT, () => {
+    console.log(`
 ╔════════════════════════════════════════╗
 ║ Portfolio Backend Server Running ║
 ╠════════════════════════════════════════╣
@@ -157,19 +158,20 @@ app.listen(PORT, () => {
 ║ Port: ${String(PORT).padEnd(36)}║
 ║ API: http://localhost:${String(PORT).padEnd(23)}║
 ╚════════════════════════════════════════╝
- `);
+    `);
 
- if (NODE_ENV === "development") {
- console.log(" API Documentation:");
- console.log(
- " Public API: GET /api/projects, /api/events, /api/certifications",
- );
- console.log(" Admin Auth: POST /admin/login, /admin/logout");
- console.log(
- " Admin CRUD: POST/GET/PUT/DELETE /admin/projects|events|certifications",
- );
- console.log("");
- }
-});
+    if (NODE_ENV === "development") {
+      console.log(" API Documentation:");
+      console.log(
+        " Public API: GET /api/projects, /api/events, /api/certifications",
+      );
+      console.log(" Admin Auth: POST /admin/login, /admin/logout");
+      console.log(
+        " Admin CRUD: POST/GET/PUT/DELETE /admin/projects|events|certifications",
+      );
+      console.log("");
+    }
+  });
+}
 
 export default app;
