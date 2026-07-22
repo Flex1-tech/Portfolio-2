@@ -1,380 +1,307 @@
-# Portfolio - Frontend + Backend (Production Ready)
+# Portfolio — Seth N. AKPLOGAN
 
-## Project Status: ** READY FOR PRODUCTION**
+> **AI & Data Science Student** — Full-stack portfolio with a headless CMS, built with React 19, Express, and PostgreSQL (Supabase).
 
-- **Backend**: Express.js REST API with SQLite database
-- **Frontend**: React 19 + Vite + TypeScript with API integration
-- **Security**: Authentication, validation, rate limiting, XSS/SQL injection prevention
-- **Admin Dashboard**: Full CRUD operations for projects, events, certifications
-- **Documentation**: Complete guides for setup, deployment, and integration
+[![CI](https://github.com/Flex1-tech/Portfolio-2/actions/workflows/ci.yml/badge.svg)](https://github.com/Flex1-tech/Portfolio-2/actions/workflows/ci.yml)
 
 ---
 
-## ️ Project Structure
+## Stack
+
+| Layer | Technologies |
+|---|---|
+| **Frontend** | React 19, TypeScript 5.9, Vite 7, React Router 7, TanStack Query 5 |
+| **Styling** | Tailwind CSS 3, GSAP 3, Lenis |
+| **Backend** | Node.js 22, Express 4, TypeScript 5 |
+| **Database** | PostgreSQL via Supabase |
+| **Auth** | express-session + connect-pg-simple + BCrypt |
+| **Images** | Cloudinary (upload + auto-optimization) |
+| **SEO** | react-helmet-async, Schema.org JSON-LD, sitemap.xml |
+| **Tests** | Vitest + Supertest |
+| **CI/CD** | GitHub Actions |
+
+---
+
+## Project Structure
 
 ```
 Portfolio/
-├── server/ # Backend (Node.js + Express + SQLite)
-│ ├── src/
-│ │ ├── index.ts # Server entry point
-│ │ ├── config/database.ts # Database configuration
-│ │ ├── models/ # Data access layer
-│ │ ├── routes/ # API endpoints
-│ │ ├── middleware/ # Auth, validation, error handling
-│ │ ├── schemas/ # Zod validation schemas
-│ │ ├── types/ # TypeScript interfaces
-│ │ └── scripts/ # Utilities (migrate, seed, init-admin)
-│ ├── .env # Environment variables (local dev)
-│ ├── .env.example # Environment template
-│ ├── package.json # Dependencies
-│ ├── README.md # Backend API documentation
-│ └── tsconfig.json # TypeScript config
+├── server/                     # Backend — Node.js + Express + PostgreSQL
+│   ├── src/
+│   │   ├── index.ts            # Entry point
+│   │   ├── config/             # Database pool (Supabase)
+│   │   ├── models/             # Data access layer (ProjectModel, ArticleModel…)
+│   │   ├── routes/             # REST API endpoints + /sitemap.xml
+│   │   ├── middleware/         # Auth, validation, sanitization, upload (Cloudinary)
+│   │   ├── schemas/            # Zod validation schemas
+│   │   ├── types/              # TypeScript interfaces
+│   │   └── tests/              # Vitest integration + unit tests
+│   ├── vitest.config.ts
+│   ├── package.json
+│   └── tsconfig.json
 │
-├── Portfolio/app/ # Frontend (React + Vite + TypeScript)
-│ ├── src/
-│ │ ├── App.tsx # Main app component
-│ │ ├── pages/ # Page components
-│ │ ├── sections/ # Section components (now with API integration)
-│ │ ├── components/ # Reusable components
-│ │ ├── services/
-│ │ │ └── api.ts # NEW: API client for backend communication
-│ │ ├── context/ # React context
-│ │ ├── hooks/ # Custom React hooks
-│ │ ├── types/ # TypeScript types
-│ │ └── lib/ # Utilities
-│ ├── .env.local # NEW: Backend URL configuration
-│ ├── package.json # Dependencies
-│ ├── vite.config.ts # Vite configuration
-│ └── tsconfig.json # TypeScript config
+├── Portfolio/app/              # Frontend — React + Vite
+│   ├── src/
+│   │   ├── App.tsx             # Routes with React.lazy() code splitting
+│   │   ├── pages/              # Articles, ArticleDetail, Admin (lazy-loaded)
+│   │   ├── sections/           # Hero, About, Skills, Projects, Certifications…
+│   │   ├── components/         # Reusable UI components (SEO, Navigation…)
+│   │   ├── services/api.ts     # API client
+│   │   ├── lib/cloudinary.ts   # Cloudinary URL optimization utility
+│   │   ├── context/            # ActiveSectionContext
+│   │   └── hooks/              # useReducedMotion, useCharacterReveal…
+│   ├── public/robots.txt
+│   ├── vite.config.ts          # Manual chunk splitting
+│   └── package.json
 │
-├── Documentation/
-│ ├── QUICK_START.md # 5-minute quick start
-│ ├── EXECUTIVE_SUMMARY.md # Overview for stakeholders
-│ ├── BACKEND_SETUP_GUIDE.md # Complete backend guide
-│ ├── INTEGRATION_GUIDE.md # Frontend-backend integration
-│ ├── DATA_MODEL_REFERENCE.md # Data type mappings
-│ ├── FILE_MANIFEST.md # File descriptions
-│ └── DOCUMENTATION_INDEX.md # Navigation guide
-│
-├── start-production.bat # NEW: Windows deployment script
-├── start-production.sh # NEW: Linux/Mac deployment script
-└── README.md # This file
+├── .github/workflows/ci.yml    # GitHub Actions CI pipeline
+└── README.md
 ```
 
 ---
 
-## Quick Start (5 Minutes)
+## Quick Start
 
-### Option 1: Automated Script (Recommended)
+**Prerequisites:** Node.js 22, a Supabase project (PostgreSQL), a Cloudinary account.
 
-**Windows:**
-
-```bash
-start-production.bat
-```
-
-**Linux/Mac:**
-
-```bash
-chmod +x start-production.sh
-./start-production.sh
-```
-
-### Option 2: Manual Setup
-
-**Terminal 1 - Backend:**
+### 1 — Backend
 
 ```bash
 cd server
 npm install
-npm run migrate # Initialize database
-npm run init-admin # Create admin account (enter credentials when prompted)
-npm run seed # Optional: Add sample data
-npm run dev # Start backend on :5000
+cp .env.example .env        # Fill in DATABASE_URL, SESSION_SECRET, Cloudinary vars
+npm run migrate             # Create tables in PostgreSQL
+npm run init-admin          # Create the first admin account
+npm run dev                 # Start on http://localhost:5000
 ```
 
-**Terminal 2 - Frontend:**
+### 2 — Frontend
 
 ```bash
 cd Portfolio/app
 npm install
-npm run dev # Start frontend on :5173
+npm run dev                 # Start on http://localhost:3000
 ```
 
-### Access the Application
+### Access
 
-- **Frontend**: http://localhost:5173
-- **Backend API**: http://localhost:5000
-- **Admin Dashboard**: http://localhost:5173/admin (after login)
+| URL | Description |
+|---|---|
+| `http://localhost:3000` | Public portfolio |
+| `http://localhost:3000/articles` | Blog articles |
+| `http://localhost:3000/admin/login` | Admin login |
+| `http://localhost:3000/admin/dashboard` | CMS dashboard |
+| `http://localhost:5000/api/projects` | API (example) |
+| `http://localhost:5000/sitemap.xml` | Dynamic sitemap |
 
 ---
 
-## What's New: Advanced Dynamic Features & Admin Management
+## Environment Variables
 
-### 100% Dynamisation & Profile Configuration
-- **Total Dynamic Home**: Hero title/bio/label, citation, and social link buttons are fully read from `profile_settings` DB table.
-- **Robust Fallback Strategy**: Instant UI rendering using built-in high-quality static fallbacks if profile values are missing or loading.
-- **Dynamic CV PDF/Image Upload**: Admin can upload their CV file (PDF or image) which pushes to Cloudinary raw storage and updates the CTA link on the home page automatically.
-
-### Reordering & UI Operations
-- **Dynamic Order Indexes**: Added manual ordering (`order_index`) for Projects, Events, and Certifications.
-- **Admin Reorder Actions**: Simple `▲ Monter` / `▼ Descendre` control buttons in the dashboard to change section orders instantly.
-
-### Admin Management & Security
-- **Admin Accounts CRUD**: Create and manage multiple admin accounts securely.
-- **Auto-Deletion Prevention**: Critical self-deletion checks and protection for the primary admin user account (ID=1).
-
-### Automatic Slugification (UX Premium)
-- **Real-Time Slugs**: Manual slug entry has been replaced by automatic, real-time URL-safe slug generation based on the title inputs.
-
-### Configuration (`Portfolio/app/.env.local`)
+### Backend (`server/.env`)
 
 ```env
-VITE_API_URL=http://localhost:5000
+NODE_ENV=development
+PORT=5000
+
+DATABASE_URL=postgresql://...          # Supabase connection string
+SESSION_SECRET=your-secret-here        # Min 32 chars, random
+
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+
+CORS_ORIGIN=http://localhost:3000
 ```
 
-Change this for production deployments.
+### Frontend (`Portfolio/app/.env.local`)
+
+Not required for development — the Vite proxy forwards `/api` and `/admin-api` to `localhost:5000` automatically.
 
 ---
 
-## Documentation
+## Admin Dashboard
 
-| Document | Purpose | Read Time |
-| --------------------------- | -------------------------------- | --------- |
-| **QUICK_START.md** | Commands and reference | 5 min |
-| **EXECUTIVE_SUMMARY.md** | Project overview & checklist | 10 min |
-| **BACKEND_SETUP_GUIDE.md** | Complete backend setup | 30 min |
-| **INTEGRATION_GUIDE.md** | Frontend integration details | 20 min |
-| **DATA_MODEL_REFERENCE.md** | Type mappings & validation | 15 min |
-| **FILE_MANIFEST.md** | File descriptions & architecture | 10 min |
-| **server/README.md** | API endpoint documentation | 20 min |
+The CMS dashboard allows full management of all portfolio content:
 
----
-
-## Security Features
-
- **Authentication & Authorization**
-
-- Session-based authentication with HttpOnly cookies
-- Rate limiting on login (5 attempts/15 minutes)
-- Admin role-based access control
-
- **Data Protection**
-
-- Bcryptjs password hashing (10 rounds)
-- Parameterized SQL queries (no injection)
-- Input sanitization (XSS prevention)
-
- **API Security**
-
-- CORS with whitelist
-- Security headers (Helmet)
-- Request validation with Zod
-- Compression and Morgan logging
+- **Projects** — CRUD, image/video upload, reordering, Cloudinary integration
+- **Certifications** — CRUD, logo upload, credential URL
+- **Events** — CRUD, reordering
+- **Articles** — CRUD, Markdown content, SEO fields, image upload
+- **Profile** — Dynamic hero text, bio, social links, CV upload
+- **Admins** — Multi-admin management (with self-deletion protection)
+- **Security** — Password change
 
 ---
 
-## ️ Database
+## API Reference
 
-**SQLite** with 4 tables:
+### Public Endpoints
 
-- **projects**: id, title, slug, description, problem, solution, tech_stack, links, status
-- **events**: id, title, organization, year, role, description
-- **certifications**: id, platform, title, status, credential_url, date_earned
-- **admin_users**: id, username, password_hash, email, last_login
+```
+GET  /health                          # Server status
+GET  /sitemap.xml                     # Dynamic XML sitemap
+GET  /api/projects                    # All projects
+GET  /api/projects?page=1&limit=10   # Paginated
+GET  /api/certifications              # All certifications
+GET  /api/events                      # All events
+GET  /api/articles                    # Published articles
+GET  /api/articles/:slug              # Article by slug
+GET  /api/profile                     # Public profile settings
+```
 
-**Automatic Setup:**
+### Admin Endpoints (session required)
+
+```
+POST /admin/login
+POST /admin/logout
+GET  /admin/session
+
+POST   /admin/projects
+PUT    /admin/projects/:id
+DELETE /admin/projects/:id
+
+POST   /admin/articles
+PUT    /admin/articles/:id
+DELETE /admin/articles/:id
+
+# Same pattern for /admin/certifications, /admin/events
+# POST /admin/profile  — Update profile settings
+# POST /admin/admins   — Create admin account
+```
+
+---
+
+## Security
+
+- **Sessions** — HttpOnly cookies, persisted in PostgreSQL (`connect-pg-simple`)
+- **Rate limiting** — `express-rate-limit` on login routes
+- **Passwords** — BCrypt (10 rounds)
+- **Headers** — `helmet()` (CSP, X-Frame-Options, etc.)
+- **Validation** — Zod schemas on all write endpoints
+- **Sanitization** — XSS stripping middleware on all inputs
+- **CORS** — Explicit allowlist
+
+---
+
+## Performance
+
+### Bundle splitting (Vite `manualChunks`)
+
+| Chunk | Size (Gzip) | Loaded |
+|---|---|---|
+| `index-*.js` (homepage) | **84 KB** | Always |
+| `admin-*.js` | 41 KB | `/admin/*` only |
+| `markdown-*.js` | 36 KB | `/articles/*` only |
+| `gsap-*.js` | 45 KB | Homepage (deferred) |
+| `radix-*.js` | 31 KB | On demand |
+
+Public visitors load **84 KB Gzip** instead of 252 KB — a **66% reduction** on first visit.
+
+### Cloudinary image optimization
+
+All displayed images use automatic transformations via `src/lib/cloudinary.ts`:
+- `f_auto` — WebP or AVIF based on browser support
+- `q_auto` — Smart quality compression
+- Dimension constraints per context (thumbnails, heroes, logos)
+
+### Caching
+
+All public API calls are cached client-side via **TanStack Query** with a 5-minute `staleTime`. Navigation between sections is instant after the first load.
+
+---
+
+## SEO
+
+- Dynamic `<title>` and `<meta name="description">` via `react-helmet-async`
+- Open Graph + Twitter Cards on all pages
+- Schema.org JSON-LD (`Person`, `ProfilePage`, `TechArticle`)
+- `public/robots.txt` (blocks `/admin/*` from indexing)
+- Dynamic `/sitemap.xml` generated from live database content
+
+---
+
+## Tests
 
 ```bash
-npm run migrate # Creates all tables
-npm run seed # Adds sample data
+# Run all tests
+cd server && npm test
+
+# Verbose output
+npm test -- --reporter=verbose
 ```
+
+**Current coverage: 51 tests across 3 test files**
+
+| File | Tests | Type |
+|---|---|---|
+| `api.test.ts` | 4 | Integration (requires DB) |
+| `validation.test.ts` | 32 | Unit (Zod schemas, in-memory) |
+| `middleware.test.ts` | 15 | Unit (mock req/res) |
 
 ---
 
-## API Endpoints
+## CI/CD
 
-### Public Endpoints (No Auth)
+The GitHub Actions workflow (`.github/workflows/ci.yml`) runs on every push and PR to `main` / `develop`:
 
-```
-GET /api/projects # All projects
-GET /api/projects?page=1&limit=10 # Paginated projects
-GET /api/projects/:id # Single project
-GET /api/projects/slug/:slug # Project by slug
-
-GET /api/events # All events
-GET /api/events/:id # Single event
-
-GET /api/certifications # All certifications
-GET /api/certifications/:id # Single certification
-```
-
-### Admin Endpoints (Auth Required)
-
-```
-POST /admin/login # Login
-POST /admin/logout # Logout
-GET /admin/session # Current session
-
-POST /admin/projects # Create
-GET /admin/projects # List
-PUT /admin/projects/:id # Update
-DELETE /admin/projects/:id # Delete
-
-(Same for /admin/events and /admin/certifications)
-```
-
-See [server/README.md](server/README.md) for detailed API documentation.
-
----
-
-## ️ Technology Stack
-
-### Backend
-
-- **Runtime**: Node.js 18+
-- **Framework**: Express.js 4.18
-- **Database**: SQLite with better-sqlite3
-- **Language**: TypeScript 5.1.6
-- **Validation**: Zod 3.22.4
-- **Security**: bcryptjs, helmet, express-rate-limit, cors
-- **Session**: express-session
-- **Logging**: Morgan
-
-### Frontend
-
-- **Framework**: React 19
-- **Build Tool**: Vite
-- **Language**: TypeScript 5.7
-- **Styling**: Tailwind CSS
-- **Animation**: GSAP + Lenis
-- **HTTP**: Fetch API with custom service
+1. Install frontend dependencies → `npm ci`
+2. Build frontend → `npm run build` (fails on TypeScript errors)
+3. Install backend dependencies → `npm ci`
+4. Build backend → `npm run build` (fails on TypeScript errors)
+5. Run unit tests → `npm test`
 
 ---
 
 ## Production Deployment
 
-### Backend Deployment Checklist
+The application is deployed on **Render** (backend) + **Render Static** (frontend).
 
-- [ ] Set `NODE_ENV=production` in `.env`
-- [ ] Generate strong `SESSION_SECRET`: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
-- [ ] Update `CORS_ORIGIN` to your production domain
-- [ ] Run `npm run build` to compile TypeScript
-- [ ] Run `npm run migrate` on server
-- [ ] Create admin account: `npm run init-admin`
-- [ ] Start with: `npm run start`
+### Backend checklist
 
-### Frontend Deployment Checklist
+- [ ] Set `NODE_ENV=production`
+- [ ] Set `DATABASE_URL` (Supabase connection string with `?sslmode=require`)
+- [ ] Set `SESSION_SECRET` (min 32 chars)
+- [ ] Set Cloudinary env vars
+- [ ] Set `CORS_ORIGIN` to the frontend production URL
+- [ ] Run `npm run build` then `npm run start`
 
-- [ ] Update `VITE_API_URL` in `.env.production` to your API domain
-- [ ] Run `npm run build` to create optimized build
-- [ ] Deploy `dist/` folder to hosting platform
-- [ ] Ensure CORS is properly configured on backend
+### Frontend checklist
+
+- [ ] Verify `vite.config.ts` proxy is not used in production (Render rewrites handle `/api`)
+- [ ] Run `npm run build`
+- [ ] Deploy the `dist/` folder
 
 ---
 
 ## Troubleshooting
 
-### Backend won't start
-
+**Port already in use**
 ```bash
-# Check if port 5000 is in use
-# Clear database and start fresh
-rm server/data/portfolio.db
-npm run migrate
+# Kill process on port 5000
+npx kill-port 5000
 ```
 
-### CORS errors in frontend
+**Database connection error**
+- Verify `DATABASE_URL` in `server/.env`
+- Ensure Supabase project is active and connection string is correct
 
-- Check `VITE_API_URL` in `Portfolio/app/.env.local`
-- Ensure backend `.env` has correct `CORS_ORIGIN`
-- Make sure both servers are running
+**CORS errors in browser**
+- Verify `CORS_ORIGIN` in `server/.env` matches the frontend URL exactly (no trailing slash)
 
-### API returns 401 Unauthorized
+**Session lost after restart**
+- Sessions are persisted in PostgreSQL — verify the `session` table was created by `npm run migrate`
 
-- Check if admin session is valid
-- Try logging in again with: `npm run init-admin`
-
-### Database migration fails
-
-- Delete `server/data/portfolio.db`
-- Run: `npm run migrate`
-- Run: `npm run seed` for sample data
-
-See **QUICK_START.md** for more troubleshooting.
-
----
-
-## Support
-
-All documentation is available in this repository:
-
-- **Getting started?** → Read `QUICK_START.md`
-- **Need overview?** → Read `EXECUTIVE_SUMMARY.md`
-- **Stuck?** → Check troubleshooting in `QUICK_START.md`
-- **API questions?** → See `server/README.md`
-- **Need frontend help?** → See `INTEGRATION_GUIDE.md`
-
----
-
-## Verification Checklist
-
-- Backend server created and documented
-- Frontend API integration complete
-- Database configured with migrations
-- Authentication system implemented
-- All CRUD operations working
-- Security measures in place
-- Comprehensive documentation included
-- Both servers run successfully
-- API data flows to frontend
-- Ready for production deployment
-
----
-
-## Next Steps
-
-### Immediate (Now)
-
-1. Run `start-production.bat` or `./start-production.sh`
-2. Open http://localhost:5173 in browser
-3. Verify data loads from backend
-
-### Short-term (Today)
-
-- [ ] Test all frontend sections
-- [ ] Test admin login functionality
-- [ ] Review API responses in browser DevTools
-
-### Medium-term (This Week)
-
-- [ ] Deploy backend to production server
-- [ ] Deploy frontend to hosting platform
-- [ ] Set up monitoring and backups
-- [ ] Update production environment variables
+**Admin login fails**
+- Re-run `npm run init-admin` to reset credentials
 
 ---
 
 ## License
 
-Created for Portfolio Application
+MIT — Created by Seth N. AKPLOGAN
 
 ---
 
-## Status
-
-```
- Implementation Complete
- Integration Complete
- Testing Ready
- Production Ready
- Ready to Deploy
-```
-
-**Last Updated**: 2026-06-29
-**Status**: Production Ready
-**Version**: 1.0.0
-
----
-
-**Run `start-production.bat` or `./start-production.sh` to start both servers now!** 
+**Last Updated**: 2026-07-22
+**Status**: Production Ready — v2.0.0
