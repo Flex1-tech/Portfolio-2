@@ -93,7 +93,7 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
  </span>
 
  <div className="project-animate mt-6">
- <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#737373] mb-2">
+ <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#A3A3A3] mb-2">
  PROBLEM
  </p>
  <div className="text-[15px] leading-relaxed text-[#CFCFCF] markdown-content">
@@ -110,7 +110,7 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
  </div>
 
  <div className="project-animate mt-5">
- <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#737373] mb-2">
+ <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#A3A3A3] mb-2">
  SOLUTION
  </p>
  <div className="text-[15px] leading-relaxed text-[#CFCFCF] markdown-content">
@@ -130,7 +130,7 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
  {(Array.isArray(project.tech) ? project.tech : []).map((t) => (
  <span
  key={t}
- className="font-mono text-[11px] text-[#737373] border border-[#1E1E1E] px-3 py-1.5"
+ className="font-mono text-[11px] text-[#A3A3A3] border border-[#1E1E1E] px-3 py-1.5"
  >
  {t}
  </span>
