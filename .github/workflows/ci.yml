@@ -55,14 +55,8 @@ jobs:
         # Fails if TypeScript compilation errors exist
 
       # ── Tests ──────────────────────────────────────────────────────────────
-      # Note: Integration tests that connect to Supabase are skipped in CI
-      # (no live database available). Only unit tests run here.
-      # Full integration test suite can be run locally with: npm test
-      - name: Run backend unit tests
+      - name: Run backend test suite
         working-directory: server
         run: npm test -- --reporter=verbose
         env:
           NODE_ENV: test
-          # No DATABASE_URL set intentionally — unit tests must be DB-free.
-          # Integration tests (api.test.ts) will be skipped automatically
-          # when the DB connection cannot be established.
