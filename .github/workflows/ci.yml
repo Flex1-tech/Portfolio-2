@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+
+    steps:
+      # ── Checkout ───────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── Node.js setup ──────────────────────────────────────────────────────
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: |
+            Portfolio/app/package-lock.json
+            server/package-lock.json
+
+      # ────────────────────────────────────────────────────────────────────────
+      # FRONTEND
+      # ────────────────────────────────────────────────────────────────────────
+      - name: Install frontend dependencies
+        working-directory: Portfolio/app
+        run: npm ci
+
+      - name: Build frontend (TypeScript + Vite)
+        working-directory: Portfolio/app
+        run: npm run build
+        # Fails if TypeScript errors or Vite bundling errors exist
+
+      # ────────────────────────────────────────────────────────────────────────
+      # BACKEND
+      # ────────────────────────────────────────────────────────────────────────
+      - name: Install backend dependencies
+        working-directory: server
+        run: npm ci
+
+      - name: Build backend (TypeScript)
+        working-directory: server
+        run: npm run build
+        # Fails if TypeScript compilation errors exist
+
+      # ── Tests ──────────────────────────────────────────────────────────────
+      # Note: Integration tests that connect to Supabase are skipped in CI
+      # (no live database available). Only unit tests run here.
+      # Full integration test suite can be run locally with: npm test
+      - name: Run backend unit tests
+        working-directory: server
+        run: npm test -- --reporter=verbose
+        env:
+          NODE_ENV: test
+          # No DATABASE_URL set intentionally — unit tests must be DB-free.
+          # Integration tests (api.test.ts) will be skipped automatically
+          # when the DB connection cannot be established.
