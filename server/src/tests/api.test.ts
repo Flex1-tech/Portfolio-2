@@ -25,10 +25,19 @@ describe("Public API Integration Tests", () => {
     expect(Array.isArray(res.body.data)).toBe(true);
   });
 
-  it("GET /api/certifications - should return list of certifications", async () => {
-    const res = await request(app).get("/api/certifications");
+  it("GET /llms.txt - should return text/plain LLMs summary", async () => {
+    const res = await request(app).get("/llms.txt");
     expect(res.status).toBe(200);
-    expect(res.body.success).toBe(true);
-    expect(Array.isArray(res.body.data)).toBe(true);
+    expect(res.headers["content-type"]).toContain("text/plain");
+    expect(res.text).toContain("Seth N. AKPLOGAN");
+    expect(res.text).toContain("## About");
+  });
+
+  it("GET /llms-full.txt - should return text/plain full LLMs dataset", async () => {
+    const res = await request(app).get("/llms-full.txt");
+    expect(res.status).toBe(200);
+    expect(res.headers["content-type"]).toContain("text/plain");
+    expect(res.text).toContain("Seth N. AKPLOGAN");
+    expect(res.text).toContain("## PROFILE");
   });
 });

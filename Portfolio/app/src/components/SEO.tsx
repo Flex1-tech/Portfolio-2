@@ -34,6 +34,7 @@ export default function SEO({
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
       <link rel="canonical" href={currentUrl} />
+      <link rel="alternate" type="text/plain" href="/llms.txt" title="LLMs.txt" />
 
       {/* Open Graph Tags */}
       <meta property="og:title" content={fullTitle} />

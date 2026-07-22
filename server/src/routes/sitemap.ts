@@ -22,6 +22,8 @@ router.get("/sitemap.xml", async (req: Request, res: Response): Promise<void> =>
     const staticPages: SitemapPage[] = [
       { url: "/", changefreq: "weekly", priority: 1.0 },
       { url: "/articles", changefreq: "daily", priority: 0.8 },
+      { url: "/llms.txt", changefreq: "weekly", priority: 0.6 },
+      { url: "/llms-full.txt", changefreq: "weekly", priority: 0.5 },
     ];
 
     const articlePages: SitemapPage[] = articles.map((article) => {

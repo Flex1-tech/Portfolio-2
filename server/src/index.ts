@@ -18,6 +18,8 @@ import apiRoutes from "./routes/api.js";
 import adminAuthRoutes from "./routes/admin-auth.js";
 import adminCrudRoutes from "./routes/admin-crud.js";
 import { AdminUserModel } from "./models/AdminUserModel.js";
+import sitemapRoutes from "./routes/sitemap.js";
+import llmsRoutes from "./routes/llms.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -34,30 +36,30 @@ app.set("trust proxy", 1);
 
 // Initialize database and auto-seed admin
 async function initializeApp() {
- await initializeDatabase();
+  await initializeDatabase();
 
- // Auto-seed admin if table is empty (Crucial for Render Free Tier)
- try {
- const adminExists = (await AdminUserModel.getAll()).length > 0;
+  // Auto-seed admin if table is empty (Crucial for Render Free Tier)
+  try {
+    const adminExists = (await AdminUserModel.getAll()).length > 0;
 
- if (!adminExists) {
- console.log(" Admin table is empty. Attempting to auto-seed first admin...");
- const defaultUsername = process.env.ADMIN_USERNAME || "admin";
- const defaultPassword = process.env.ADMIN_PASSWORD;
- const defaultEmail = process.env.ADMIN_EMAIL || undefined;
+    if (!adminExists) {
+      console.log(" Admin table is empty. Attempting to auto-seed first admin...");
+      const defaultUsername = process.env.ADMIN_USERNAME || "admin";
+      const defaultPassword = process.env.ADMIN_PASSWORD;
+      const defaultEmail = process.env.ADMIN_EMAIL || undefined;
 
- if (defaultPassword && defaultPassword.length >= 8) {
- if (!(await AdminUserModel.usernameExists(defaultUsername))) {
- await AdminUserModel.create(defaultUsername, defaultPassword, defaultEmail);
- console.log(` Successfully created default admin: ${defaultUsername}`);
- }
- } else {
- console.warn("️ Admin table is empty but ADMIN_PASSWORD is not set or too short in Render environment variables!");
- }
- }
- } catch (seedError) {
- console.error(" Failed to auto-seed admin user:", seedError);
- }
+      if (defaultPassword && defaultPassword.length >= 8) {
+        if (!(await AdminUserModel.usernameExists(defaultUsername))) {
+          await AdminUserModel.create(defaultUsername, defaultPassword, defaultEmail);
+          console.log(` Successfully created default admin: ${defaultUsername}`);
+        }
+      } else {
+        console.warn("️ Admin table is empty but ADMIN_PASSWORD is not set or too short in Render environment variables!");
+      }
+    }
+  } catch (seedError) {
+    console.error(" Failed to auto-seed admin user:", seedError);
+  }
 }
 
 initializeApp();
@@ -67,34 +69,34 @@ app.use(helmet());
 
 // CORS configuration
 app.use(
- cors({
- origin: process.env.CORS_ORIGIN?.split(",") || [
- "http://localhost:5173",
- "https://seth-akplogan.onrender.com",
- ],
- credentials: true,
- methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
- allowedHeaders: ["Content-Type", "Authorization"],
- }),
+  cors({
+    origin: process.env.CORS_ORIGIN?.split(",") || [
+      "http://localhost:5173",
+      "https://seth-akplogan.onrender.com",
+    ],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
 );
 
 // Session configuration using PostgreSQL store
 app.use(
- session({
- store: new PgStore({
- pool,
- createTableIfMissing: true,
- }),
- secret: process.env.SESSION_SECRET || "dev-secret",
- resave: false,
- saveUninitialized: false,
- cookie: {
- secure: NODE_ENV === "production",
- httpOnly: true,
- maxAge: 24 * 60 * 60 * 1000, // 24 hours
- sameSite: NODE_ENV === "production" ? ("none" as const) : ("strict" as const),
- },
- }),
+  session({
+    store: new PgStore({
+      pool,
+      createTableIfMissing: true,
+    }),
+    secret: process.env.SESSION_SECRET || "dev-secret",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: NODE_ENV === "production",
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      sameSite: NODE_ENV === "production" ? ("none" as const) : ("strict" as const),
+    },
+  }),
 );
 
 // Body parsers
@@ -111,19 +113,20 @@ app.use(morgan(NODE_ENV === "production" ? "combined" : "dev"));
 // Routes
 // ============================================================================
 
-import sitemapRoutes from "./routes/sitemap.js";
-
 // Health check
 app.get("/health", (req: Request, res: Response) => {
- res.json({
- success: true,
- message: "Server is running",
- timestamp: new Date().toISOString(),
- });
+  res.json({
+    success: true,
+    message: "Server is running",
+    timestamp: new Date().toISOString(),
+  });
 });
 
 // Dynamic sitemap
 app.use("/", sitemapRoutes);
+
+// LLMs.txt — AI-readable portfolio data (llmstxt.org standard)
+app.use("/", llmsRoutes);
 
 // Public API routes
 app.use("/api", apiRoutes);
@@ -152,7 +155,7 @@ if (process.env.NODE_ENV !== "test") {
   app.listen(PORT, () => {
     console.log(`
 ╔════════════════════════════════════════╗
-║ Portfolio Backend Server Running ║
+║ Portfolio Backend Server Running       ║
 ╠════════════════════════════════════════╣
 ║ Environment: ${NODE_ENV.padEnd(27)}║
 ║ Port: ${String(PORT).padEnd(36)}║
@@ -169,6 +172,7 @@ if (process.env.NODE_ENV !== "test") {
       console.log(
         " Admin CRUD: POST/GET/PUT/DELETE /admin/projects|events|certifications",
       );
+      console.log(" LLMs.txt: GET /llms.txt, /llms-full.txt");
       console.log("");
     }
   });
