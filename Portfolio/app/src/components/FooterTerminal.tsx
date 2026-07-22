@@ -54,7 +54,7 @@ export default function FooterTerminal() {
       case 'projects':
         response = (
           <div className="space-y-1 text-xs">
-            <p className="text-[#F5F5F5]">🚀 Projets Phares :</p>
+            <p className="text-[#F5F5F5]">Projets Phares :</p>
             <p>• <span className="text-[#2F8F8F]">MusiCNN & ONNX</span> : Moteur de recommandation musicale basé sur l'IA</p>
             <p>• <span className="text-[#2F8F8F]">Secure 2FA Engine</span> : Authentification multicanal haute sécurité</p>
             <p>• <span className="text-[#2F8F8F]">Carpool Platform</span> : Solution de mobilité intelligente</p>
@@ -65,7 +65,7 @@ export default function FooterTerminal() {
       case 'skills':
         response = (
           <div className="space-y-1 text-xs">
-            <p className="text-[#F5F5F5]">🧠 Stack Technique :</p>
+            <p className="text-[#F5F5F5]">Stack Technique :</p>
             <p><span className="text-[#A3A3A3]">AI / Data</span>: Python, PyTorch, Scikit-Learn, Pandas, ONNX, OpenCV</p>
             <p><span className="text-[#A3A3A3]">Backend</span>: Node.js, Express, TypeScript, PostgreSQL, Supabase, SQLite</p>
             <p><span className="text-[#A3A3A3]">Frontend</span>: React 19, TypeScript, Vite, Tailwind CSS, GSAP</p>
@@ -85,9 +85,9 @@ export default function FooterTerminal() {
       case 'contact':
         response = (
           <div className="space-y-1 text-xs">
-            <p>📧 Email : <a href="mailto:sethakplogan@gmail.com" className="text-[#B5423F] hover:underline">sethakplogan@gmail.com</a></p>
-            <p>💼 LinkedIn : <a href="https://linkedin.com/in/seth-akplogan" target="_blank" rel="noreferrer" className="text-[#B5423F] hover:underline">linkedin.com/in/seth-akplogan</a></p>
-            <p>🐙 GitHub : <a href="https://github.com/Flex1-tech" target="_blank" rel="noreferrer" className="text-[#B5423F] hover:underline">github.com/Flex1-tech</a></p>
+            <p>Email : <a href="mailto:sethakplogan@gmail.com" className="text-[#B5423F] hover:underline">sethakplogan@gmail.com</a></p>
+            <p>LinkedIn : <a href="https://linkedin.com/in/seth-akplogan" target="_blank" rel="noreferrer" className="text-[#B5423F] hover:underline">linkedin.com/in/seth-akplogan</a></p>
+            <p>GitHub : <a href="https://github.com/Flex1-tech" target="_blank" rel="noreferrer" className="text-[#B5423F] hover:underline">github.com/Flex1-tech</a></p>
           </div>
         );
         break;
