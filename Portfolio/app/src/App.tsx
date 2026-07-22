@@ -15,6 +15,8 @@ import CommunitySection from '@/sections/CommunitySection';
 import ContactSection from '@/sections/ContactSection';
 import AdminLogin from '@/pages/admin/AdminLogin';
 import AdminDashboard from '@/pages/admin/AdminDashboard';
+import Articles from '@/pages/Articles';
+import ArticleDetail from '@/pages/ArticleDetail';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -87,6 +89,8 @@ export default function App() {
  <AppContent />
  </SmoothScrollProvider>
  } />
+ <Route path="/articles" element={<Articles />} />
+ <Route path="/articles/:slug" element={<ArticleDetail />} />
  <Route path="/admin/login" element={<AdminLogin />} />
  <Route path="/admin/dashboard" element={<AdminDashboard />} />
  <Route path="*" element={<Navigate to="/" replace />} />

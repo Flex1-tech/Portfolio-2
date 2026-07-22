@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useActiveSection } from '@/context/ActiveSectionContext';
-import { getProfile } from '@/services/api';
+import { getProfile, getArticles } from '@/services/api';
+import { Link } from 'react-router';
 
 const NAV_LINKS = [
   { label: 'About', href: '#about' },
@@ -13,12 +14,21 @@ export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [username, setUsername] = useState('Seth N. AKPLOGAN');
+  const [hasArticles, setHasArticles] = useState(false);
   const { activeSection } = useActiveSection();
 
   useEffect(() => {
     getProfile()
       .then((data) => {
         if (data.username) setUsername(data.username);
+      })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    getArticles()
+      .then((articles) => {
+        setHasArticles(articles.length > 0);
       })
       .catch(() => {});
   }, []);
@@ -95,6 +105,14 @@ export default function Navigation() {
  </button>
  );
  })}
+ {hasArticles && (
+ <Link
+ to="/articles"
+ className="text-[13px] font-body tracking-[0.06em] text-[#CFCFCF] hover:text-[#F5F5F5] transition-colors duration-200"
+ >
+ Articles
+ </Link>
+ )}
  </div>
 
  {/* Mobile hamburger */}
@@ -146,6 +164,19 @@ export default function Navigation() {
  {link.label}
  </button>
  ))}
+ {hasArticles && (
+ <Link
+ to="/articles"
+ onClick={() => setIsMenuOpen(false)}
+ className="font-display text-4xl text-[#F5F5F5] hover:text-[#B5423F] transition-colors"
+ style={{
+ animation: `fadeInUp 0.4s ease ${NAV_LINKS.length * 0.08}s forwards`,
+ opacity: 0,
+ }}
+ >
+ Articles
+ </Link>
+ )}
  <style>{`
  @keyframes fadeIn {
  from { opacity: 0; }

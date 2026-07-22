@@ -7,6 +7,7 @@ import { Router, Request, Response } from "express";
 import { ProjectModel } from "../models/ProjectModel.js";
 import { EventModel } from "../models/EventModel.js";
 import { CertificationModel } from "../models/CertificationModel.js";
+import { ArticleModel } from "../models/ArticleModel.js";
 import { ProfileModel } from "../models/ProfileModel.js";
 import { validateQuery } from "../middleware/index.js";
 import { paginationSchema } from "../schemas/validation.js";
@@ -254,6 +255,78 @@ router.get("/certifications/:id", async (req: Request, res: Response): Promise<v
  res.status(500).json({
  success: false,
  message: "Failed to fetch certification",
+ });
+ }
+});
+
+/**
+ * GET /api/articles - Get all published articles
+ */
+router.get("/articles", async (req: Request, res: Response): Promise<void> => {
+ try {
+ const articles = await ArticleModel.getPublished();
+ res.json({
+ success: true,
+ data: articles,
+ });
+ } catch (error) {
+ console.error("Error fetching articles:", error);
+ res.status(500).json({
+ success: false,
+ message: "Failed to fetch articles",
+ });
+ }
+});
+
+/**
+ * GET /api/articles/paginated - Get paginated articles with search
+ */
+router.get(
+ "/articles/paginated",
+ validateQuery(paginationSchema),
+ async (req: Request, res: Response): Promise<void> => {
+ try {
+ const { page = 1, limit = 10, search } = req.query as any;
+ const result = await ArticleModel.getPaginated(page, limit, search, 'published');
+ res.json({
+ success: true,
+ data: result,
+ });
+ } catch (error) {
+ console.error("Error fetching paginated articles:", error);
+ res.status(500).json({
+ success: false,
+ message: "Failed to fetch articles",
+ });
+ }
+ },
+);
+
+/**
+ * GET /api/articles/:slug - Get article by slug
+ */
+router.get("/articles/:slug", async (req: Request, res: Response): Promise<void> => {
+ try {
+ const { slug } = req.params;
+ const article = await ArticleModel.getPublishedBySlug(slug);
+
+ if (!article) {
+ res.status(404).json({
+ success: false,
+ message: "Article not found",
+ });
+ return;
+ }
+
+ res.json({
+ success: true,
+ data: article,
+ });
+ } catch (error) {
+ console.error("Error fetching article:", error);
+ res.status(500).json({
+ success: false,
+ message: "Failed to fetch article",
  });
  }
 });

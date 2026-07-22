@@ -84,6 +84,25 @@ export async function initializeDatabase(): Promise<void> {
  )
  `);
 
+ // Create articles table
+ await pool.query(`
+ CREATE TABLE IF NOT EXISTS articles (
+ id SERIAL PRIMARY KEY,
+ title TEXT NOT NULL,
+ slug TEXT UNIQUE NOT NULL,
+ summary TEXT NOT NULL,
+ content TEXT NOT NULL,
+ image_url TEXT,
+ image_alt TEXT,
+ published_at TIMESTAMP,
+ order_index INTEGER DEFAULT 0,
+ seo_title TEXT,
+ seo_description TEXT,
+ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+ )
+ `);
+
  // Create profile_settings key-value table
  await pool.query(`
  CREATE TABLE IF NOT EXISTS profile_settings (

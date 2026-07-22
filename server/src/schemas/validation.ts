@@ -71,6 +71,30 @@ export const createCertificationSchema = z.object({
 
 export const updateCertificationSchema = createCertificationSchema.partial();
 
+// Article schemas
+export const createArticleSchema = z.object({
+  title: z.string().min(3, "Title must be at least 3 characters").max(255),
+  slug: z
+    .string()
+    .regex(
+      /^[a-z0-9-]+$/,
+      "Slug must contain only lowercase letters, numbers, and hyphens",
+    ),
+  summary: z.string().min(10, "Summary must be at least 10 characters").max(500),
+  content: z.string().min(50, "Content must be at least 50 characters"),
+  image_url: emptyToNull,
+  image_alt: z.string().max(255).optional(),
+  published_at: z.preprocess(
+    (val) => (val === "" ? null : val),
+    z.string().datetime().optional().nullable()
+  ),
+  order_index: z.coerce.number().int().default(0),
+  seo_title: z.string().max(255).optional(),
+  seo_description: z.string().max(500).optional(),
+});
+
+export const updateArticleSchema = createArticleSchema.partial();
+
 // Authentication schemas
 export const loginSchema = z.object({
  username: z.string().min(3),
@@ -104,6 +128,8 @@ export type CreateEvent = z.infer<typeof createEventSchema>;
 export type UpdateEvent = z.infer<typeof updateEventSchema>;
 export type CreateCertification = z.infer<typeof createCertificationSchema>;
 export type UpdateCertification = z.infer<typeof updateCertificationSchema>;
+export type CreateArticle = z.infer<typeof createArticleSchema>;
+export type UpdateArticle = z.infer<typeof updateArticleSchema>;
 export type LoginCredentials = z.infer<typeof loginSchema>;
 export type ChangePasswordData = z.infer<typeof changePasswordSchema>;
 export type PaginationParams = z.infer<typeof paginationSchema>;

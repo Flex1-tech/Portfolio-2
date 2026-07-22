@@ -53,6 +53,22 @@ export interface AdminUser {
  updated_at?: string;
 }
 
+export interface Article {
+ id?: number;
+ title: string;
+ slug: string;
+ summary: string;
+ content: string;
+ image_url?: string;
+ image_alt?: string;
+ published_at?: string;
+ order_index?: number;
+ seo_title?: string;
+ seo_description?: string;
+ created_at?: string;
+ updated_at?: string;
+}
+
 export interface SessionData {
  userId: number;
  username: string;

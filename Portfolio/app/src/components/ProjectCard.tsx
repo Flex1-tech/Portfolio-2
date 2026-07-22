@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type { Project } from '@/types';
+import ReactMarkdown from 'react-markdown';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -95,14 +96,34 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
  <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#737373] mb-2">
  PROBLEM
  </p>
- <p className="text-[15px] leading-relaxed text-[#CFCFCF]">{project.problem}</p>
+ <div className="text-[15px] leading-relaxed text-[#CFCFCF] markdown-content">
+  <ReactMarkdown
+   components={{
+    a: ({ node, ...props }) => (
+     <a target="_blank" rel="noopener noreferrer" {...props} />
+    )
+   }}
+  >
+   {project.problem}
+  </ReactMarkdown>
+ </div>
  </div>
 
  <div className="project-animate mt-5">
  <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#737373] mb-2">
  SOLUTION
  </p>
- <p className="text-[15px] leading-relaxed text-[#CFCFCF]">{project.solution}</p>
+ <div className="text-[15px] leading-relaxed text-[#CFCFCF] markdown-content">
+  <ReactMarkdown
+   components={{
+    a: ({ node, ...props }) => (
+     <a target="_blank" rel="noopener noreferrer" {...props} />
+    )
+   }}
+  >
+   {project.solution}
+  </ReactMarkdown>
+ </div>
  </div>
 
  <div className="project-animate flex flex-wrap gap-2 mt-5">

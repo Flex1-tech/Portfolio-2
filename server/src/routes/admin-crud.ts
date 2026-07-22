@@ -7,6 +7,7 @@ import rateLimit from "express-rate-limit";
 import { ProjectModel } from "../models/ProjectModel.js";
 import { EventModel } from "../models/EventModel.js";
 import { CertificationModel } from "../models/CertificationModel.js";
+import { ArticleModel } from "../models/ArticleModel.js";
 import { ProfileModel } from "../models/ProfileModel.js";
 import { AdminUserModel } from "../models/AdminUserModel.js";
 import { pool } from "../config/database.js";
@@ -18,6 +19,8 @@ import {
  updateEventSchema,
  createCertificationSchema,
  updateCertificationSchema,
+  createArticleSchema,
+  updateArticleSchema,
 } from "../schemas/validation.js";
 import {
  validate,
@@ -566,7 +569,7 @@ router.post(
  * Body: { resource: 'projects'|'events'|'certifications', orders: [{id, order_index}] }
  */
 router.post("/reorder", async (req: Request, res: Response): Promise<void> => {
-  const ALLOWED = ["projects", "events", "certifications"];
+  const ALLOWED = ["projects", "events", "certifications", "articles"];
   const { resource, orders } = req.body;
 
   if (!ALLOWED.includes(resource)) {
@@ -673,6 +676,150 @@ router.delete("/users/:id", async (req: Request, res: Response): Promise<void> =
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: "Failed to delete admin" });
+  }
+});
+
+
+
+// ============================================================================
+// ARTICLES CRUD
+// ============================================================================
+
+/**
+ * GET /admin-api/articles - Get all articles (including drafts)
+ */
+router.get("/articles", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const articles = await ArticleModel.getAll();
+    res.json({ success: true, data: articles });
+  } catch (error) {
+    console.error("Error fetching articles:", error);
+    res.status(500).json({ success: false, message: "Failed to fetch articles" });
+  }
+});
+
+/**
+ * POST /admin-api/articles - Create a new article
+ */
+router.post(
+  "/articles",
+  uploadSingle("image"),
+  validate(createArticleSchema),
+  async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { title, slug, summary, content, image_alt, published_at, order_index, seo_title, seo_description } = req.body as any;
+      const image_url = (req as any).file?.path || req.body.image_url;
+
+      // Check if slug is unique
+      const isUnique = await ArticleModel.isSlugUnique(slug);
+      if (!isUnique) {
+        res.status(409).json({ success: false, message: "Slug already exists" });
+        return;
+      }
+
+      const article = await ArticleModel.create({
+        title,
+        slug,
+        summary,
+        content,
+        image_url,
+        image_alt,
+        published_at: published_at || null,
+        order_index: order_index || 0,
+        seo_title,
+        seo_description,
+      });
+
+      res.status(201).json({ success: true, data: article });
+    } catch (error) {
+      console.error("Error creating article:", error);
+      res.status(500).json({ success: false, message: "Failed to create article" });
+    }
+  }
+);
+
+/**
+ * PUT /admin-api/articles/:id - Update an article
+ */
+router.put(
+  "/articles/:id",
+  uploadSingle("image"),
+  validate(updateArticleSchema),
+  async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const { title, slug, summary, content, image_alt, published_at, order_index, seo_title, seo_description } = req.body as any;
+      const image_url = (req as any).file?.path || req.body.image_url;
+
+      // Check if slug is unique (excluding current article)
+      if (slug) {
+        const isUnique = await ArticleModel.isSlugUnique(slug, Number(id));
+        if (!isUnique) {
+          res.status(409).json({ success: false, message: "Slug already exists" });
+          return;
+        }
+      }
+
+      const updates: any = {};
+      if (title !== undefined) updates.title = title;
+      if (slug !== undefined) updates.slug = slug;
+      if (summary !== undefined) updates.summary = summary;
+      if (content !== undefined) updates.content = content;
+      if (image_url !== undefined) updates.image_url = image_url;
+      if (image_alt !== undefined) updates.image_alt = image_alt;
+      if (published_at !== undefined) updates.published_at = published_at || null;
+      if (order_index !== undefined) updates.order_index = order_index;
+      if (seo_title !== undefined) updates.seo_title = seo_title;
+      if (seo_description !== undefined) updates.seo_description = seo_description;
+
+      const article = await ArticleModel.update(Number(id), updates);
+      if (!article) {
+        res.status(404).json({ success: false, message: "Article not found" });
+        return;
+      }
+
+      res.json({ success: true, data: article });
+    } catch (error) {
+      console.error("Error updating article:", error);
+      res.status(500).json({ success: false, message: "Failed to update article" });
+    }
+  }
+);
+
+/**
+ * DELETE /admin-api/articles/:id - Delete an article
+ */
+router.delete("/articles/:id", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const success = await ArticleModel.delete(Number(id));
+    if (!success) {
+      res.status(404).json({ success: false, message: "Article not found" });
+      return;
+    }
+    res.json({ success: true, message: "Article deleted" });
+  } catch (error) {
+    console.error("Error deleting article:", error);
+    res.status(500).json({ success: false, message: "Failed to delete article" });
+  }
+});
+
+/**
+ * POST /admin-api/articles/reorder - Reorder articles
+ */
+router.post("/articles/reorder", async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { items } = req.body as { items: { id: number; order_index: number }[] };
+    if (!Array.isArray(items)) {
+      res.status(400).json({ success: false, message: "Invalid items array" });
+      return;
+    }
+
+    await ArticleModel.reorder(items);
+    res.json({ success: true, message: "Articles reordered" });
+  } catch (error) {
+    console.error("Error reordering articles:", error);
+    res.status(500).json({ success: false, message: "Failed to reorder articles" });
   }
 });
 

@@ -4,12 +4,12 @@ import gsap from 'gsap';
 import AdminGuard from '@/components/AdminGuard';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { adminLogout } from '@/services/api';
-import { getProjects, getEvents, getCertifications } from '@/services/api';
-import type { Project, Event, Certification } from '@/services/api';
+import { adminLogout, getProjects, getEvents, getCertifications, getAdminArticles } from '@/services/api';
+import type { Project, Event, Certification, Article } from '@/services/api';
 import ProjectsTab from '@/components/admin/ProjectsTab';
 import CertificationsTab from '@/components/admin/CertificationsTab';
 import EventsTab from '@/components/admin/EventsTab';
+import ArticlesTab from '@/components/admin/ArticlesTab';
 import ProfileTab from '@/components/admin/ProfileTab';
 import AdminsTab from '@/components/admin/AdminsTab';
 import SecurityTab from '@/components/admin/SecurityTab';
@@ -19,20 +19,23 @@ export default function AdminDashboard() {
     const [projects, setProjects] = useState<Project[]>([]);
     const [events, setEvents] = useState<Event[]>([]);
     const [certifications, setCertifications] = useState<Certification[]>([]);
+    const [articles, setArticles] = useState<Article[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         async function loadData() {
             try {
-                const [projectsData, eventsData, certsData] = await Promise.all([
+                const [projectsData, eventsData, certsData, articlesData] = await Promise.all([
                     getProjects(),
                     getEvents(),
                     getCertifications(),
+                    getAdminArticles(),
                 ]);
                 setProjects(projectsData);
                 setEvents(eventsData);
                 setCertifications(certsData);
+                setArticles(articlesData);
             } catch (error) {
                 console.error('Error loading data:', error);
             } finally {
@@ -60,21 +63,21 @@ export default function AdminDashboard() {
         navigate('/admin/login');
     };
 
+    // Silent background refresh — does NOT touch isLoading to avoid full re-render / GSAP flash
     const refreshData = async () => {
-        setIsLoading(true);
         try {
-            const [projectsData, eventsData, certsData] = await Promise.all([
+            const [projectsData, eventsData, certsData, articlesData] = await Promise.all([
                 getProjects(),
                 getEvents(),
                 getCertifications(),
+                getAdminArticles(),
             ]);
             setProjects(projectsData);
             setEvents(eventsData);
             setCertifications(certsData);
+            setArticles(articlesData);
         } catch (error) {
             console.error('Error refreshing data:', error);
-        } finally {
-            setIsLoading(false);
         }
     };
 
@@ -116,6 +119,9 @@ export default function AdminDashboard() {
                             <TabsTrigger value="events" className="data-[state=active]:bg-[#2A2A2A] text-[#F5F5F5]">
                                 Events
                             </TabsTrigger>
+                            <TabsTrigger value="articles" className="data-[state=active]:bg-[#2A2A2A] text-[#F5F5F5]">
+                                Articles
+                            </TabsTrigger>
                             <TabsTrigger value="profile" className="data-[state=active]:bg-[#2A2A2A] text-[#F5F5F5]">
                                 Profil
                             </TabsTrigger>
@@ -147,6 +153,14 @@ export default function AdminDashboard() {
                             <EventsTab
                                 events={events}
                                 setEvents={setEvents}
+                                onRefresh={refreshData}
+                            />
+                        </TabsContent>
+
+                        <TabsContent value="articles">
+                            <ArticlesTab
+                                articles={articles}
+                                setArticles={setArticles}
                                 onRefresh={refreshData}
                             />
                         </TabsContent>

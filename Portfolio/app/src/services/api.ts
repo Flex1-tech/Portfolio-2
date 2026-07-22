@@ -53,6 +53,23 @@ export interface Certification {
  updated_at: string;
 }
 
+
+export interface Article {
+ id: number;
+ title: string;
+ slug: string;
+ summary: string;
+ content: string;
+ image_url?: string;
+ image_alt?: string;
+ published_at?: string;
+ order_index?: number;
+ seo_title?: string;
+ seo_description?: string;
+ created_at: string;
+ updated_at: string;
+}
+
 export interface ApiResponse<T> {
  success: boolean;
  data?: T;
@@ -688,6 +705,127 @@ export async function deleteCertification(id: number): Promise<boolean> {
  }
 }
 
+
+// ============================================================================
+// Articles API
+// ============================================================================
+
+/** GET /api/articles - public endpoint for published articles */
+export async function getArticles(): Promise<Article[]> {
+ try {
+  const response = await fetch(`${API_URL}/api/articles`, {
+  credentials: "include",
+  });
+  if (!response.ok) return [];
+  const data: ApiResponse<Article[]> = await response.json();
+  return data.data || [];
+ } catch (error) {
+  console.error("Error fetching articles:", error);
+  return [];
+ }
+}
+
+/** GET /api/articles/paginated - paginated articles with search */
+export async function getArticlesPaginated(
+ page: number = 1,
+ limit: number = 10,
+ search?: string
+): Promise<{ articles: Article[]; total: number; page: number; pages: number }> {
+ try {
+  const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+  if (search) params.append("search", search);
+  const response = await fetch(`${API_URL}/api/articles/paginated?${params}`, {
+  credentials: "include",
+  });
+  if (!response.ok) return { articles: [], total: 0, page, pages: 0 };
+  const data: ApiResponse<{ articles: Article[]; total: number; page: number; pages: number }> = await response.json();
+  return data.data || { articles: [], total: 0, page, pages: 0 };
+ } catch (error) {
+  console.error("Error fetching paginated articles:", error);
+  return { articles: [], total: 0, page, pages: 0 };
+ }
+}
+
+/** GET /api/articles/:slug - get single article by slug */
+export async function getArticleBySlug(slug: string): Promise<Article | null> {
+ try {
+  const response = await fetch(`${API_URL}/api/articles/${slug}`, {
+  credentials: "include",
+  });
+  if (!response.ok) return null;
+  const data: ApiResponse<Article> = await response.json();
+  return data.data || null;
+ } catch (error) {
+  console.error("Error fetching article:", error);
+  return null;
+ }
+}
+
+/** GET /admin-api/articles - admin get all articles (including drafts) */
+export async function getAdminArticles(): Promise<Article[]> {
+ try {
+  const response = await fetch(`${API_URL}/admin-api/articles`, {
+  credentials: "include",
+  });
+  if (!response.ok) return [];
+  const data: ApiResponse<Article[]> = await response.json();
+  return data.data || [];
+ } catch (error) {
+  console.error("Error fetching admin articles:", error);
+  return [];
+ }
+}
+
+/** POST /admin-api/articles - create article */
+export async function createArticle(article: FormData): Promise<Article | null> {
+ try {
+  const response = await fetch(`${API_URL}/admin-api/articles`, {
+  method: "POST",
+  credentials: "include",
+  body: article,
+  });
+  if (!response.ok) throw new Error("Failed to create article");
+  const data: ApiResponse<Article> = await response.json();
+  return data.data || null;
+ } catch (error) {
+  console.error("Error creating article:", error);
+  return null;
+ }
+}
+
+/** PUT /admin-api/articles/:id - update article */
+export async function updateArticle(id: number, article: FormData): Promise<Article | null> {
+ try {
+  const response = await fetch(`${API_URL}/admin-api/articles/${id}`, {
+  method: "PUT",
+  credentials: "include",
+  body: article,
+  });
+  if (!response.ok) throw new Error("Failed to update article");
+  const data: ApiResponse<Article> = await response.json();
+  return data.data || null;
+ } catch (error) {
+  console.error("Error updating article:", error);
+  return null;
+ }
+}
+
+/** DELETE /admin-api/articles/:id - delete article */
+export async function deleteArticle(id: number): Promise<boolean> {
+ try {
+  const response = await fetch(`${API_URL}/admin-api/articles/${id}`, {
+  method: "DELETE",
+  credentials: "include",
+  });
+  if (!response.ok) throw new Error("Failed to delete article");
+  const data: ApiResponse<void> = await response.json();
+  return data.success || false;
+ } catch (error) {
+  console.error("Error deleting article:", error);
+  return false;
+ }
+}
+
 // ============================================================================
 // Profile Settings API
 // ============================================================================
@@ -732,7 +870,7 @@ export async function updateProfile(
 // ============================================================================
 
 export type ReorderPayload = { id: number; order_index: number }[];
-export type ResourceType = "projects" | "events" | "certifications";
+export type ResourceType = "projects" | "events" | "certifications" | "articles";
 
 export async function reorderItems(
   resource: ResourceType,
