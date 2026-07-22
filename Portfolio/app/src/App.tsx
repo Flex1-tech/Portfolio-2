@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import gsap from 'gsap';
@@ -7,6 +7,8 @@ import { ActiveSectionProvider, useActiveSection } from '@/context/ActiveSection
 import SmoothScrollProvider from '@/components/SmoothScrollProvider';
 import Navigation from '@/components/Navigation';
 import CustomCursor from '@/components/CustomCursor';
+import PageLoader from '@/components/PageLoader';
+// Homepage sections — statically imported to guarantee optimal FCP/LCP
 import HeroSection from '@/sections/HeroSection';
 import AboutSection from '@/sections/AboutSection';
 import SkillsSection from '@/sections/SkillsSection';
@@ -14,11 +16,16 @@ import ProjectsSection from '@/sections/ProjectsSection';
 import CertificationsSection from '@/sections/CertificationsSection';
 import CommunitySection from '@/sections/CommunitySection';
 import ContactSection from '@/sections/ContactSection';
-import AdminLogin from '@/pages/admin/AdminLogin';
-import AdminDashboard from '@/pages/admin/AdminDashboard';
-import Articles from '@/pages/Articles';
-import ArticleDetail from '@/pages/ArticleDetail';
 import SEO from '@/components/SEO';
+
+// ─── Lazy-loaded routes ────────────────────────────────────────────────────────
+// These pages are never needed for the initial homepage render.
+// Each will form its own chunk via Vite's manualChunks config.
+const AdminLogin = lazy(() => import('@/pages/admin/AdminLogin'));
+const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashboard'));
+const Articles = lazy(() => import('@/pages/Articles'));
+const ArticleDetail = lazy(() => import('@/pages/ArticleDetail'));
+
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -127,16 +134,38 @@ export default function App() {
  <BrowserRouter>
  <ActiveSectionProvider>
  <Routes>
- <Route path="/" element={
- <SmoothScrollProvider>
- <AppContent />
- </SmoothScrollProvider>
- } />
- <Route path="/articles" element={<Articles />} />
- <Route path="/articles/:slug" element={<ArticleDetail />} />
- <Route path="/admin/login" element={<AdminLogin />} />
- <Route path="/admin/dashboard" element={<AdminDashboard />} />
- <Route path="*" element={<Navigate to="/" replace />} />
+   {/* Homepage — no Suspense needed, all imports are static */}
+   <Route path="/" element={
+     <SmoothScrollProvider>
+       <AppContent />
+     </SmoothScrollProvider>
+   } />
+
+   {/* Article routes — lazy loaded (includes react-markdown chunk) */}
+   <Route path="/articles" element={
+     <Suspense fallback={<PageLoader />}>
+       <Articles />
+     </Suspense>
+   } />
+   <Route path="/articles/:slug" element={
+     <Suspense fallback={<PageLoader />}>
+       <ArticleDetail />
+     </Suspense>
+   } />
+
+   {/* Admin routes — lazy loaded (largest chunk, never visited by public) */}
+   <Route path="/admin/login" element={
+     <Suspense fallback={<PageLoader />}>
+       <AdminLogin />
+     </Suspense>
+   } />
+   <Route path="/admin/dashboard" element={
+     <Suspense fallback={<PageLoader />}>
+       <AdminDashboard />
+     </Suspense>
+   } />
+
+   <Route path="*" element={<Navigate to="/" replace />} />
  </Routes>
  </ActiveSectionProvider>
  </BrowserRouter>
