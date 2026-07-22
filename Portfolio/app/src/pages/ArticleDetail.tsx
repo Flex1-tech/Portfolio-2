@@ -1,25 +1,17 @@
-import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router';
+import { useQuery } from '@tanstack/react-query';
 import { getArticleBySlug } from '@/services/api';
-import type { Article } from '@/services/api';
 import ReactMarkdown from 'react-markdown';
 import SEO from '@/components/SEO';
 
 export default function ArticleDetail() {
   const { slug } = useParams<{ slug: string }>();
-  const [article, setArticle] = useState<Article | null>(null);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchArticle = async () => {
-      if (!slug) return;
-      setLoading(true);
-      const data = await getArticleBySlug(slug);
-      setArticle(data);
-      setLoading(false);
-    };
-    fetchArticle();
-  }, [slug]);
+  const { data: article = null, isLoading: loading } = useQuery({
+    queryKey: ['article', slug],
+    queryFn: () => getArticleBySlug(slug!),
+    enabled: !!slug,
+  });
 
   if (loading) {
     return (

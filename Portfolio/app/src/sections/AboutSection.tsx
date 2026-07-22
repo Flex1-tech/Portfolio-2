@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import SectionLabel from '@/components/SectionLabel';
 import SectionHeading from '@/components/SectionHeading';
 import { getProfile } from '@/services/api';
-import type { ProfileSettings } from '@/services/api';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -12,11 +12,11 @@ export default function AboutSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const [profile, setProfile] = useState<ProfileSettings>({});
 
-  useEffect(() => {
-    getProfile().then(setProfile).catch(() => {});
-  }, []);
+  const { data: profile = {} } = useQuery({
+    queryKey: ['profile'],
+    queryFn: getProfile,
+  });
 
   useEffect(() => {
     const section = sectionRef.current;

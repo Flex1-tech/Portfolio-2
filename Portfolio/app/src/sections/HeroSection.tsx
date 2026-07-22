@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import gsap from 'gsap';
 import AsciiCanvas from '@/components/AsciiCanvas';
 import ScrollIndicator from '@/components/ScrollIndicator';
 import { getProfile } from '@/services/api';
-import type { ProfileSettings } from '@/services/api';
 import { downloadCV } from '@/lib/downloadCV';
 
 export default function HeroSection() {
@@ -13,12 +13,12 @@ export default function HeroSection() {
   const punchlineRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const labelRef = useRef<HTMLParagraphElement>(null);
-  const [profile, setProfile] = useState<ProfileSettings>({});
   const animatedUsernameRef = useRef<string | null>(null);
 
-  useEffect(() => {
-    getProfile().then(setProfile).catch(() => {});
-  }, []);
+  const { data: profile = {} } = useQuery({
+    queryKey: ['profile'],
+    queryFn: getProfile,
+  });
 
   useEffect(() => {
     const username = profile.username || 'Seth N. AKPLOGAN';

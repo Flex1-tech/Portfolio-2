@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ActiveSectionProvider, useActiveSection } from '@/context/ActiveSectionContext';
@@ -111,8 +112,18 @@ function AppContent() {
  );
 }
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes cache
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
 export default function App() {
  return (
+ <QueryClientProvider client={queryClient}>
  <BrowserRouter>
  <ActiveSectionProvider>
  <Routes>
@@ -129,5 +140,6 @@ export default function App() {
  </Routes>
  </ActiveSectionProvider>
  </BrowserRouter>
+ </QueryClientProvider>
  );
 }

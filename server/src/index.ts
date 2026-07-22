@@ -111,6 +111,8 @@ app.use(morgan(NODE_ENV === "production" ? "combined" : "dev"));
 // Routes
 // ============================================================================
 
+import sitemapRoutes from "./routes/sitemap.js";
+
 // Health check
 app.get("/health", (req: Request, res: Response) => {
  res.json({
@@ -119,6 +121,9 @@ app.get("/health", (req: Request, res: Response) => {
  timestamp: new Date().toISOString(),
  });
 });
+
+// Dynamic sitemap
+app.use("/", sitemapRoutes);
 
 // Public API routes
 app.use("/api", apiRoutes);

@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import { useQuery } from "@tanstack/react-query";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SectionLabel from "@/components/SectionLabel";
@@ -12,44 +13,30 @@ gsap.registerPlugin(ScrollTrigger);
 export default function ProjectsSection() {
  const sectionRef = useRef<HTMLElement>(null);
  const introRef = useRef<HTMLParagraphElement>(null);
- const [projects, setProjects] = useState<Project[]>([]);
- const [loading, setLoading] = useState(true);
 
- useEffect(() => {
- const fetchProjects = async () => {
- try {
- const data = await getProjects();
- 
- // Sort projects by order_index ascending
- const sortedData = [...data].sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0));
-
- // Transform backend data to frontend format
- const staticSlugs = ["2fa", "carpool", "mllib", "music"];
- const transformedProjects: Project[] = sortedData.map((project, index) => {
-   const hasStaticImage = staticSlugs.includes(project.slug);
-   const imagePath = project.image_url || (hasStaticImage ? `/images/projects/${project.slug}.jpg` : "");
-   return {
-     number: String(index + 1).padStart(2, "0"),
-     title: project.title,
-     status: project.status === "in_progress" ? "in-progress" : "completed",
-     problem: project.core_problem,
-     solution: project.technical_solution,
-     tech: project.tech_stack,
-     githubUrl: project.github_link,
-     demoUrl: project.live_demo_link,
-     image: imagePath || undefined,
-   };
+ const { data: projects = [], isLoading: loading } = useQuery({
+   queryKey: ["projects"],
+   queryFn: async () => {
+     const data = await getProjects();
+     const sortedData = [...data].sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0));
+     const staticSlugs = ["2fa", "carpool", "mllib", "music"];
+     return sortedData.map((project, index): Project => {
+       const hasStaticImage = staticSlugs.includes(project.slug);
+       const imagePath = project.image_url || (hasStaticImage ? `/images/projects/${project.slug}.jpg` : "");
+       return {
+         number: String(index + 1).padStart(2, "0"),
+         title: project.title,
+         status: project.status === "in_progress" ? "in-progress" : "completed",
+         problem: project.core_problem,
+         solution: project.technical_solution,
+         tech: project.tech_stack,
+         githubUrl: project.github_link,
+         demoUrl: project.live_demo_link,
+         image: imagePath || undefined,
+       };
+     });
+   },
  });
- setProjects(transformedProjects);
- } catch (error) {
- console.error("Failed to fetch projects:", error);
- } finally {
- setLoading(false);
- }
- };
-
- fetchProjects();
- }, []);
 
  useEffect(() => {
  const intro = introRef.current;

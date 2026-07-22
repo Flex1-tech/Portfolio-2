@@ -1,22 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { getArticles } from '@/services/api';
-import type { Article } from '@/services/api';
 import { Link } from 'react-router';
 import SEO from '@/components/SEO';
 
 export default function Articles() {
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchArticles = async () => {
-      setLoading(true);
-      const data = await getArticles();
-      setArticles(data);
-      setLoading(false);
-    };
-    fetchArticles();
-  }, []);
+  const { data: articles = [], isLoading: loading } = useQuery({
+    queryKey: ['articles'],
+    queryFn: getArticles,
+  });
 
   if (loading) {
     return (
