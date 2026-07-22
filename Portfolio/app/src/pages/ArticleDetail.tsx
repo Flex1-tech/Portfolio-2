@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getArticleBySlug } from '@/services/api';
 import ReactMarkdown from 'react-markdown';
 import SEO from '@/components/SEO';
+import { getArticleHeroImage } from '@/lib/cloudinary';
 
 export default function ArticleDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -76,8 +77,10 @@ export default function ArticleDetail() {
         {article.image_url && (
           <div className="w-full h-64 md:h-96 overflow-hidden rounded-lg mb-8">
             <img
-              src={article.image_url}
+              src={getArticleHeroImage(article.image_url)}
               alt={article.image_alt || article.title}
+              loading="eager"
+              decoding="async"
               className="w-full h-full object-cover"
             />
           </div>

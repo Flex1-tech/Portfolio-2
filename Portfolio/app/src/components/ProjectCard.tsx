@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type { Project } from '@/types';
 import ReactMarkdown from 'react-markdown';
+import { getProjectThumbnail } from '@/lib/cloudinary';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -169,9 +170,10 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
  }`}
  >
  <img
- src={project.image}
+ src={getProjectThumbnail(project.image)}
  alt={project.title}
  loading="lazy"
+ decoding="async"
  className="w-full h-full object-cover aspect-[16/10] hover:scale-[1.03] transition-transform duration-600"
  />
  </div>

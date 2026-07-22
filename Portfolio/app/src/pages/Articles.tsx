@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getArticles } from '@/services/api';
 import { Link } from 'react-router';
 import SEO from '@/components/SEO';
+import { getArticleThumbnail } from '@/lib/cloudinary';
 
 export default function Articles() {
   const { data: articles = [], isLoading: loading } = useQuery({
@@ -44,8 +45,10 @@ export default function Articles() {
               {article.image_url && (
                 <div className="w-full h-48 overflow-hidden">
                   <img
-                    src={article.image_url}
+                    src={getArticleThumbnail(article.image_url)}
                     alt={article.image_alt || article.title}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover"
                   />
                 </div>

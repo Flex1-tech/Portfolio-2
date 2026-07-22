@@ -1,5 +1,6 @@
 import type { Certification } from '@/types';
 import { Award, ExternalLink } from 'lucide-react';
+import { getCertificationLogo } from '@/lib/cloudinary';
 
 interface CertificationCardProps {
   cert: Certification;
@@ -41,7 +42,7 @@ export default function CertificationCard({ cert, onViewCert }: CertificationCar
           {/* Logo / Badge */}
           {hasImage ? (
             <div className="w-12 h-12 rounded-lg overflow-hidden border border-[#2A2A2A] bg-[#0A0A0A] p-2 flex items-center justify-center shrink-0">
-              <img src={cert.imageUrl} alt={cert.platform} className="w-full h-full object-contain" />
+            <img src={getCertificationLogo(cert.imageUrl)} alt={cert.platform} className="w-full h-full object-contain" loading="lazy" decoding="async" />
             </div>
           ) : (
             <div
