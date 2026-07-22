@@ -13,7 +13,7 @@ export default function FooterTerminal() {
       command: 'welcome',
       response: (
         <span className="text-[#A3A3A3]">
-          Tapez <span className="text-[#2F8F8F] font-bold">help</span> pour afficher les commandes disponibles.
+          Type <span className="text-[#2F8F8F] font-bold">help</span> to display available commands.
         </span>
       ),
     },
@@ -41,12 +41,12 @@ export default function FooterTerminal() {
       case 'help':
         response = (
           <div className="space-y-1 text-xs">
-            <p className="text-[#F5F5F5] font-semibold">Commandes disponibles :</p>
-            <p><span className="text-[#2F8F8F] w-24 inline-block font-bold">projects</span> — Afficher la liste des projets principaux</p>
-            <p><span className="text-[#2F8F8F] w-24 inline-block font-bold">skills</span> — Afficher la stack technique IA & Dev</p>
-            <p><span className="text-[#2F8F8F] w-24 inline-block font-bold">about</span> — À propos de Seth N. AKPLOGAN</p>
-            <p><span className="text-[#2F8F8F] w-24 inline-block font-bold">contact</span> — Liens de contact & réseaux sociaux</p>
-            <p><span className="text-[#2F8F8F] w-24 inline-block font-bold">clear</span> — Effacer l'écran du terminal</p>
+            <p className="text-[#F5F5F5] font-semibold">Available commands:</p>
+            <p><span className="text-[#2F8F8F] w-24 inline-block font-bold">projects</span> — List featured projects</p>
+            <p><span className="text-[#2F8F8F] w-24 inline-block font-bold">skills</span> — Display AI & Dev tech stack</p>
+            <p><span className="text-[#2F8F8F] w-24 inline-block font-bold">about</span> — About Seth N. AKPLOGAN</p>
+            <p><span className="text-[#2F8F8F] w-24 inline-block font-bold">contact</span> — Contact details & social links</p>
+            <p><span className="text-[#2F8F8F] w-24 inline-block font-bold">clear</span> — Clear terminal screen</p>
           </div>
         );
         break;
@@ -54,10 +54,10 @@ export default function FooterTerminal() {
       case 'projects':
         response = (
           <div className="space-y-1 text-xs">
-            <p className="text-[#F5F5F5]">Projets Phares :</p>
-            <p>• <span className="text-[#2F8F8F]">MusiCNN & ONNX</span> : Moteur de recommandation musicale basé sur l'IA</p>
-            <p>• <span className="text-[#2F8F8F]">Secure 2FA Engine</span> : Authentification multicanal haute sécurité</p>
-            <p>• <span className="text-[#2F8F8F]">Carpool Platform</span> : Solution de mobilité intelligente</p>
+            <p className="text-[#F5F5F5]">Featured Projects:</p>
+            <p>• <span className="text-[#2F8F8F]">MusiCNN & ONNX</span>: AI-based music recommendation engine</p>
+            <p>• <span className="text-[#2F8F8F]">Secure 2FA Engine</span>: High-security multi-channel authentication</p>
+            <p>• <span className="text-[#2F8F8F]">Carpool Platform</span>: Smart mobility solution</p>
           </div>
         );
         break;
@@ -65,7 +65,7 @@ export default function FooterTerminal() {
       case 'skills':
         response = (
           <div className="space-y-1 text-xs">
-            <p className="text-[#F5F5F5]">Stack Technique :</p>
+            <p className="text-[#F5F5F5]">Tech Stack:</p>
             <p><span className="text-[#A3A3A3]">AI / Data</span>: Python, PyTorch, Scikit-Learn, Pandas, ONNX, OpenCV</p>
             <p><span className="text-[#A3A3A3]">Backend</span>: Node.js, Express, TypeScript, PostgreSQL, Supabase, SQLite</p>
             <p><span className="text-[#A3A3A3]">Frontend</span>: React 19, TypeScript, Vite, Tailwind CSS, GSAP</p>
@@ -76,8 +76,8 @@ export default function FooterTerminal() {
       case 'about':
         response = (
           <p className="text-xs text-[#CFCFCF]">
-            Étudiant en 2ème année de Licence en Intelligence Artificielle à l'IFRI (Université d'Abomey-Calavi).
-            Spécialisé en Machine Learning, Deep Learning et ingénierie logicielle robuste.
+            2nd-year Artificial Intelligence student at IFRI (Université d'Abomey-Calavi).
+            Specialized in Machine Learning, Deep Learning, and robust software engineering.
           </p>
         );
         break;
@@ -85,9 +85,9 @@ export default function FooterTerminal() {
       case 'contact':
         response = (
           <div className="space-y-1 text-xs">
-            <p>Email : <a href="mailto:sethakplogan@gmail.com" className="text-[#B5423F] hover:underline">sethakplogan@gmail.com</a></p>
-            <p>LinkedIn : <a href="https://linkedin.com/in/seth-akplogan" target="_blank" rel="noreferrer" className="text-[#B5423F] hover:underline">linkedin.com/in/seth-akplogan</a></p>
-            <p>GitHub : <a href="https://github.com/Flex1-tech" target="_blank" rel="noreferrer" className="text-[#B5423F] hover:underline">github.com/Flex1-tech</a></p>
+            <p>Email: <a href="mailto:sethakplogan@gmail.com" className="text-[#B5423F] hover:underline">sethakplogan@gmail.com</a></p>
+            <p>LinkedIn: <a href="https://linkedin.com/in/seth-akplogan" target="_blank" rel="noreferrer" className="text-[#B5423F] hover:underline">linkedin.com/in/seth-akplogan</a></p>
+            <p>GitHub: <a href="https://github.com/Flex1-tech" target="_blank" rel="noreferrer" className="text-[#B5423F] hover:underline">github.com/Flex1-tech</a></p>
           </div>
         );
         break;
@@ -95,7 +95,7 @@ export default function FooterTerminal() {
       default:
         response = (
           <span className="text-[#B5423F]">
-            Commande inconnue : "{trimmed}". Tapez <span className="underline font-bold">help</span>.
+            Unknown command: "{trimmed}". Type <span className="underline font-bold">help</span>.
           </span>
         );
         break;
@@ -141,7 +141,7 @@ export default function FooterTerminal() {
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Tapez une commande (ex: help, projects, skills)..."
+          placeholder="Type a command (e.g. help, projects, skills)..."
           className="flex-1 bg-transparent text-[#F5F5F5] placeholder-[#555] focus:outline-none font-mono text-xs"
         />
         <button type="submit" className="text-[#A3A3A3] hover:text-[#F5F5F5] transition-colors p-1">
@@ -151,3 +151,4 @@ export default function FooterTerminal() {
     </div>
   );
 }
+
