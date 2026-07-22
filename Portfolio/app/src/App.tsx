@@ -37,15 +37,38 @@ const homeSchema = {
       '@id': 'https://seth-akplogan.onrender.com/#person',
       name: 'Seth N. AKPLOGAN',
       jobTitle: 'Artificial Intelligence & Data Science Student',
+      description: 'AI & Data Science student at IFRI, Université d\'Abomey-Calavi. Building reliable and intelligent software solutions.',
       worksFor: {
         '@type': 'EducationalOrganization',
         name: "IFRI — Université d'Abomey-Calavi",
       },
+      alumniOf: {
+        '@type': 'EducationalOrganization',
+        name: "IFRI — Institut de Formation et de Recherche en Informatique",
+      },
+      knowsAbout: [
+        'Artificial Intelligence',
+        'Machine Learning',
+        'Data Science',
+        'Deep Learning',
+        'Natural Language Processing',
+        'Full-Stack Software Engineering',
+        'Python',
+        'TypeScript',
+        'React',
+        'Node.js',
+        'PostgreSQL',
+      ],
       url: 'https://seth-akplogan.onrender.com',
       sameAs: [
         'https://linkedin.com/in/seth-akplogan',
         'https://github.com/Flex1-tech',
       ],
+      subjectOf: {
+        '@type': 'WebDocument',
+        url: 'https://seth-akplogan.onrender.com/llms.txt',
+        name: 'LLMs.txt Summary',
+      },
     },
     {
       '@type': 'ProfilePage',

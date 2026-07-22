@@ -2,9 +2,33 @@
 User-agent: *
 Allow: /
 
+# Explicit rules for AI Search & LLM Crawlers
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
 # Disallow admin routes from indexing
 Disallow: /admin/
 Disallow: /admin/*
 
-# Sitemap location
+# Sitemap & LLMs discovery
 Sitemap: https://seth-akplogan.onrender.com/sitemap.xml
+# LLMs.txt specification: https://llmstxt.org
+
