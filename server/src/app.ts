@@ -34,13 +34,17 @@ app.use(
   cors({
     origin: process.env.CORS_ORIGIN?.split(",") || [
       "http://localhost:5173",
+      "http://localhost:3000",
+      "https://sethakplogan.me",
+      "https://www.sethakplogan.me",
       "https://seth-akplogan.onrender.com",
     ],
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
+
 
 // Session configuration
 // Use PostgreSQL store in production/development, or MemoryStore in test environment

@@ -410,33 +410,69 @@ export async function getCertificationById(
 
 /**
  * Login to admin dashboard
+ * Uses safe text-first parsing to prevent SyntaxError on non-JSON responses
+ * (e.g. when a reverse proxy or static host returns HTML instead of JSON).
  */
 export async function adminLogin(
- username: string,
- password: string,
+  username: string,
+  password: string,
 ): Promise<{ success: boolean; message?: string }> {
- try {
+  try {
     const response = await fetch(`${API_URL}/admin-api/login`, {
- method: "POST",
- headers: {
- "Content-Type": "application/json",
- },
- credentials: "include",
- body: JSON.stringify({ username, password }),
- });
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({ username, password }),
+    });
 
-    const data: ApiResponse<unknown> = await response.json();
+    // --- Safe response parsing ---
+    const contentType = response.headers.get("content-type") || "";
+    const text = await response.text();
+
+    let data: ApiResponse<unknown> | null = null;
+
+    if (text.trim()) {
+      if (contentType.includes("application/json")) {
+        try {
+          data = JSON.parse(text) as ApiResponse<unknown>;
+        } catch {
+          throw new Error(
+            "Le serveur a renvoyé un JSON invalide. Vérifiez que le backend est bien déployé.",
+          );
+        }
+      } else {
+        // HTML or other non-JSON: likely a 502/proxy/SPA fallback
+        throw new Error(
+          `Le serveur a renvoyé une réponse non-JSON (HTTP ${response.status}). ` +
+          `Le backend est peut-être hors ligne ou mal configuré.`,
+        );
+      }
+    }
 
     if (!response.ok) {
- throw new Error(data.message || "Login failed");
- }
+      throw new Error(
+        (data as any)?.message ||
+        (data as any)?.error ||
+        `Erreur serveur (${response.status})`,
+      );
+    }
 
- return { success: true, message: data.message };
- } catch (error) {
- console.error("Error logging in:", error);
- return { success: false, message: String(error) };
- }
+    if (!data) {
+      throw new Error("Le serveur a renvoyé une réponse vide.");
+    }
+
+    return { success: true, message: (data as any).message };
+  } catch (error) {
+    console.error("Error logging in:", error);
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : String(error),
+    };
+  }
 }
+
 
 /**
  * Logout from admin dashboard
