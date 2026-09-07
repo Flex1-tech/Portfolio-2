@@ -7,15 +7,10 @@ import "dotenv/config";
 import { Pool } from "pg";
 
 // Initialize PostgreSQL connection pool
-// Supabase Transaction Pooler (port 5432): use ssl:true with rejectUnauthorized:false.
-// Do NOT pass ssl: { rejectUnauthorized: false } alone — that forces SSL initiation which
-// the Transaction Pooler rejects. The pg driver needs ssl: { rejectUnauthorized: false }
-// only when NODE_ENV is production; for local dev without a pooler it can be skipped.
 export const pool = new Pool({
  connectionString: process.env.DATABASE_URL,
- ssl: process.env.DATABASE_URL?.includes("supabase")
-  ? { rejectUnauthorized: false }
-  : undefined,
+ // Supabase pooler requires SSL in all environments (including dev)
+ ssl: { rejectUnauthorized: false },
  connectionTimeoutMillis: 10000,
  idleTimeoutMillis: 30000,
  max: 10,
@@ -25,14 +20,6 @@ export const pool = new Pool({
  * Initialize database schema
  */
 export async function initializeDatabase(): Promise<void> {
- // Test connectivity first with a short timeout
- try {
-  await pool.query("SELECT 1");
- } catch (connError: any) {
-  console.error(" Database connectivity test failed:", connError.message);
-  return;
- }
-
  try {
   // Create projects table
  await pool.query(`
